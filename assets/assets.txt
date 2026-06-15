@@ -1,0 +1,18 @@
+fonts/Cinzel-VariableFont_wght.ttf
+fonts/Perpetua Regular.otf
+fonts/TrajanPro-Regular.ttf
+icons/logo.png
+libgdx.png
+ui/font-list.fnt
+ui/font-subtitle.fnt
+ui/font-window.fnt
+ui/font.fnt
+ui/menu/background.png
+ui/menu/main menu/beam.png
+ui/menu/main menu/logo.png
+ui/menu/main menu/pointer.png
+ui/menu/settingBottom.png
+ui/menu/titleBottom.png
+ui/uiskin.atlas
+ui/uiskin.json
+ui/uiskin.png
