@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 public class FontManager {
     private static BitmapFont titleFont;
     private static BitmapFont menuFont;
+    private static BitmapFont menuSmallFont;
     private static BitmapFont bodyFont;
 
     public static void load() {
@@ -36,6 +37,12 @@ public class FontManager {
         params.shadowOffsetY = 2;
         menuFont = cinzel.generateFont(params);
 
+        // Menu small button font
+        params.size = 32;
+        params.shadowOffsetX = 2;
+        params.shadowOffsetY = 2;
+        menuSmallFont = cinzel.generateFont(params);
+
         // Body text font
         params.size = 24;
         params.shadowOffsetX = 0;
@@ -48,6 +55,7 @@ public class FontManager {
 
     public static BitmapFont getTitle() { return titleFont; }
     public static BitmapFont getMenu()  { return menuFont;  }
+    public static BitmapFont getMenuSmall()  { return menuSmallFont;  }
     public static BitmapFont getBody()  { return bodyFont;  }
 
     public static void dispose() {
