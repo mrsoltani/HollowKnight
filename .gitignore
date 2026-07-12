@@ -1,23 +1,25 @@
-# ===== ASSETS (get from Google Drive) =====
-assets/ui/
-assets/sprites/
-assets/audio/
-assets/Hollow Knight sprites 1.5.12459 (Nintendo Switch 2 edition)/
+# Ignore Java compiled files
+*.class
+*.bluej
+*.ctxt
+*.jar
+*.war
+*.nar
+*.ear
+*.class
 
-# Keep these asset subfolders (source code, not binaries)
-!assets/i18n/
-!assets/ASSETS_README.md
-
-# ===== Gradle =====
-.gradle/
+# Ignore libGDX / Gradle build directories
+bin/
+gen/
+out/
 build/
-*/build/
+.gradle/
+lwjgl3/bin/
+lwjgl3/build/
 
-# ===== IntelliJ =====
+# IDE specific files
 .idea/
 *.iml
-out/
-
-# ===== OS =====
-.DS_Store
-Thumbs.db
+.project
+.classpath
+.settings/
