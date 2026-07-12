@@ -1,7 +1,7 @@
 package com.Graphic.models.enums;
 
 public enum GameArea {
-    NONE, // For a brand new empty save slot
+    NONE,
     CROSSROADS,
     CRYSTAL_PEAK
 }

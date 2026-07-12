@@ -11,12 +11,12 @@ import com.badlogic.gdx.utils.Array;
 
 public class AchievementPopup {
 
-    private static final float DELAY_DURATION   = 2.0f; // 2-second delay before showing
-    private static final float DISPLAY_DURATION = 3.5f; // Total visible time
+    private static final float DELAY_DURATION   = 2.0f;
+    private static final float DISPLAY_DURATION = 3.5f;
     private static final float SLIDE_DURATION   = 0.4f;
     private static final float ICON_SIZE        = 64f;
 
-    // Position offsets from the bottom-left corner
+
     private static final float MARGIN_LEFT      = 30f;
     private static final float MARGIN_BOTTOM    = 30f;
 
@@ -39,16 +39,16 @@ public class AchievementPopup {
         }
         if (current != null) {
             timer += delta;
-            // Life cycle ends after the delay period + the display period are over
+
             if (timer >= DELAY_DURATION + DISPLAY_DURATION) current = null;
         }
     }
 
     public void render(SpriteBatch batch) {
-        // Do not render anything if no item is active, or if we are still waiting out the delay
+
         if (current == null || timer < DELAY_DURATION) return;
 
-        // Calculate active time relative to when it actually started showing
+
         float activeTimer = timer - DELAY_DURATION;
         float fadeOutStart = DISPLAY_DURATION - SLIDE_DURATION;
 
@@ -56,7 +56,7 @@ public class AchievementPopup {
             ? activeTimer / SLIDE_DURATION
             : (activeTimer > fadeOutStart ? 1f - (activeTimer - fadeOutStart) / SLIDE_DURATION : 1f);
 
-        // Updated for Bottom-Left Positioning
+
         float x = MARGIN_LEFT;
         float y = MARGIN_BOTTOM;
 
@@ -67,7 +67,7 @@ public class AchievementPopup {
         String title = LocalizationManager.get(current.getTitleKey());
         FontManager.getMenuSmall().draw(batch, title, x + ICON_SIZE + 16f, y + ICON_SIZE * 0.6f);
 
-        // Reset text and drawing batch color channels
+
         batch.setColor(1f, 1f, 1f, 1f);
         FontManager.getMenuSmall().setColor(1f, 1f, 1f, 1f);
     }

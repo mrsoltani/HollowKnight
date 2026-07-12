@@ -24,6 +24,6 @@ public class Achievement {
     public Texture getIcon()                { return icon; }
     public boolean isUnlocked()             { return unlocked; }
 
-    // Package-private — only AchievementManager should mutate this.
+
     public void setUnlocked(boolean unlocked) { this.unlocked = unlocked; }
 }

@@ -14,12 +14,12 @@ public class GameSaveData {
 
     public GameArea lastArea;
 
-    // Up to 3 equipped charm slots (NONE = empty slot)
+
     public CharmId equippedCharm1;
     public CharmId equippedCharm2;
     public CharmId equippedCharm3;
 
-    // Constructor for a brand new game
+
     public GameSaveData(int slotId) {
         this.slotId = slotId;
         this.timePlayed = 0f;
@@ -28,14 +28,14 @@ public class GameSaveData {
         this.charmAcquired = false;
         this.wallBroken = false;
         this.gameBeaten = false;
-        this.lastArea = GameArea.NONE; // Empty slot
+        this.lastArea = GameArea.NONE;
 
         this.equippedCharm1 = CharmId.NONE;
         this.equippedCharm2 = CharmId.NONE;
         this.equippedCharm3 = CharmId.NONE;
     }
 
-    // Constructor for loading from the DB
+
     public GameSaveData(int slotId, float timePlayed, int enemiesKilled, int deaths,
                         boolean charmAcquired, boolean wallBroken, boolean gameBeaten, String areaString,
                         String equippedCharm1Str, String equippedCharm2Str, String equippedCharm3Str) {
@@ -50,7 +50,7 @@ public class GameSaveData {
         try {
             this.lastArea = GameArea.valueOf(areaString);
         } catch (Exception e) {
-            this.lastArea = GameArea.NONE; // Fallback
+            this.lastArea = GameArea.NONE;
         }
 
         this.equippedCharm1 = parseCharmId(equippedCharm1Str);
@@ -62,7 +62,7 @@ public class GameSaveData {
         try {
             return CharmId.valueOf(value);
         } catch (Exception e) {
-            return CharmId.NONE; // Fallback for null/unknown values
+            return CharmId.NONE;
         }
     }
 }

@@ -72,6 +72,6 @@ public class PauseScreen extends BaseMenuScreen {
 
     @Override
     protected void handleExtraInput(float delta){
-        // Left empty or removed unless you have other non-ESCAPE hotkeys to track here
+
     }
 }

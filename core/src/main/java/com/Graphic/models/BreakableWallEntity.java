@@ -34,7 +34,7 @@ public class BreakableWallEntity {
         }
     }
 
-    /** Returns true if the wall just broke on this hit. */
+
     public boolean onHit() {
         if (broken) return false;
         hitCount++;
@@ -42,12 +42,12 @@ public class BreakableWallEntity {
 
         if (hitCount >= MAX_HITS) {
             broken = true;
-            // Play structural destruction blast audio
+
             AudioManager.playSFX("wall_break_death");
             return true;
         }
 
-        // Pick a random surface hit variant and add a slight realistic pitch variation
+
         String randomHitSFX = MathUtils.randomBoolean() ? "wall_break_hit_1" : "wall_break_hit_2";
         AudioManager.playPitchedSFX(0.9f, 1.1f, randomHitSFX);
 

@@ -11,9 +11,9 @@ public class LanguageSettingsScreen extends BaseMenuScreen {
 
     private String[] items() {
         return new String[]{
-            LocalizationManager.get("game.english"), // 0
-            LocalizationManager.get("game.french"),  // 1
-            LocalizationManager.get("menu.back")     // 2
+            LocalizationManager.get("game.english"),
+            LocalizationManager.get("game.french"),
+            LocalizationManager.get("menu.back")
         };
     }
 

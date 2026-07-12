@@ -17,17 +17,17 @@ public class AchievementManager {
     private static AchievementStore store;
     private static final Map<AchievementId, Achievement> achievements = new EnumMap<>(AchievementId.class);
 
-    // TODO: replace with your real enemy-type enum and its total count once
-    // it exists — tracked as strings for now since I don't have that enum.
+
+
     private static final Set<String> killedEnemyTypes = new HashSet<>();
-    private static final int TOTAL_ENEMY_TYPES = 0; // set this
+    private static final int TOTAL_ENEMY_TYPES = 4;
 
-    // TODO: same for charms — replace String with your CharmId enum.
+
     private static final Set<CharmId> collectedCharms = new HashSet<>();
-    private static final int TOTAL_COLLECTABLE_CHARMS = 1; // set this
+    private static final int TOTAL_COLLECTABLE_CHARMS = 1;
 
-    // Tune to taste — seconds. GAME_COMPLETED payload should be the elapsed
-    // run time in seconds (Float) for this check to work.
+
+
     private static final float SPEEDRUN_TARGET_SECONDS = 20f * 60f;
 
     public static void init() {
@@ -73,7 +73,7 @@ public class AchievementManager {
         }
     }
 
-    // TODO: change `Object data` to your real enemy-type enum once it exists.
+
     private static void onEnemyKilled(Object data) {
         if (data instanceof String enemyType) {
             killedEnemyTypes.add(enemyType);
@@ -83,7 +83,7 @@ public class AchievementManager {
         }
     }
 
-    // TODO: change `Object data` to your real charm-id enum once it exists.
+
     private static void onCharmCollected(Object data) {
             if(data instanceof CharmId) {
                 collectedCharms.add((CharmId)data);
@@ -102,7 +102,7 @@ public class AchievementManager {
         EventBus.emit(EventBus.Event.ACHIEVEMENT_UNLOCKED, achievement);
     }
 
-    /** Order matches AchievementId's declaration order — used directly by AchievementsScreen. */
+
     public static Array<Achievement> getAll() {
         Array<Achievement> list = new Array<>();
         for (AchievementId id : AchievementId.values()) {

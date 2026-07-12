@@ -18,8 +18,6 @@ import static com.Graphic.utils.Constants.Menu.PATH_CRYSTAL_PEAK_BACKGROUND;
 import static com.Graphic.utils.Constants.Menu.PATH_LIGHT_BEAM;
 
 
-// Most of this file is A.I. generated cause I am not an expert animation designer :))
-// But I tried to understand it, I can say I did a good job doing that.
 public class MenuAtmosphere implements Disposable {
 
 
@@ -59,17 +57,17 @@ public class MenuAtmosphere implements Disposable {
         this.particles = new Array<>();
         this.fogClouds = new Array<>();
 
-        // 1. Static Light Beams
+
         this.beamTexture = new Texture(Gdx.files.internal(PATH_LIGHT_BEAM));
 
-        // 2. Generate Procedural Particle Template
+
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
         pixmap.setColor(1f, 1f, 1f, 1f);
         pixmap.fillCircle(8, 8, 8);
         this.particleTexture = new Texture(pixmap);
         pixmap.dispose();
 
-        // 3. Generate Dense Fog Texture Template
+
         int fogRes = 256;
         Pixmap fogPixmap = new Pixmap(fogRes, fogRes, Pixmap.Format.RGBA8888);
         float center = fogRes / 2f;
@@ -89,14 +87,14 @@ public class MenuAtmosphere implements Disposable {
         this.fogTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         fogPixmap.dispose();
 
-        // 4. Load the initial background asset and fill arrays
+
         applyTheme(initialTheme, true);
     }
 
     public void applyTheme(Theme theme, boolean preWarm) {
         this.currentTheme = theme;
 
-        // Dynamic Texture Swap: Prevent memory leaks by throwing away the old asset
+
         if (currentBackground != null) {
             currentBackground.dispose();
         }
@@ -105,14 +103,14 @@ public class MenuAtmosphere implements Disposable {
         particles.clear();
         fogClouds.clear();
 
-        // Spawn Particles
+
         for (int i = 0; i < currentTheme.particleCount; i++) {
             VoidParticle p = spawnParticle();
             if (preWarm) p.y = MathUtils.random(0, height);
             particles.add(p);
         }
 
-        // Spawn Smoke Clouds
+
         for (int i = 0; i < 5; i++) {
             FogCloud fog = new FogCloud();
             fog.width = MathUtils.random(1300f, 1900f);
@@ -131,7 +129,7 @@ public class MenuAtmosphere implements Disposable {
     public void update(float delta) {
         beamTimer += 0.6f * delta;
 
-        // Update Fog Positions
+
         for (FogCloud fog : fogClouds) {
             fog.x += fog.speedX * delta;
             fog.waveTimer += fog.waveSpeed * delta;
@@ -141,7 +139,7 @@ public class MenuAtmosphere implements Disposable {
             }
         }
 
-        // Update Particles
+
         for (int i = particles.size - 1; i >= 0; i--) {
             VoidParticle p = particles.get(i);
             p.currentLife -= delta;
@@ -158,23 +156,23 @@ public class MenuAtmosphere implements Disposable {
     }
 
     public void render(SpriteBatch batch) {
-        // Layer 1: The Active Themed Background
+
         batch.setColor(Color.WHITE);
         batch.draw(currentBackground, 0, 0, width, height);
 
-        // Layer 2: Ambient Beams
+
         float beamAlpha = 0.12f + MathUtils.sin(beamTimer) * 0.06f;
         batch.setColor(1f, 1f, 1f, beamAlpha);
         batch.draw(beamTexture, 0, 0, width, height);
 
-        // Layer 3: Thick Rolling Fog/Smoke
+
         for (FogCloud fog : fogClouds) {
             float dynamicY = fog.y + (MathUtils.sin(fog.waveTimer) * fog.waveAmplitude);
             batch.setColor(currentTheme.fogColor.r, currentTheme.fogColor.g, currentTheme.fogColor.b, fog.alpha);
             batch.draw(fogTexture, fog.x, dynamicY, fog.width, fog.height);
         }
 
-        // Layer 4: Distinct Rising Particles
+
         for (VoidParticle p : particles) {
             float normalizedLife = p.currentLife / p.maxLifetime;
             float alpha = p.baseAlpha * MathUtils.sin(normalizedLife * MathUtils.PI);
@@ -182,7 +180,7 @@ public class MenuAtmosphere implements Disposable {
             batch.draw(particleTexture, p.x - p.size/2f, p.y - p.size/2f, p.size, p.size);
         }
 
-        batch.setColor(Color.WHITE); // Standard color batch reset
+        batch.setColor(Color.WHITE);
     }
 
     private VoidParticle spawnParticle() {

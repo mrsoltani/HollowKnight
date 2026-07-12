@@ -11,7 +11,7 @@ public class AmbientParticle {
     private float currentScale;
     private float maxLifetime;
     private float currentLifetime;
-    private float randomAlpha; // Unique opacity for this specific particle
+    private float randomAlpha;
 
     public AmbientParticle() {}
 
@@ -28,7 +28,7 @@ public class AmbientParticle {
         this.maxLifetime = MathUtils.random(2.0f, 4.5f);
         this.currentLifetime = 0f;
 
-        // Assign a random opacity value between 0.3f (faint) and 1.0f (fully bright)
+
         this.randomAlpha = MathUtils.random(0.3f, 1.0f);
     }
 
@@ -38,7 +38,7 @@ public class AmbientParticle {
         x += velocityX * delta;
         y += velocityY * delta;
 
-        // Shrink linearly to 0 scale over time
+
         float lifeRatio = currentLifetime / maxLifetime;
         currentScale = baseScale * (1f - lifeRatio);
 
@@ -48,7 +48,7 @@ public class AmbientParticle {
     public void draw(SpriteBatch batch, TextureRegion texture) {
         if (currentScale <= 0f) return;
 
-        // Apply the pre-calculated random opacity to the color mask
+
         batch.setColor(1f, 1f, 1f, randomAlpha);
 
         batch.draw(texture,

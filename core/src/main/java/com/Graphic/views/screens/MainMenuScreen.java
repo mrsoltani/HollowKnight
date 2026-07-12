@@ -30,7 +30,7 @@ public class MainMenuScreen extends BaseMenuScreen {
         };
     }
 
-    @Override protected String getTitle()     { return ""; } // unused — logo replaces header
+    @Override protected String getTitle()     { return ""; }
     @Override protected int    getItemCount() { return 5; }
 
     @Override
@@ -54,7 +54,7 @@ public class MainMenuScreen extends BaseMenuScreen {
         EventBus.emit(EventBus.Event.ENTER_MENU);
     }
 
-    // Logo replaces the standard title + divider header
+
     @Override
     protected void renderHeader() {
         float logoW = logo.getWidth();
@@ -78,7 +78,7 @@ public class MainMenuScreen extends BaseMenuScreen {
 
     @Override
     protected void handleExtraInput(float delta) {
-        // Theme hot-swap shortcuts
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
             com.Graphic.views.atmosphere.MenuAtmosphere.getInstance()
                 .applyTheme(com.Graphic.views.atmosphere.Theme.VOID, false);
@@ -101,7 +101,7 @@ public class MainMenuScreen extends BaseMenuScreen {
         }
     }
 
-    @Override protected void goBack() { /* top-level, no back */ }
+    @Override protected void goBack() {  }
 
     @Override
     protected void onDispose() {

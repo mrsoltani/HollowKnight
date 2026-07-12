@@ -17,7 +17,7 @@ public class DialogueBox {
 
     public enum State { HIDDEN, TYPING, WAITING, DONE }
 
-    // ── Layout — matches the screenshot exactly ───────────────────────────
+
     private static final float BOX_X          = 0f;
     private static final float BOX_Y          = 40f;
     private static final float BOX_W          = V_WIDTH;
@@ -27,11 +27,11 @@ public class DialogueBox {
     private static final float ORNAMENT_SCALE = 0.8f;
     private static final float CHARS_PER_SEC  = 45f;
 
-    // ── Assets ────────────────────────────────────────────────────────────
-    private final Texture background;
-    private final Texture ornament; // titleBottom.png — used top and bottom
 
-    // ── State ─────────────────────────────────────────────────────────────
+    private final Texture background;
+    private final Texture ornament;
+
+
     private State    state        = State.HIDDEN;
     private String[] lines;
     private int      lineIndex    = 0;
@@ -44,7 +44,7 @@ public class DialogueBox {
     public DialogueBox(Texture ornament) {
         this.ornament = ornament;
 
-        // Pure dark background — nearly black with slight blue tint like screenshot
+
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pm.setColor(0.02f, 0.02f, 0.06f, 0.96f);
         pm.fill();
@@ -52,7 +52,7 @@ public class DialogueBox {
         pm.dispose();
     }
 
-    // ── Public API ────────────────────────────────────────────────────────
+
 
     public void show(String[] dialogueLines) {
         lines        = dialogueLines;
@@ -88,13 +88,13 @@ public class DialogueBox {
             || Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
 
             if (state == State.TYPING) {
-                // Skip typewriter — show full line
+
                 charProgress = currentLine().length();
                 state        = State.WAITING;
                 return true;
             }
 
-            // Advance to next line
+
             lineIndex++;
             if (lineIndex >= lines.length) {
                 state = State.DONE;
@@ -108,7 +108,7 @@ public class DialogueBox {
             return true;
         }
 
-        return true; // consume all input while visible
+        return true;
     }
 
     public void render(SpriteBatch batch) {
@@ -118,26 +118,26 @@ public class DialogueBox {
         float oh = ornament.getHeight() * ORNAMENT_SCALE;
         float ox = (V_WIDTH - ow) / 2f;
 
-        // ── 1. Dark background ────────────────────────────────────────────
+
         batch.setColor(1f, 1f, 1f, 1f);
         batch.draw(background, BOX_X, BOX_Y, BOX_W, BOX_H);
 
-        // ── 2. Top ornament — centered, sits ON TOP edge of box ──────────
-        // Flipped vertically so it hangs downward like the screenshot
+
+
         batch.draw(
             ornament,
             ox,
-            BOX_Y + BOX_H - oh * 0.5f, // half overhangs above box
+            BOX_Y + BOX_H - oh * 0.5f,
             0, 0,
             ornament.getWidth(), ornament.getHeight(),
             ORNAMENT_SCALE, ORNAMENT_SCALE,
             0,
             0, 0,
             ornament.getWidth(), ornament.getHeight(),
-            false, true // flipX=false, flipY=true → hangs from top
+            false, true
         );
 
-        // ── 3. Bottom ornament — centered, sits ON BOTTOM edge ───────────
+
         batch.draw(
             ornament,
             ox,
@@ -148,10 +148,10 @@ public class DialogueBox {
             0,
             0, 0,
             ornament.getWidth(), ornament.getHeight(),
-            false, false // normal orientation
+            false, false
         );
 
-        // ── 4. Dialogue text ──────────────────────────────────────────────
+
         if (lines != null && lineIndex < lines.length) {
             String full    = currentLine();
             int    visible = Math.min((int) charProgress, full.length());
@@ -169,11 +169,11 @@ public class DialogueBox {
                 textY,
                 textW,
                 Align.left,
-                true // wrap
+                true
             );
         }
 
-        // ── 5. Blinking continue prompt (bottom-right of box) ────────────
+
         if (state == State.WAITING && blinkVisible) {
             String prompt = LocalizationManager.get("npc.dialogue.continue");
             layout.setText(FontManager.getBody(), prompt);
@@ -188,7 +188,7 @@ public class DialogueBox {
         }
     }
 
-    // ── Queries ───────────────────────────────────────────────────────────
+
 
     public boolean isDone()    { return state == State.DONE;   }
     public boolean isVisible() { return state != State.HIDDEN; }

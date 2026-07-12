@@ -12,11 +12,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * Owns every currently-active Fireball / Scream instance: spawning, per-frame update,
- * wall collision, target collision + damage dispatch, and rendering. Keeps all of this
- * out of GameScreen.
- */
+
 public class SpellManager {
 
     private final TextureAtlas ballAtlas;
@@ -38,10 +34,7 @@ public class SpellManager {
         screams.add(new Scream(screamAtlas, x, y, voidHeartActive));
     }
 
-    /**
-     * @param solidBlocks walls/floors the fireball should vanish against (deadly blocks are ignored)
-     * @param targets     damageable entities (enemies) spells can hit
-     */
+
     public void update(float delta, Array<SolidBlock> solidBlocks, Array<? extends Damageable> targets) {
         updateFireballs(delta, solidBlocks, targets);
         updateScreams(delta, targets);

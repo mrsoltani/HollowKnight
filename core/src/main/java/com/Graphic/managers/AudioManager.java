@@ -14,38 +14,38 @@ public class AudioManager {
     private static final String PREFS_NAME = "audio_settings";
     private static Preferences prefs;
 
-    // ── Volume & Toggle State ─────────────────────────────────────────────
+
     private static float   masterVolume = 0.75f;
     private static boolean musicEnabled = true;
     private static boolean sfxEnabled   = true;
     private static float   musicVolume  = 0.35f;
 
-    // ── Registries ────────────────────────────────────────────────────────
+
     private static final Map<String, Sound> sounds   = new HashMap<>();
     private static final Map<String, Music> musicMap = new HashMap<>();
 
-    // ── Music Processing State ────────────────────────────────────────────
+
     private static Music  currentMusic;
     private static String currentMusicKey = "";
 
-    // ── Crossfade Processing State ────────────────────────────────────────
+
     private static boolean isFading     = false;
     private static float   fadeTimer    = 0f;
-    private static float   fadeDuration = 2.0f; // Increased to 2.0s for a cinematic blend
+    private static float   fadeDuration = 2.0f;
     private static Music   fadingOutMusic;
     private static Music   fadingInMusic;
     private static String  pendingMusicKey = "";
 
-    // ── Channel State (prevents overlapping instances of repeating SFX) ───
+
     private static class ChannelState {
         Sound sound;
         long id;
     }
     private static final Map<String, ChannelState> channels = new HashMap<>();
 
-    // =========================================================================
-    // Initialization & Event Binding
-    // =========================================================================
+
+
+
 
     public static void init() {
         prefs        = Gdx.app.getPreferences(PREFS_NAME);
@@ -66,13 +66,13 @@ public class AudioManager {
         loadMusic("end screen",         "audio/music/Sealed Vessel.mp3");
 
 
-        // Ui
         loadSFX("ui_hover",       "audio/sfx/ui/Ui Change Selection.mp3");
         loadSFX("ui_select",      "audio/sfx/ui/Ui Button Confirm.mp3");
         loadSFX("ui_confirm",     "audio/sfx/ui/Ui Button Confirm.mp3");
         loadSFX("ui_save",        "audio/sfx/ui/Ui Save.mp3");
 
-        // Movement
+
+
         loadSFX("hero_walk",        "audio/sfx/player/Hero Walk Footsteps Stone.mp3");
         loadSFX("hero_run",         "audio/sfx/player/Hero Run Footsteps Stone.mp3");
         loadSFX("hero_jump",        "audio/sfx/player/Hero Jump.mp3");
@@ -85,28 +85,38 @@ public class AudioManager {
         loadSFX("hero_wall_jump",   "audio/sfx/player/Hero Wall Jump.mp3");
         loadSFX("hero_wall_slide",  "audio/sfx/player/Hero Wall Slide.mp3");
 
-        // Combat & Abilities
+
         loadSFX("hero_slash",       "audio/sfx/player/Hero Slash.mp3");
         loadSFX("hero_slash_alt",   "audio/sfx/player/Hero SlashAlt.mp3");
         loadSFX("hero_down_slash",  "audio/sfx/player/Hero Down Slash.mp3");
 
-        // Wall Hit Dynamic Variations
+
         loadSFX("sword_hit_wall_1", "audio/sfx/player/sword hit window 1.mp3");
         loadSFX("sword_hit_wall_2", "audio/sfx/player/sword hit window 2.mp3");
         loadSFX("sword_hit_wall_3", "audio/sfx/player/sword hit window 3.mp3");
         loadSFX("sword_hit_wall_4", "audio/sfx/player/sword hit window 4.mp3");
 
-        // Magic / Spells / Healing
+
         loadSFX("hero_fireball",    "audio/sfx/player/Hero Fireball.mp3");
         loadSFX("hero_scream",      "audio/sfx/player/Hero Scream Spell.mp3");
         loadSFX("hero_heal",        "audio/sfx/player/Focus Health Heal.mp3");
 
-        // Damage Conditions
+
         loadSFX("hero_damage_1",    "audio/sfx/player/Hero Damage Less Harsh.mp3");
         loadSFX("hero_damage_2",    "audio/sfx/player/Hero Damage.mp3");
         loadSFX("hero_death",       "audio/sfx/player/Hero Death V2.mp3");
 
-        // ── Zote Authentic Audio Registry ─────────────────────────────────
+        loadSFX("hero_damage_1",    "audio/sfx/player/Hero Damage Less Harsh.mp3");
+        loadSFX("hero_damage_2",    "audio/sfx/player/Hero Damage.mp3");
+        loadSFX("hero_death",       "audio/sfx/player/Hero Death V2.mp3");
+
+
+        loadSFX("soul_1",    "audio/sfx/player/Soul Pickup 1.mp3");
+        loadSFX("soul_2",    "audio/sfx/player/Soul Pickup 2.mp3");
+        loadSFX("soul_3",       "audio/sfx/player/Soul Pickup 3.mp3");
+        loadSFX("soul_4",       "audio/sfx/player/Soul Pickup 4.mp3");
+
+
         loadSFX("zote_grunt_1",     "audio/sfx/zote/Zote 01.mp3");
         loadSFX("zote_grunt_2",     "audio/sfx/zote/Zote 02.mp3");
         loadSFX("zote_grunt_3",     "audio/sfx/zote/Zote 03.mp3");
@@ -126,7 +136,7 @@ public class AudioManager {
         loadSFX("charm_pickup",     "audio/sfx/area/Dream Orb Pickup.mp3");
         loadSFX("charm_pickup_2",   "audio/sfx/area/Dream Enter Pt 2.mp3");
 
-        // ── Falling Stalactites / Hazards ───────────────────────────────────
+
         loadSFX("stalactite_break",  "audio/sfx/area/Stalactite Break.mp3");
         loadSFX("stalactite_impact", "audio/sfx/area/Stalactite Impact.mp3");
         loadSFX("stalactite_death",  "audio/sfx/area/Stalactite Death.mp3");
@@ -134,14 +144,36 @@ public class AudioManager {
 
         loadSFX("enemy_hit", "audio/sfx/enemies/Enemy Damage.mp3");
         loadSFX("enemy_death",  "audio/sfx/enemies/Enemy Death Sword.mp3");
+
+
+        loadSFX("fk_attack_1", "audio/sfx/false knight/False Knight Attack New 01.mp3");
+        loadSFX("fk_attack_2", "audio/sfx/false knight/False Knight Attack New 02.mp3");
+        loadSFX("fk_attack_3", "audio/sfx/false knight/False Knight Attack New 03.mp3");
+        loadSFX("fk_attack_4", "audio/sfx/false knight/False Knight Attack New 04.mp3");
+        loadSFX("fk_attack_5", "audio/sfx/false knight/False Knight Attack New 05.mp3");
+        loadSFX("fk_ceiling_break",     "audio/sfx/false knight/False Knight Ceiling Break.mp3");
+        loadSFX("fk_damage_armour",     "audio/sfx/false knight/False Knight Damage Armour.mp3");
+        loadSFX("fk_damage_armour_final","audio/sfx/false knight/False Knight Damage Armour Final.mp3");
+        loadSFX("fk_head_damage_2",     "audio/sfx/false knight/False Knight Head Damage 2.mp3");
+        loadSFX("fk_jump",              "audio/sfx/false knight/False Knight Jump.mp3");
+        loadSFX("fk_land_first",        "audio/sfx/false knight/False Knight Land 1st Time.mp3");
+        loadSFX("fk_land",              "audio/sfx/false knight/False Knight Land.mp3");
+        loadSFX("fk_roll",              "audio/sfx/false knight/False Knight Roll.mp3");
+        loadSFX("fk_strike_ground",     "audio/sfx/false knight/False Knight Strike Ground.mp3");
+        loadSFX("fk_swing",             "audio/sfx/false knight/False Knight Swing.mp3");
+        loadSFX("fk_death",             "audio/sfx/false knight/Fknight Death.mp3");
+        loadSFX("fk_hit_1",             "audio/sfx/false knight/Fknight Hit 01.mp3");
+        loadSFX("fk_hit_2",             "audio/sfx/false knight/Fknight Hit 02.mp3");
+        loadSFX("fk_rage",              "audio/sfx/false knight/Fknight Rage.mp3");
     }
 
     private static void subscribeToAreaEvents() {
-        // CHANGED: Use fadeToMusic instead of playMusic for area transitions!
+
         EventBus.subscribe(EventBus.Event.ENTER_MENU, e -> fadeToMusic("menu"));
         EventBus.subscribe(EventBus.Event.ENTER_CROSSROADS, e -> fadeToMusic("forgotten crossroads"));
         EventBus.subscribe(EventBus.Event.ENTER_CRYSTAL_PEAK, e -> fadeToMusic("crystal peak"));
         EventBus.subscribe(EventBus.Event.ENTER_BOSS, e -> fadeToMusic("false knight"));
+        EventBus.subscribe(EventBus.Event.ENTER_END, e -> fadeToMusic("end screen"));
     }
 
     private static void subscribeToPlayerEvents() {
@@ -168,22 +200,46 @@ public class AudioManager {
 
         EventBus.subscribe(EventBus.Event.PLAYER_HIT_WALL,     e -> playRandomSFX("sword_hit_wall_1", "sword_hit_wall_2", "sword_hit_wall_3", "sword_hit_wall_4"));
 
-        // Magic / Spells / Healing
+
         EventBus.subscribe(EventBus.Event.PLAYER_FIREBALL,     e -> playSFX("hero_fireball"));
         EventBus.subscribe(EventBus.Event.PLAYER_SCREAM_SPELL, e -> playSFX("hero_scream"));
         EventBus.subscribe(EventBus.Event.PLAYER_HEAL,         e -> playSFX("hero_heal"));
 
-        // Life States
+
         EventBus.subscribe(EventBus.Event.PLAYER_DAMAGED,      e -> playRandomSFX("hero_damage_1", "hero_damage_2"));
         EventBus.subscribe(EventBus.Event.PLAYER_DEATH,        e -> playSFX("hero_death"));
 
         EventBus.subscribe(EventBus.Event.ENEMY_HIT,      e -> playSFX("enemy_hit"));
         EventBus.subscribe(EventBus.Event.ENEMY_KILLED,        e -> playSFX("enemy_death"));
+        EventBus.subscribe(EventBus.Event.PLAYER_SOUL_GAIN,        e ->playRandomSFX("soul_1","soul_2","soul_3","soul_4"));
+
+    }
+    public static void subscribeToBossEvents() {
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_ATTACK_WINDUP,
+            e -> playRandomSFX("fk_attack_1", "fk_attack_2", "fk_attack_3", "fk_attack_4", "fk_attack_5"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_CHARGE_SWING, e -> playSFX("fk_swing"));
+
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_JUMP_TAKEOFF, e -> playSFX("fk_jump"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_LAND_FIRST,   e -> playSFX("fk_land_first"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_JUMP_LAND,    e -> playSFX("fk_land"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_SLAM_IMPACT,  e -> playSFX("fk_strike_ground"));
+
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_CEILING_BREAK, e -> playSFX("fk_ceiling_break"));
+
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_HIT,
+            e -> playRandomSFX("fk_damage_armour", "fk_hit_1", "fk_hit_2"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_HIT_PHASE2,
+            e -> playRandomSFX("fk_damage_armour_final", "fk_head_damage_2", "fk_hit_1", "fk_hit_2"));
+
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_STUN_RECOVER, e -> playSFX("fk_roll"));
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_RAGE,         e -> playSFX("fk_rage"));
+
+        EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_DEATH, e -> playSFX("fk_death"));
     }
 
-    // =========================================================================
-    // Core Playback Controls
-    // =========================================================================
+
+
+
 
     public static void playSFX(String name) {
         playSFXInternal(name, 1.0f, 1.0f, null);
@@ -247,7 +303,7 @@ public class AudioManager {
     public static void playMusic(String name) {
         if (keyMatchesCurrent(name) && !isFading) return;
 
-        // Hard reset any existing fades
+
         if (isFading) clearFades();
         if (currentMusic != null) currentMusic.stop();
 
@@ -263,8 +319,6 @@ public class AudioManager {
     }
 
     public static void fadeToMusic(String name) {
-        System.out.println("should now play: "+name);
-        // Ignore if we're already playing this track fully, or already in the process of fading to it
         if (keyMatchesCurrent(name) && !isFading) return;
         if (pendingMusicKey.equals(name) && isFading) return;
 
@@ -278,11 +332,11 @@ public class AudioManager {
         isFading = true;
         fadeTimer = 0f;
 
-        // If something is currently playing, set it to fade out
+
         if (currentMusic != null && currentMusic.isPlaying()) {
             fadingOutMusic = currentMusic;
         } else if (fadingInMusic != null) {
-            // Player transitioned rooms very fast: fade out the track that was currently fading in
+
             fadingOutMusic = fadingInMusic;
         } else {
             fadingOutMusic = null;
@@ -297,16 +351,16 @@ public class AudioManager {
     }
 
     public static void update(float delta) {
-        // ONLY process this if a fade is actually happening
+
         if (!isFading) return;
 
         fadeTimer += delta;
 
-        // MathUtils.clamp ensures progress never exceeds 1.0 (100%)
+
         float progress = MathUtils.clamp(fadeTimer / fadeDuration, 0f, 1f);
         float maxVol = masterVolume * musicVolume;
 
-        // Crossfade Volume Calculation
+
         if (fadingOutMusic != null) {
             fadingOutMusic.setVolume(maxVol * (1f - progress));
         }
@@ -315,13 +369,13 @@ public class AudioManager {
             fadingInMusic.setVolume(maxVol * progress);
         }
 
-        // Check if fade is completely finished
+
         if (progress >= 1f) {
             if (fadingOutMusic != null) {
                 fadingOutMusic.stop();
             }
 
-            // Finalize state
+
             currentMusic = fadingInMusic;
             currentMusicKey = pendingMusicKey;
             clearFades();
@@ -366,7 +420,7 @@ public class AudioManager {
             if (Gdx.files.internal(path).exists()) {
                 Music m = Gdx.audio.newMusic(Gdx.files.internal(path));
                 m.setLooping(true);
-                // Setup default volume early, but it will be overridden by logic
+
                 m.setVolume(masterVolume * musicVolume);
                 musicMap.put(name, m);
             } else {
@@ -389,11 +443,11 @@ public class AudioManager {
     }
 
     private static void updateActiveVolumes() {
-        // Automatically updates current track volume dynamically if user tweaks settings mid-game
+
         if (!isFading && currentMusic != null) {
             currentMusic.setVolume(masterVolume * musicVolume);
         }
-        // Note: If isFading == true, the update() loop will automatically catch the new volume bounds on the next frame!
+
     }
 
     public static void setMusicEnabled(boolean enabled) {
@@ -403,7 +457,7 @@ public class AudioManager {
             else         currentMusic.pause();
         }
 
-        // Force cleanup fades if toggled during a transition
+
         if (!enabled && isFading) {
             if (fadingInMusic != null) fadingInMusic.pause();
             if (fadingOutMusic != null) fadingOutMusic.pause();

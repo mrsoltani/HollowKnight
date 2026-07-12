@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="69" nextobjectid="222">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="69" nextobjectid="228">
  <tileset firstgid="1" source="textures/forgotten crossroads/SimplePath.tsx"/>
  <tileset firstgid="341" source="textures/forgotten crossroads/FlatPath.tsx"/>
  <tileset firstgid="597" source="textures/forgotten crossroads/CdFloor.tsx"/>
@@ -1356,6 +1356,9 @@
   <object id="219" name="SPAWN_EAST" x="3093.03" y="1554.12">
    <point/>
   </object>
+  <object id="227" name="SPAWN_EAST2" x="3254.67" y="596">
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="67" name="breakableWall">
   <object id="216" x="3212" y="733.03" width="147.333" height="913.939"/>
@@ -1388,6 +1391,13 @@
     <property name="targetSpawn" value="SPAWN_WEST"/>
    </properties>
   </object>
+  <object id="222" x="3322" y="30" width="36" height="664">
+   <properties>
+    <property name="location" value="CRYSTAL_PEAK"/>
+    <property name="targetSpawn" value="SpawnPlayer"/>
+   </properties>
+  </object>
+  <object id="223" x="3580" y="1024" height="94"/>
  </objectgroup>
  <objectgroup id="64" name="danger">
   <object id="208" x="851.167" y="344.833" width="129" height="961">

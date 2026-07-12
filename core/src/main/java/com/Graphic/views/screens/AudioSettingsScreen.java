@@ -67,7 +67,7 @@ public class AudioSettingsScreen extends BaseMenuScreen {
 
         masterSlider = new Slider(0f, 1f, 0.01f, false, skin, SLIDER_STYLE);
 
-        // Read initial value from AudioManager — single source of truth
+
         masterSlider.setValue(AudioManager.getMasterVolume());
 
         masterSlider.addListener(new ChangeListener() {
@@ -96,7 +96,7 @@ public class AudioSettingsScreen extends BaseMenuScreen {
             } else if (i == 1 || i == 2) {
                 FontManager.getMenu().draw(batch, items[i], LEFT_COL_X, y);
 
-                // Fetch live state from AudioManager
+
                 boolean state = (i == 1)
                     ? AudioManager.isMusicEnabled()
                     : AudioManager.isSFXEnabled();

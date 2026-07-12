@@ -6,7 +6,7 @@ import static com.Graphic.utils.Constants.Menu.*;
 
 public enum Theme {
     VOID(
-        PATH_VOID_HEART_BACKGROUND, // Adjust paths to match your assets folder
+        PATH_VOID_HEART_BACKGROUND,
         new Color(0.16f, 0.18f, 0.22f, 1f),
         0.4f, 0.65f,
         0.01f, 0.22f,

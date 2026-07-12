@@ -17,29 +17,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-/**
- * Isolated playground for tuning Fireball / Scream hitboxes against their animations,
- * before wiring them into the real Player/EventBus flow.
- *
- * Controls:
- *   F            - cast Fireball to the right from the caster marker
- *   SHIFT + F    - cast Fireball to the left
- *   G            - cast Scream at the caster marker
- *   V            - toggle Void Heart (switches to Shadow versions + red hitbox tint)
- *   H            - toggle hitbox outlines on/off
- *   C            - clear all active spells
- *
- *   Fireball hitbox tuning:   Q / E  -> width -/+      Z / X -> height -/+
- *   Scream   hitbox tuning:   R / T  -> height -/+     Y / U -> angle -/+
- *
- *   LEFT / RIGHT - move the caster marker (where spells spawn from)
- */
+
 public class SpellTestScreen implements Screen {
 
     private static final float WORLD_WIDTH  = 960f;
     private static final float WORLD_HEIGHT = 540f;
-    private static final float STEP_SMALL   = 2f;   // px per key tap for width/height
-    private static final float STEP_ANGLE   = 1f;   // degrees per key tap
+    private static final float STEP_SMALL   = 2f;
+    private static final float STEP_ANGLE   = 1f;
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -59,8 +43,8 @@ public class SpellTestScreen implements Screen {
     private float casterX = 300f;
     private final float casterY = 120f;
 
-    // A simple wall on the right side, purely so you can test the fireball's
-    // wall-hit -> reverse-vanish behaviour.
+
+
     private final Rectangle wall = new Rectangle(820f, 0f, 20f, WORLD_HEIGHT);
 
     @Override
@@ -71,7 +55,7 @@ public class SpellTestScreen implements Screen {
 
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
-        font = new BitmapFont(); // swap for your own bitmap font if you have one
+        font = new BitmapFont();
 
         ballAtlas = new TextureAtlas(Gdx.files.internal("sprites/spells/Ball.atlas"));
         screamAtlas = new TextureAtlas(Gdx.files.internal("sprites/spells/Scream.atlas"));
@@ -112,13 +96,13 @@ public class SpellTestScreen implements Screen {
         if (Gdx.input.isKeyPressed(Keys.LEFT))  casterX -= 150f * delta;
         if (Gdx.input.isKeyPressed(Keys.RIGHT)) casterX += 150f * delta;
 
-        // Fireball hitbox tuning
+
         if (Gdx.input.isKeyJustPressed(Keys.Q)) Fireball.HITBOX_WIDTH  = Math.max(2f, Fireball.HITBOX_WIDTH - STEP_SMALL);
         if (Gdx.input.isKeyJustPressed(Keys.E)) Fireball.HITBOX_WIDTH  += STEP_SMALL;
         if (Gdx.input.isKeyJustPressed(Keys.Z)) Fireball.HITBOX_HEIGHT = Math.max(2f, Fireball.HITBOX_HEIGHT - STEP_SMALL);
         if (Gdx.input.isKeyJustPressed(Keys.X)) Fireball.HITBOX_HEIGHT += STEP_SMALL;
 
-        // Scream hitbox tuning
+
         if (Gdx.input.isKeyJustPressed(Keys.R)) Scream.HEIGHT = Math.max(4f, Scream.HEIGHT - STEP_SMALL * 4f);
         if (Gdx.input.isKeyJustPressed(Keys.T)) Scream.HEIGHT += STEP_SMALL * 4f;
         if (Gdx.input.isKeyJustPressed(Keys.Y)) Scream.ANGLE_DEGREES = Math.max(2f, Scream.ANGLE_DEGREES - STEP_ANGLE);
@@ -152,13 +136,13 @@ public class SpellTestScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         shapes.setProjectionMatrix(camera.combined);
 
-        // --- animations ---
+
         batch.begin();
         for (Fireball fb : fireballs) fb.render(batch);
         for (Scream sc : screams) sc.render(batch);
         batch.end();
 
-        // --- reference wall, caster marker, hitboxes ---
+
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(Color.DARK_GRAY);
         shapes.rect(wall.x, wall.y, wall.width, wall.height);
@@ -180,7 +164,7 @@ public class SpellTestScreen implements Screen {
             shapes.end();
         }
 
-        // --- HUD text ---
+
         batch.begin();
         font.setColor(Color.WHITE);
         font.draw(batch,

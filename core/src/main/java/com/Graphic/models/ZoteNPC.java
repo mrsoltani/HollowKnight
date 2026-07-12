@@ -27,21 +27,21 @@ public class ZoteNPC {
     private float stateTime = 0f;
     private boolean faceRight = false;
 
-    // Animations
+
     private Animation<TextureRegion> idleAnim;
     private Animation<TextureRegion> talkAnim;
     private Animation<TextureRegion> attackAnim;
     private Animation<TextureRegion> fallAnim;
     private Animation<TextureRegion> getUpAnim;
 
-    // State Timers
+
     private float stateTimer = 0f;
     private float soundCadenceTimer = 0f;
     private static final float ATTACK_DURATION = 3.5f;
     private static final float FALL_DURATION   = 1.5f;
     private static final float GET_UP_DURATION = 1.2f;
 
-    // Runtime Dialogue Tracking
+
     private String[] currentInitialLines;
     private int dialogueIndex = 0;
     private boolean showingPrecept = false;
@@ -91,7 +91,7 @@ public class ZoteNPC {
                 stateTimer += delta;
                 soundCadenceTimer += delta;
 
-                // Keep playing the running loop audio clear of overlap stacking
+
                 if (soundCadenceTimer >= 0.28f) {
                     soundCadenceTimer = 0f;
                     AudioManager.playChannelSFX("zote_run", 0.96f, 1.04f, 0.8f, "zote_run_loop");
@@ -102,7 +102,7 @@ public class ZoteNPC {
                 }
                 faceRight = velocity.x > 0;
 
-                // Player impact contact
+
                 if (bounds.overlaps(player.getBounds())) {
                     AudioManager.playSFX("zote_impact_tonk", 0.9f);
                     velocity.x = -velocity.x;
@@ -128,7 +128,7 @@ public class ZoteNPC {
                     }
                 }
 
-                // Wall or Edge Turnaround processing
+
                 if (wallHit || !hasGroundAhead) {
                     AudioManager.playSFX("zote_impact_tonk", 0.7f);
                     velocity.x = -velocity.x;
@@ -220,7 +220,7 @@ public class ZoteNPC {
         this.stateTimer = 0f;
         this.soundCadenceTimer = 0f;
 
-        // Cleanup and route state transitions to correct SFX keys
+
         if (newState != ZoteState.ATTACKING) {
             AudioManager.stopChannel("zote_run");
         }
@@ -244,7 +244,7 @@ public class ZoteNPC {
     }
 
     private void playRandomGrunt() {
-        // Picks randomly across your real Zote 01.mp3 through Zote 05.mp3 files
+
         int gruntIndex = MathUtils.random(1, 5);
         AudioManager.playSFX("zote_grunt_" + gruntIndex, 1.0f);
     }

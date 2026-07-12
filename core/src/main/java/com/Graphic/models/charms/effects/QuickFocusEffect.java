@@ -3,10 +3,10 @@ package com.Graphic.models.charms.effects;
 import com.Graphic.models.PlayerStats;
 import com.Graphic.models.charms.CharmEffect;
 
-// ── 5. Quick Focus ────────────────────────────────────────────────────────────
+
 public class QuickFocusEffect implements CharmEffect {
     @Override
     public void applyStats(PlayerStats s) {
-        s.focusDuration *= 0.6f; // 40% faster heal
+        s.focusDuration *= 0.6f;
     }
 }

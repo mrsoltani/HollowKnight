@@ -27,9 +27,9 @@ import static com.Graphic.utils.Constants.SettingsMenu.TITLE_Y;
 public abstract class BaseMenuScreen implements Screen {
 
     protected SpriteBatch        batch;
-    // ExtendViewport instead of FitViewport: when the window's aspect ratio
-    // doesn't match V_WIDTH:V_HEIGHT, this extends the world to fill the
-    // screen completely instead of leaving black bars on the mismatched axis.
+
+
+
     protected ExtendViewport     viewport;
     protected OrthographicCamera camera;
     protected Texture            titleBottom;
@@ -41,21 +41,21 @@ public abstract class BaseMenuScreen implements Screen {
     protected int     selectedIndex   = 0;
     protected float   currentPointerY = 0f;
 
-    // Guards against the exact same ESC keypress that just switched us TO
-    // this screen also being read as a fresh "just pressed" event here,
-    // which would immediately call goBack() and bounce right back out.
-    // Armed in show() if ESC happens to be down at that moment; disarmed
-    // the first time it's observed released.
+
+
+
+
+
     private boolean escGuardActive = false;
 
-    // ── Shared in-game background blur ───────────────────────────────────
+
     private static final float BLUR_RADIUS = 1.4f;
     private static final float DARKNESS    = 0.35f;
 
     private ShaderProgram blurShader;
     private boolean       blurShaderOk;
 
-    // ── Abstract contract ────────────────────────────────────────────────
+
     protected abstract String getTitle();
     protected abstract int    getItemCount();
     protected abstract float  getItemY(int index);
@@ -65,7 +65,7 @@ public abstract class BaseMenuScreen implements Screen {
     protected abstract void   selectCurrent();
     protected abstract void   goBack();
 
-    // ── Optional hooks ───────────────────────────────────────────────────
+
     protected void onShow()                       {}
     protected void onDispose()                    {}
     protected void handleExtraInput(float delta)  {}
@@ -83,11 +83,11 @@ public abstract class BaseMenuScreen implements Screen {
         batch.draw(titleBottom, (viewport.getWorldWidth() - dw) / 2f, TITLE_Y - dh - 90f);
     }
 
-    // ── Background: frozen blurred game frame when paused mid-game,
-    //    atmosphere when reached from the main menu. Always sized to the
-    //    viewport's actual (possibly extended) world dimensions, never the
-    //    fixed V_WIDTH/V_HEIGHT constants, so it always covers the full
-    //    visible area with no gaps regardless of window aspect ratio. ─────
+
+
+
+
+
     protected void renderBackground() {
         boolean inGame = Main.getInstance().isInGame();
         float w = viewport.getWorldWidth();
@@ -122,7 +122,7 @@ public abstract class BaseMenuScreen implements Screen {
         }
     }
 
-    // ── Template ─────────────────────────────────────────────────────────
+
     @Override
     public void show() {
         batch         = new SpriteBatch();
@@ -134,7 +134,7 @@ public abstract class BaseMenuScreen implements Screen {
         pointer       = new Texture(Gdx.files.internal(PATH_POINTER));
         pointerRegion = new TextureRegion(pointer);
 
-        // 1x1 dark pixel used as in-game background overlay fallback
+
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pm.setColor(0f, 0f, 0f, 0.82f);
         pm.fill();
@@ -164,13 +164,13 @@ public abstract class BaseMenuScreen implements Screen {
 
         handleInput(delta);
 
-        // A navigation action inside handleInput() (goBack()/selectCurrent())
-        // may have switched the active screen this frame. If so, stop here —
-        // continuing to render this now-inactive screen is what caused the
-        // "stuck on pause" bug: it kept drawing stale UI over the switch,
-        // and touched ScreenCapture right after the new screen's resize()
-        // had just reset it. Mirrors the `return;` GameScreen already uses
-        // right after enterPause().
+
+
+
+
+
+
+
         if (Main.getInstance().getScreen() != this) {
             return;
         }
@@ -202,26 +202,26 @@ public abstract class BaseMenuScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             selectedIndex = (selectedIndex - 1 + total) % total;
-            if (selectedIndex != prev) EventBus.emit(EventBus.Event.MENU_NAVIGATE); // ← hover SFX
+            if (selectedIndex != prev) EventBus.emit(EventBus.Event.MENU_NAVIGATE);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             selectedIndex = (selectedIndex + 1) % total;
-            if (selectedIndex != prev) EventBus.emit(EventBus.Event.MENU_NAVIGATE); // ← hover SFX
+            if (selectedIndex != prev) EventBus.emit(EventBus.Event.MENU_NAVIGATE);
         }
 
         handleExtraInput(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
             || Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-            EventBus.emit(EventBus.Event.MENU_SELECT);  // ← select SFX
+            EventBus.emit(EventBus.Event.MENU_SELECT);
             selectCurrent();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            EventBus.emit(EventBus.Event.MENU_NAVIGATE); // ← back SFX
+            EventBus.emit(EventBus.Event.MENU_NAVIGATE);
             goBack();
         }
 
-        // Mouse hover
+
         float mx = getMouseX(), my = getMouseY();
         for (int i = 0; i < total; i++) {
             float y = getItemY(i);
@@ -230,13 +230,13 @@ public abstract class BaseMenuScreen implements Screen {
                 && my >= y - layout.height && my <= y) {
                 if (i != selectedIndex) {
                     selectedIndex = i;
-                    EventBus.emit(EventBus.Event.MENU_NAVIGATE); // ← hover SFX on mouse move
+                    EventBus.emit(EventBus.Event.MENU_NAVIGATE);
                 }
             }
         }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            EventBus.emit(EventBus.Event.MENU_SELECT);  // ← click SFX
+            EventBus.emit(EventBus.Event.MENU_SELECT);
             handleItemClick(selectedIndex);
         }
     }
@@ -251,7 +251,7 @@ public abstract class BaseMenuScreen implements Screen {
         onDispose();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+
     protected void drawPointers(float startX, float endX, float y) {
         float pw = pointer.getWidth()  * 0.4f;
         float ph = pointer.getHeight() * 0.4f;

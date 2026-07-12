@@ -17,7 +17,7 @@ public class LocalizationManager {
     private static I18NBundle  bundle;
     private static Language    current = Language.EN;
 
-    // All screens register here to get notified on language change
+
     private static final List<Runnable> listeners = new ArrayList<>();
 
     public static void load() {

@@ -2,8 +2,9 @@ package com.Graphic.models;
 
 import com.Graphic.Main;
 import com.Graphic.managers.*;
-import com.Graphic.models.*;
+import com.Graphic.models.boss.FalseKnight;
 import com.Graphic.models.enemies.*;
+import com.Graphic.models.enums.GameArea;
 import com.Graphic.models.enums.GameMap;
 import com.Graphic.models.enums.GameViewScreen;
 import com.Graphic.models.spells.Damageable;
@@ -43,14 +44,14 @@ import static com.Graphic.utils.Constants.V_WIDTH;
 
 public class GameScreen implements Screen {
 
-    // Core Rendering & Cameras
+
     private OrthographicCamera camera;
     private OrthographicCamera screenCam;
     private Viewport           viewport;
     private SpriteBatch        batch;
     private ShapeRenderer      shapeRenderer;
 
-    // Map & Environment
+
     private TiledMap           tiledMap;
     private TiledMapRenderer   mapRenderer;
     private int[]              backgroundLayers;
@@ -58,7 +59,7 @@ public class GameScreen implements Screen {
     private float              mapPixelWidth;
     private float              mapPixelHeight;
 
-    // Entities & Physics
+
     private TextureAtlas       playerAtlas;
     private Player             player;
     private ZoteNPC            zote;
@@ -67,12 +68,14 @@ public class GameScreen implements Screen {
     private Array<TeleportZone> teleportZones;
     private Array<FallingSpikeEntity> fallingSpikes;
 
-    // Enemies
+
     private final Array<BaseEnemy> enemies = new Array<>();
     private final Array<Rectangle> enemyCollisionRects = new Array<>();
-    private static final float NAIL_DAMAGE = 1f;
 
-    private final com.badlogic.gdx.utils.ObjectSet<BaseEnemy> hitThisSwing =
+
+
+
+    private final com.badlogic.gdx.utils.ObjectSet<Damageable> hitThisSwing =
         new com.badlogic.gdx.utils.ObjectSet<>();
     private PlayerState prevPlayerState = PlayerState.IDLE;
 
@@ -82,17 +85,20 @@ public class GameScreen implements Screen {
     private AmbientParticleSystem fgParticleSystem;
     private TextureRegion      singleParticleDot;
 
-    // Spells
+
     private SpellManager       spellManager;
+
+
+
     private final Array<Damageable> spellTargets = new Array<>();
 
-    // UI & State
+
     private GameHUD            gameHUD;
     private boolean            initialized = false;
     private boolean            pause = false;
     private boolean            showHitboxes = false;
 
-    // Transitions
+
     private enum TransitionState { NONE, FADING_OUT, FADING_IN }
     private TransitionState    transitionState = TransitionState.NONE;
     private float              transitionAlpha = 0f;
@@ -104,6 +110,13 @@ public class GameScreen implements Screen {
 
     private BossDoor bossDoor;
     private Texture  bossDoorTexture;
+    private FalseKnight falseKnight;
+    private Damageable falseKnightDamageable;
+
+    private Rectangle bossTrigger;
+    private boolean bossActive = false;
+    private Vector2 bossSpawnPoint;
+    private Rectangle bossRoomBounds;
 
     @Override
     public void show() {
@@ -125,11 +138,16 @@ public class GameScreen implements Screen {
         spawn();
         gameHUD = new GameHUD(player.getMaxHealth());
         ScreenCapture.init(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ready=true;
     }
 
     public void spawn(){
-        loadRoom(GameMap.CROSSROADS_01, "SpawnPlayer");
+        if(SaveManager.currentSave.lastArea==GameArea.CROSSROADS){
+            loadRoom(GameMap.CROSSROADS_01, "SpawnPlayer");
+        }
+
+        if(SaveManager.currentSave.lastArea==GameArea.CRYSTAL_PEAK){
+            loadRoom(GameMap.CRYSTAL_PEAK, "SpawnPlayer");
+        }
         player.reset();
 
     }
@@ -145,9 +163,14 @@ public class GameScreen implements Screen {
         mapPixelWidth  = props.get("width", Integer.class) * props.get("tilewidth", Integer.class);
         mapPixelHeight = props.get("height", Integer.class) * props.get("tileheight", Integer.class);
         Mosquito.setMapBounds(new Rectangle(0, 0, mapPixelWidth, mapPixelHeight));
-        // Initialize the static camera system with the new camera and map bounds
-        CameraManager.init(camera, new Vector2(mapPixelWidth, mapPixelHeight));
 
+        CameraManager.init(camera, new Vector2(mapPixelWidth, mapPixelHeight));
+        Array<Rectangle> cameraZones = helper.getCameraZones();
+        CameraManager.setCameraZones(cameraZones);
+
+        bossRoomBounds = (cameraZones != null && cameraZones.size > 0) ? cameraZones.first() : null;
+        bossTrigger = helper.getBossTrigger();
+        bossActive = false;
         solidBlocks   = helper.getSolidRectangles();
         breakableWall = helper.getBreakableWall();
         breakableWallLayer = (com.badlogic.gdx.maps.tiled.TiledMapTileLayer)
@@ -188,7 +211,16 @@ public class GameScreen implements Screen {
         Vector2 zoteSpawn = helper.findObjectPosition("logical", "SPAWN_ZOTE");
         if (zote != null) zote.dispose();
         zote = (zoteSpawn != null) ? new ZoteNPC(zoteSpawn) : null;
+        falseKnight = null;
+        falseKnightDamageable = null;
+        bossActive = false;
 
+
+        bossSpawnPoint = helper.findObjectPosition("logical", "BOSS_SPAWN");
+
+
+        bossTrigger = helper.getBossTrigger();
+        hitThisSwing.clear();
         if (player != null) {
             Rectangle pb = player.getBounds();
             camera.position.set(pb.x + pb.width / 2f, pb.y + pb.height / 2f, 0);
@@ -196,17 +228,22 @@ public class GameScreen implements Screen {
         }
 
         if ("CROSSROADS".equals(targetMap.getAreaTag())) {
+            SaveManager.currentSave.lastArea= GameArea.CROSSROADS;
             EventBus.emit(EventBus.Event.ENTER_CROSSROADS);
         }
         if ("CRYSTAL_PEAK".equals(targetMap.getAreaTag())) {
+            SaveManager.currentSave.lastArea= GameArea.CRYSTAL_PEAK;
             EventBus.emit(EventBus.Event.ENTER_CRYSTAL_PEAK);
         }
     }
 
-    private boolean ready=false;
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
+        if(bossActive&& falseKnight.isDead()){
+            bossActive=false;
+            triggerEndGame();
+        }
         handleTransitions(delta);
         handleInput();
 
@@ -220,6 +257,7 @@ public class GameScreen implements Screen {
             handleSpellCasts();
             updateSpellTargets();
             spellManager.update(delta, solidBlocks, spellTargets);
+            handleNailDamage();
 
             updateFallingSpikes(delta);
             updateBreakableWall(delta);
@@ -227,7 +265,31 @@ public class GameScreen implements Screen {
 
             if (charmEntity != null) charmEntity.update(delta, player, gameHUD);
             if (zote != null) zote.update(delta, player, gameHUD, solidBlocks);
+            if (!bossActive && bossTrigger != null && bossSpawnPoint != null) {
+                if (bossTrigger.overlaps(player.getBounds())) {
+                    bossActive = true;
+                    EventBus.emit(EventBus.Event.ENTER_BOSS);
 
+
+                    falseKnight = new FalseKnight(bossSpawnPoint.x, bossSpawnPoint.y);
+                    AudioManager.subscribeToBossEvents();
+                    falseKnight.setSolidBlocks(solidBlocks);
+                    falseKnight.setRoomBounds(bossRoomBounds);
+
+
+                    final FalseKnight fk = falseKnight;
+                    falseKnightDamageable = new Damageable() {
+                        @Override public Rectangle getBounds() { return fk.getVulnerableBox(); }
+                        @Override public void takeDamage(float amount, boolean fromRight) { fk.takeDamage((int) amount); }
+                    };
+
+
+                    if (bossDoor != null) bossDoor.trigger();
+
+
+                    EventBus.emit(EventBus.Event.ENTER_BOSS);
+                }
+            }
             checkRoomTransitions();
         }
         if (bossDoor != null) {
@@ -239,11 +301,29 @@ public class GameScreen implements Screen {
                 }
             }
         }
+        if (falseKnight != null && !falseKnight.isDead()) {
+            if (bossActive) {
+                falseKnight.update(delta, player.getBounds());
+
+                if (!player.isInvincible()) {
+                    Rectangle weapon = falseKnight.getWeaponBox();
+                    boolean bodyHit  = falseKnight.getBodyBox().overlaps(player.getBounds());
+                    boolean weapHit  = weapon != null && weapon.overlaps(player.getBounds());
+                    boolean shockHit = false;
+                    for (Rectangle swBox : falseKnight.getShockwaveHitboxes()) {
+                        if (swBox.overlaps(player.getBounds())) { shockHit = true; break; }
+                    }
+                    if (bodyHit || weapHit || shockHit) {
+                        player.takeDamage(1, falseKnight.getBounds().x < player.getBounds().x);
+                    }
+                }
+            }
+        }
         bgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
         fgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
         gameHUD.update(delta, player);
 
-        // Static update step
+
         updateCamera(delta);
 
         EffectManager.update(delta);
@@ -286,6 +366,49 @@ public class GameScreen implements Screen {
 
     private void updateSpellTargets() {
         spellTargets.clear();
+
+        for (BaseEnemy e : enemies) {
+            if (e.isAlive()) spellTargets.add(e);
+        }
+
+        if (falseKnight != null && !falseKnight.isDead() && falseKnightDamageable != null) {
+            spellTargets.add(falseKnightDamageable);
+        }
+    }
+
+    private void handleNailDamage() {
+        PlayerState ps = player.getState();
+        boolean enteringSwing = ps != prevPlayerState
+            && (ps == PlayerState.ATTACK || ps == PlayerState.ATTACK_ALT || ps == PlayerState.DOWN_SLASH);
+        if (enteringSwing) hitThisSwing.clear();
+        prevPlayerState = ps;
+
+        Rectangle attackBox = null;
+        if (ps == PlayerState.ATTACK || ps == PlayerState.ATTACK_ALT) {
+            attackBox = player.getForwardAttackBox();
+        } else if (ps == PlayerState.DOWN_SLASH) {
+            attackBox = player.getDownwardAttackBox();
+        }
+        if (attackBox == null) return;
+
+        Rectangle pb = player.getBounds();
+        float playerCX = pb.x + pb.width / 2f;
+
+        for (Damageable target : spellTargets) {
+            if (hitThisSwing.contains(target)) continue;
+
+            Rectangle tb = target.getBounds();
+            if (tb == null || !attackBox.overlaps(tb)) continue;
+
+            float targetCX = tb.x + tb.width / 2f;
+            boolean fromRight = playerCX > targetCX;
+            target.takeDamage(CharmManager.getStats().nailDamage, fromRight);
+            hitThisSwing.add(target);
+
+
+            player.gainSoul();
+            EventBus.emit(EventBus.Event.PLAYER_SOUL_GAIN);
+        }
     }
 
     private void renderGameWorld() {
@@ -308,6 +431,8 @@ public class GameScreen implements Screen {
         if (charmEntity != null) charmEntity.render(batch);
 
         if (bossDoor != null) bossDoor.render(batch);
+        if (falseKnight != null) falseKnight.render(batch);
+
         batch.end();
 
         mapRenderer.render(foregroundLayers);
@@ -328,9 +453,6 @@ public class GameScreen implements Screen {
         if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F1)) player.cheatFillSoul();
         if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F2)) player.cheatRestoreOneMask();
         if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F3)) loadRoom(GameMap.CROSSROADS_03, "SPAWN_EAST");
-        if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            if (bossDoor != null) bossDoor.trigger();
-        }
 
         if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F5)) player.toggleGodMode();
         if (shift && Gdx.input.isKeyJustPressed(Input.Keys.F6)) CharmManager.toggleOneHitMode();
@@ -408,7 +530,7 @@ public class GameScreen implements Screen {
         float targetX = pb.x + pb.width / 2f;
         float targetY = pb.y + pb.height / 2f;
 
-        // Static call
+
         CameraManager.update(targetX, targetY, delta);
     }
 
@@ -490,14 +612,6 @@ public class GameScreen implements Screen {
         Rectangle pb = player.getBounds();
         float playerCX = pb.x + pb.width / 2f;
 
-        PlayerState ps = player.getState();
-        Rectangle attackBox = null;
-        if (ps == PlayerState.ATTACK || ps == PlayerState.ATTACK_ALT) {
-            attackBox = player.getForwardAttackBox();
-        } else if (ps == PlayerState.DOWN_SLASH) {
-            attackBox = player.getDownwardAttackBox();
-        }
-
         for (BaseEnemy e : enemies) {
             e.update(delta, pb, enemyCollisionRects);
 
@@ -506,15 +620,19 @@ public class GameScreen implements Screen {
             Rectangle hb = e.getHitbox();
             float enemyCX = hb.x + hb.width / 2f;
 
-            if (attackBox != null && attackBox.overlaps(hb)) {
-                e.takeDamage(CharmManager.getStats().nailDamage, playerCX > enemyCX);
-            }
-
             if (!player.isInvincible() && hb.overlaps(pb)) {
                 if(player.isShadowDashing()){
                     e.takeDamage(5, playerCX > enemyCX);
                 }
                 player.takeDamage(1, enemyCX > playerCX);
+            }
+            if(e instanceof CrystalGuardian){
+                CrystalGuardian s=(CrystalGuardian) e;
+                s.setPlatforms(enemyCollisionRects);
+                if (s.isPlayerInBeam(player.getBounds()) && !player.isInvincible()) {
+                    player.takeDamage(1, true);
+                }
+
             }
         }
     }
@@ -541,6 +659,17 @@ public class GameScreen implements Screen {
         ScreenCapture.beginCapture(); renderGameWorld(); ScreenCapture.endCapture();
         Main.getInstance().setInGame(true);
         Main.getInstance().setScreen(GameViewScreen.InventoryScreen);
+    }
+
+    public void triggerEndGame() {
+        ScreenCapture.beginCapture();
+        renderGameWorld();
+        ScreenCapture.endCapture();
+        EventBus.emit(EventBus.Event.ENTER_END);
+        EventBus.emit(EventBus.Event.BOSS_FKNIGHT_DEATH);
+        EventBus.emit(EventBus.Event.GAME_COMPLETED,SaveManager.currentSave.timePlayed);
+        Main.getInstance().setInGame(false);
+        gameHUD.triggerEndScreen();
     }
 
     private void renderTransitionOverlay() {
@@ -584,7 +713,9 @@ public class GameScreen implements Screen {
             Rectangle zb = zote.getBounds();
             shapeRenderer.rect(zb.x, zb.y, zb.width, zb.height);
         }
-
+        if (falseKnight != null) {
+            falseKnight.drawHitboxes(shapeRenderer);
+        }
         for (BaseEnemy e : enemies) e.renderDebug(shapeRenderer);
 
         Rectangle fw = player.getForwardAttackBox();
@@ -655,6 +786,7 @@ public class GameScreen implements Screen {
         enemies.clear();
         if (spellManager != null) spellManager.dispose();
         if (bossDoorTexture != null) bossDoorTexture.dispose();
+        if (falseKnight != null) falseKnight.dispose();
 
         ScreenCapture.dispose();
     }

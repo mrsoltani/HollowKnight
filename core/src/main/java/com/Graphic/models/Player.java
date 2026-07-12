@@ -42,7 +42,7 @@ public class Player {
     private static final float KNOCKBACK_X    = 300f;
     private static final float KNOCKBACK_Y    = 180f;
 
-    // Mantis Claw
+
     private static final float WALL_SLIDE_SPEED      = -150f;
     private static final float WALL_JUMP_VELOCITY_Y  = 900f;
     private static final float WALL_JUMP_VELOCITY_X  = 400f;
@@ -60,7 +60,7 @@ public class Player {
     private float focusTimer          = 0f;
     private static final float FOCUS_DURATION = 1.0f;
 
-    // Spell casting Tap vs Hold measurement
+
     private float spellTapTimer       = 0f;
     private static final float SPELL_TAP_THRESHOLD = 0.15f;
 
@@ -71,9 +71,9 @@ public class Player {
     private static final float HITBOX_WIDTH_RATIO  = 0.6f;
     private static final float HITBOX_HEIGHT_RATIO = 0.85f;
 
-    // Wall jump state control
-    private static final float WALL_JUMP_LOCK   = 0.18f; // seconds horizontal input is ignored
-    private static final float WALL_RECLING_COOLDOWN = 0.25f; // prevent instant re-cling same wall
+
+    private static final float WALL_JUMP_LOCK   = 0.18f;
+    private static final float WALL_RECLING_COOLDOWN = 0.25f;
     private float wallJumpLockTimer     = 0f;
     private float wallReclingCooldown   = 0f;
     private boolean lastWallJumpOnRight = false;
@@ -81,15 +81,15 @@ public class Player {
     private float recoilLockTimer = 0f;
     private static final float RECOIL_DURATION = 0.1f;
 
-    // Wall Jump Grace Period
-    private static final float WALL_JUMP_GRACE_TIME = 0.15f; // 150ms window to press jump after detaching
+
+    private static final float WALL_JUMP_GRACE_TIME = 0.15f;
     private float wallJumpGraceTimer = 0f;
-    private boolean graceWallOnRight = false; // Remembers which wall we just left
+    private boolean graceWallOnRight = false;
 
     private final Rectangle bounds      = new Rectangle();
     public final Vector2   velocity    = new Vector2();
     private final Vector2   spawnPoint;
-    private final Vector2   lastSafePosition = new Vector2(); // Tracks newest safe ground checkpoint
+    private final Vector2   lastSafePosition = new Vector2();
 
     private boolean onGround            = false;
     private float fallStartY   = 0f;
@@ -98,22 +98,22 @@ public class Player {
     private boolean doubleJumpAvailable = true;
     private boolean inputEnabled        = true;
 
-    // Wall-cling eligibility, recomputed once per frame before handleInput()
+
     private boolean wallClingActive;
     private boolean wallOnRight;
 
-    // Cache world reference specifically for handling wall hit detections inside setState
+
     private Array<SolidBlock> transientBlocksRef;
     private Rectangle breakableWallBounds;
     boolean hitWall=false;
 
     private float deathTimer = 0f;
-    // Set this to match the length of your death animation (plus any extra delay you want)
+
     private static final float DEATH_DELAY = 1.5f;
 
-    // Consume-once flags: set true the instant a spell-cast state is entered, read and
-    // cleared by GameScreen (via consumeFireballCastTrigger()/consumeScreamCastTrigger())
-    // to know exactly when to spawn the actual spell object.
+
+
+
     private boolean fireballCastTriggered = false;
     private boolean screamCastTriggered   = false;
 
@@ -169,7 +169,7 @@ public class Player {
         add(atlas, PlayerState.FOCUS_GET,   "Focus Get",   1f / 15f,        Animation.PlayMode.NORMAL);
         add(atlas, PlayerState.FOCUS_END,   "Focus End",   1f / 15f,        Animation.PlayMode.NORMAL);
 
-        // Add the newly required spell animations (ensure "Scream" matches your actual atlas region name!)
+
         add(atlas, PlayerState.FIREBALL_CAST, "Fireball Cast", FPS_SPELL, Animation.PlayMode.NORMAL);
         add(atlas, PlayerState.SCREAM_CAST,   "Scream",        FPS_SPELL, Animation.PlayMode.NORMAL);
     }
@@ -180,8 +180,8 @@ public class Player {
         animations.put(s, new Animation<>(frameDuration, frames, mode));
     }
 
-    // Be sure to import your BaseEnemy class at the top of the file!
-// import com.Graphic.models.enemies.BaseEnemy;
+
+
 
     public void update(float delta, Array<SolidBlock> solidBlocks, Rectangle wallBound, Array<BaseEnemy> enemies) {
         this.transientBlocksRef = solidBlocks;
@@ -203,7 +203,7 @@ public class Player {
         applyGravity(delta);
         moveAndCollide(delta, solidBlocks);
 
-        // Pass the enemies down to the pogo checker!
+
         checkPogo(enemies);
 
         updateState(delta);
@@ -219,18 +219,18 @@ public class Player {
 
         Rectangle downBox = getDownwardAttackBox();
 
-        // 1. Check for bouncing on enemies
+
         if (enemies != null) {
             for (BaseEnemy enemy : enemies) {
-                // Note: Use whatever methods you have in BaseEnemy to get bounds and check if dead
+
                 if (!enemy.isDead() && downBox.overlaps(enemy.getBounds())) {
                     triggerPogoBounce();
-                    return; // We bounced! Stop checking to save performance.
+                    return;
                 }
             }
         }
 
-        // 2. Check for bouncing on deadly blocks / spikes
+
         if (transientBlocksRef != null) {
             for (SolidBlock b : transientBlocksRef) {
                 if (b.isDeadly && downBox.overlaps(b.bounds)) {
@@ -342,7 +342,7 @@ public class Player {
         }
     }
     private void handleInput() {
-        // 1. STATE LOCK: Player cannot input movement while casting
+
         if (!inputEnabled
             || state == PlayerState.DEAD
             || state == PlayerState.IDLE_HURT
@@ -363,9 +363,9 @@ public class Player {
         boolean upHeld               = Gdx.input.isKeyPressed(InputManager.getKeyCode(GameAction.UP));
         boolean jumpJustPressed      = Gdx.input.isKeyJustPressed(InputManager.getKeyCode(GameAction.JUMP));
 
-        // --- TAP VS HOLD: FOCUS/CAST LOGIC ---
+
         if (focusJustPressed) {
-            // 2. SOUL CHECK: Requires at least 33 soul (SOUL_HEAL_COST)
+
             if (upHeld && soul >= SOUL_HEAL_COST) {
                 soul -= SOUL_HEAL_COST;
                 velocity.x = 0;
@@ -374,7 +374,7 @@ public class Player {
             } else if (!onGround && soul >= SOUL_HEAL_COST) {
                 soul -= SOUL_HEAL_COST;
                 setState(PlayerState.FIREBALL_CAST);
-                triggerAirStall(); // Keeps the player hovering briefly while shooting in the air
+                triggerAirStall();
                 return;
             } else if (onGround) {
                 spellTapTimer = 0.001f;
@@ -402,7 +402,7 @@ public class Player {
                 setState(PlayerState.FOCUS_END);
                 focusTimer = 0f;
             } else if (spellTapTimer > 0f && spellTapTimer < SPELL_TAP_THRESHOLD) {
-                // 2. SOUL CHECK: Requires 33 soul for ground fireball
+
                 if (soul >= SOUL_HEAL_COST) {
                     soul -= SOUL_HEAL_COST;
                     setState(PlayerState.FIREBALL_CAST);
@@ -411,7 +411,7 @@ public class Player {
             }
             spellTapTimer = 0f;
         }
-        // -------------------------------------
+
 
         if (wallJumpLockTimer <= 0 && recoilLockTimer <= 0) {
             if (rightHeld) {
@@ -507,7 +507,8 @@ public class Player {
     }
 
     private void applyGravity(float delta) {
-        // ADDED: FIREBALL_CAST and SCREAM_CAST to the gravity immunity list
+
+
         if (state == PlayerState.DEAD
             || state == PlayerState.DASH
             || state == PlayerState.SHADOW_DASH
@@ -546,7 +547,7 @@ public class Player {
                 onGround = true;
                 doubleJumpAvailable = true;
 
-                // Safely on solid ground -> Update latest safe checkpoint position
+
                 lastSafePosition.set(bounds.x, bounds.y);
 
                 if (wasFalling) {
@@ -561,7 +562,7 @@ public class Player {
             velocity.y = 0;
         }
 
-        // Deadly block overlap detection
+
         if (state != PlayerState.DEAD) {
             for (SolidBlock b : solidBlocks) {
                 if (b.isDeadly && bounds.overlaps(b.bounds)) {
@@ -618,7 +619,7 @@ public class Player {
 
             case FIREBALL_CAST:
             case SCREAM_CAST:
-                // ABSOLUTE LOCK: Freeze the player in place (both ground and mid-air)
+
                 velocity.set(0, 0);
 
                 if (isFinished()) {
@@ -834,8 +835,8 @@ public class Player {
             case ATTACK_ALT:    EventBus.emit(EventBus.Event.PLAYER_ATTACK_ALT,   payload); break;
             case DOWN_SLASH:    EventBus.emit(EventBus.Event.PLAYER_DOWN_SLASH,   payload); break;
 
-            // 3. EVENT BUS EMISSION: Fired cleanly when the state changes, plus the
-            // consume-once trigger flags SpellManager spawning reads off of.
+
+
             case FIREBALL_CAST:
                 fireballCastTriggered = true;
                 EventBus.emit(EventBus.Event.PLAYER_FIREBALL, payload);
@@ -880,7 +881,7 @@ public class Player {
         return false;
     }
 
-    /** True exactly once, the frame the player entered FIREBALL_CAST - spawn the Fireball here. */
+
     public boolean consumeFireballCastTrigger() {
         if (fireballCastTriggered) {
             fireballCastTriggered = false;
@@ -889,7 +890,7 @@ public class Player {
         return false;
     }
 
-    /** True exactly once, the frame the player entered SCREAM_CAST - spawn the Scream here. */
+
     public boolean consumeScreamCastTrigger() {
         if (screamCastTriggered) {
             screamCastTriggered = false;

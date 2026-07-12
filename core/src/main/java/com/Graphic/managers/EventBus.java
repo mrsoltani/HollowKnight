@@ -9,21 +9,21 @@ import java.util.function.Consumer;
 public class EventBus {
 
     public enum Event {
-        // ── System & UI ──────────────────────────────────────────────────
+
         MENU_NAVIGATE,
         MENU_SELECT,
         MUSIC_CHANGED,
         SFX_CHANGED,
         GAME_PAUSED,
-        GAME_COMPLETED,       // payload: Float elapsed run time in seconds
-        ACHIEVEMENT_UNLOCKED, // payload: Achievement
+        GAME_COMPLETED,
+        ACHIEVEMENT_UNLOCKED,
         CHARM_COLLECTED,
-        // ── Player Movement & Combat ─────────────────────────────────────
-        PLAYER_WALK,        // Emitted continuously/on timer during walking
-        PLAYER_RUN,          // Emitted continuously/on timer during running
+
+        PLAYER_WALK,
+        PLAYER_RUN,
         PLAYER_STOP_WALK,
         PLAYER_JUMP,
-        PLAYER_DOUBLE_JUMP, // Mapped to the Wings sound
+        PLAYER_DOUBLE_JUMP,
         PLAYER_LAND_HARD,
         PLAYER_DASH,
         PLAYER_SHADOW_DASH,
@@ -41,28 +41,44 @@ public class EventBus {
         PLAYER_HIT_WALL,
         PLAYER_SOUL_GAIN,
 
-        // ── Generic Enemies ──────────────────────────────────────────────
+
         ENEMY_HIT,
         ENEMY_KILLED,
 
-        // ── Boss: False Knight / FKnight ─────────────────────────────────
+
         BOSS_FK_JUMP,
         BOSS_FK_LAND,
         BOSS_FK_SWING,
         BOSS_FK_STRIKE_GROUND,
-        BOSS_FK_ATTACK_MULTI, // For the generic "Attack New 01-05" sounds
-        BOSS_FK_ARMOUR_HIT,   // When hitting the armour
-        BOSS_FKNIGHT_HIT,     // When hitting the exposed maggot
-        BOSS_FKNIGHT_RAGE,    // The tantrum phase
+        BOSS_FK_ATTACK_MULTI,
+        BOSS_FK_ARMOUR_HIT,
+        BOSS_FKNIGHT_HIT,
+        BOSS_FKNIGHT_RAGE,
         BOSS_FKNIGHT_DEATH,
 
         ENTER_MENU,
         ENTER_CROSSROADS,
         ENTER_CRYSTAL_PEAK,
         ENTER_BOSS,
+        ENTER_END,
 
         BREAKABLE_WALL_HIT,
         BREAKABLE_WALL_BROKEN,
+
+
+        FALSE_KNIGHT_ATTACK_WINDUP,
+        FALSE_KNIGHT_JUMP_TAKEOFF,
+        FALSE_KNIGHT_JUMP_LAND,
+        FALSE_KNIGHT_SLAM_IMPACT,
+        FALSE_KNIGHT_STUN_ENTER,
+        FALSE_KNIGHT_STUN_RECOVER,
+        FALSE_KNIGHT_DEATH,
+        FALSE_KNIGHT_HIT,
+        FALSE_KNIGHT_HIT_PHASE2,
+        FALSE_KNIGHT_RAGE,
+        FALSE_KNIGHT_CEILING_BREAK,
+        FALSE_KNIGHT_LAND_FIRST,
+        FALSE_KNIGHT_CHARGE_SWING
     }
 
     private static final Map<Event, List<Consumer<Object>>> listeners = new HashMap<>();

@@ -1,10 +1,7 @@
 package com.Graphic.views.ui;
 
 import com.Graphic.Main;
-import com.Graphic.managers.DialogueManager;
-import com.Graphic.managers.FontManager;
-import com.Graphic.managers.LocalizationManager;
-import com.Graphic.managers.SaveManager;
+import com.Graphic.managers.*;
 import com.Graphic.models.Player;
 import com.Graphic.models.GameSaveData;
 import com.Graphic.models.enums.GameViewScreen;
@@ -261,7 +258,7 @@ public class GameHUD {
                 if (restartHovered) {
                     menuFont.setColor(Color.YELLOW);
                     if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                        Main.getInstance().setScreen(GameViewScreen.GameScreen);
+                        Main.getInstance().setScreen(GameViewScreen.StartGameMenu);
                     }
                 } else {
                     menuFont.setColor(1f, 1f, 1f, buttonsAlpha);
@@ -291,6 +288,7 @@ public class GameHUD {
         bodyFont.setColor(originalBodyColor);
 
         batch.end();
+        EventBus.emit(EventBus.Event.ENTER_END);
     }
 
     public void resize(int w, int h) {

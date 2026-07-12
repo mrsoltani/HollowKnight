@@ -13,30 +13,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Plays one-shot visual effects triggered by EventBus events. Player has
- * zero knowledge of this class — it just emits events; this class decides
- * what to draw and where.
- *
- * Call EffectManager.init() once (Main.create()). Call update(delta) once
- * per real frame from GameScreen, and render(batch) inside the same
- * batch.begin()/end() block as player.render() (world camera projection).
- *
- * ── Trim-correct anchoring ── every frame draws relative to originalWidth/
- * originalHeight/offsetX/offsetY (its position within the ORIGINAL untrimmed
- * canvas), not its own trimmed pixel size, since trimmed sizes vary wildly
- * frame-to-frame (see Blast: 20x95 up to 233x270) and centering on trimmed
- * size alone causes visible drift.
- *
- * ── Mirroring ── offsetX is an asymmetric trim, so flipping pixels alone
- * (negative-width trick) without also mirroring offsetX around canvas
- * center leaves the trimmed box anchored to the same side in both facing
- * directions. mirroredOffsetX = originalWidth - offsetX - packedWidth
- * fixes that for facingRight. invertFlip additionally lets a specific
- * effect (e.g. dash) use the OPPOSITE of the player's actual facing — for
- * effects whose base art orientation doesn't match Player's own
- * left-is-unflipped convention.
- */
+
 public class EffectManager {
 
     private static TextureAtlas atlas;
@@ -64,23 +41,23 @@ public class EffectManager {
     public static void init() {
         atlas = new TextureAtlas(Gdx.files.internal("effects/effects.atlas"));
 
-        // register(event, frameDuration, extraForwardOffset, extraOffsetY, invertFlip, regionName...)
 
-        // ── Movement Effects ──────────────────────────────────────────────
+
+
         register(EventBus.Event.PLAYER_DASH,         1f / 16f,  0f, -50f, true,  "Dash Effect");
-        register(EventBus.Event.PLAYER_SHADOW_DASH,  1f / 16f,  0f, -50f, true,  "Dash Effect"); // Can swap to a shadow sprite later
+        register(EventBus.Event.PLAYER_SHADOW_DASH,  1f / 16f,  0f, -50f, true,  "Dash Effect");
 
-        // ── Combat Effects ────────────────────────────────────────────────
+
         register(EventBus.Event.PLAYER_ATTACK,       1f / 60f, 30f,   0f, false, "SlashEffect");
         register(EventBus.Event.PLAYER_ATTACK_ALT,   1f / 60f, 24f,   0f, false, "SlashEffectAlt");
         register(EventBus.Event.PLAYER_DOWN_SLASH,   1f / 20f,  0f, -120f, false, "DownSlashEffect");
 
-        // ── Spell Effects ─────────────────────────────────────────────────
-        // Passing multiple strings will randomly pick between them!
-        register(EventBus.Event.PLAYER_FIREBALL,     1f / 20f,  -120f,   -100f, true, "Blast");
-        //register(EventBus.Event.PLAYER_SCREAM_SPELL, 1f / 14f,  0f,   0f, false, "SoulScream", "ShadowScream");
 
-        // ── Subscribe to Unified Events ───────────────────────────────────
+
+        register(EventBus.Event.PLAYER_FIREBALL,     1f / 20f,  -120f,   -100f, true, "Blast");
+
+
+
         EventBus.subscribe(EventBus.Event.PLAYER_DASH,         data -> spawn(EventBus.Event.PLAYER_DASH, data));
         EventBus.subscribe(EventBus.Event.PLAYER_SHADOW_DASH,  data -> spawn(EventBus.Event.PLAYER_SHADOW_DASH, data));
 
@@ -89,7 +66,7 @@ public class EffectManager {
         EventBus.subscribe(EventBus.Event.PLAYER_DOWN_SLASH,   data -> spawn(EventBus.Event.PLAYER_DOWN_SLASH, data));
 
         EventBus.subscribe(EventBus.Event.PLAYER_FIREBALL,     data -> spawn(EventBus.Event.PLAYER_FIREBALL, data));
-        //EventBus.subscribe(EventBus.Event.PLAYER_SCREAM_SPELL, data -> spawn(EventBus.Event.PLAYER_SCREAM_SPELL, data));
+
     }
 
     private static void register(EventBus.Event event, float frameDuration,
@@ -112,10 +89,10 @@ public class EffectManager {
     }
 
     private static void spawn(EventBus.Event event, Object data) {
-        // Safe cast: If something emits this event WITHOUT payload, it just ignores the visual
+
         if (!(data instanceof EffectSpawnData spawnData)) {
-            // Optional: Only log if it's a critical missing visual, otherwise fail silently
-            // since AudioManager is also using these events without sending data sometimes!
+
+
             return;
         }
 
@@ -144,7 +121,7 @@ public class EffectManager {
         }
     }
 
-    /** Call inside the same batch.begin()/end() block using the WORLD camera's projection. */
+
     public static void render(SpriteBatch batch) {
         for (ActiveEffect e : activeEffects) {
             TextureAtlas.AtlasRegion frame = e.animation.getKeyFrame(e.stateTime);

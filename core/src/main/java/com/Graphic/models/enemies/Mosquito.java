@@ -7,23 +7,21 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * Enemy 2 — Mosquito (flying ambusher).
- */
+
 public class Mosquito extends BaseEnemy {
 
-    // ── Sprite frame size (the artwork) ──────────────────────────────────────
+
     private static final int FRAME_W = 220;
     private static final int FRAME_H = 155;
 
-    // ── Hitbox size (TUNE THESE)
+
     public static float HITBOX_WIDTH  = 90f;
     public static float HITBOX_HEIGHT = 70f;
     public static float SPRITE_OFFSET_X = 0f;
     public static float SPRITE_OFFSET_Y = -30f;
 
     private static final float CONTACT_DAMAGE   = 1f;
-    private static final float MAX_HEALTH       = 2f;
+    private static final float MAX_HEALTH       = 25f;
 
     private static final float VISION_WIDTH  = 520f;
     private static final float VISION_HEIGHT = 320f;
@@ -37,8 +35,8 @@ public class Mosquito extends BaseEnemy {
     private static final float SWOOP_ACCEL       = 900f;
     private static final float SWOOP_MAX_SPEED   = 900f;
 
-    // --- STATIC MAP BOUNDS ---
-    // Shared by all Mosquitoes. Set this once in your loadRoom method.
+
+
     private static Rectangle globalMapBounds = null;
 
     private final Rectangle visionBox = new Rectangle();
@@ -63,9 +61,7 @@ public class Mosquito extends BaseEnemy {
         changeState(EnemyState.IDLE);
     }
 
-    /**
-     * Call this ONCE when a room loads to restrict all mosquitoes to the new map boundaries.
-     */
+
     public static void setMapBounds(Rectangle bounds) {
         globalMapBounds = bounds;
     }
@@ -154,12 +150,12 @@ public class Mosquito extends BaseEnemy {
                 break;
         }
 
-        // --- GLOBAL MAP BOUNDARY CLAMPING ---
+
         if (globalMapBounds != null) {
             float nextX = bounds.x + velocity.x * delta;
             float nextY = bounds.y + velocity.y * delta;
 
-            // X-axis limits
+
             if (nextX < globalMapBounds.x) {
                 bounds.x = globalMapBounds.x;
                 velocity.x = 0;
@@ -168,7 +164,7 @@ public class Mosquito extends BaseEnemy {
                 velocity.x = 0;
             }
 
-            // Y-axis limits
+
             if (nextY < globalMapBounds.y) {
                 bounds.y = globalMapBounds.y;
                 velocity.y = 0;

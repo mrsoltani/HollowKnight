@@ -63,6 +63,10 @@ audio/sfx/player/Hero Walk Footsteps Stone.mp3
 audio/sfx/player/Hero Wall Jump.mp3
 audio/sfx/player/Hero Wall Slide.mp3
 audio/sfx/player/Hero Wings.mp3
+audio/sfx/player/Soul Pickup 1.mp3
+audio/sfx/player/Soul Pickup 2.mp3
+audio/sfx/player/Soul Pickup 3.mp3
+audio/sfx/player/Soul Pickup 4.mp3
 audio/sfx/player/Sword Hit Reject.mp3
 audio/sfx/player/Sword Hit Window 1.mp3
 audio/sfx/player/Sword Hit Window 2.mp3
@@ -404,6 +408,23 @@ saves/savedata.db
 shaders/blur.frag
 shaders/blur.vert
 shaders/grayscale.frag
+sprites/boss/Attack Antic.png
+sprites/boss/Attack Recover.png
+sprites/boss/Attack.png
+sprites/boss/Body.png
+sprites/boss/DeathFall.png
+sprites/boss/DeathHit.png
+sprites/boss/DeathLand.png
+sprites/boss/Idle.png
+sprites/boss/Jump Antic.png
+sprites/boss/Jump Attack.png
+sprites/boss/Jump.png
+sprites/boss/Land.png
+sprites/boss/Run Antic.png
+sprites/boss/Run.png
+sprites/boss/Stun Recover.png
+sprites/boss/Turn.png
+sprites/boss/libgdx.png
 sprites/dust_dot.png
 sprites/knight-0.png
 sprites/knight-default.png
@@ -488,6 +509,8 @@ sprites/knight/Slash_004.png
 sprites/knight/pack.json
 sprites/objects/glowing_object.atlas
 sprites/objects/glowing_object.png
+sprites/shockwave/shockwave.atlas
+sprites/shockwave/shockwave.png
 sprites/spells/Ball.atlas
 sprites/spells/Ball.png
 sprites/spells/Scream.atlas

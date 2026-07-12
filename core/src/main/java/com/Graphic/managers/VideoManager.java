@@ -10,7 +10,7 @@ public class VideoManager {
 
     private static Preferences prefs;
 
-    private static float                brightness = 1.0f; // 0..1
+    private static float                brightness = 1.0f;
     private static Theme theme       = Theme.VOID;
 
     public static void init() {

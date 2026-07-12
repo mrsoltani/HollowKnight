@@ -20,7 +20,7 @@ public class AchievementsScreen extends BaseMenuScreen {
     private static final float ICON_SIZE    = 96f;
     private static final float ROW_HEIGHT   = 120f;
 
-    // Lowered from 900f to 780f so the list doesn't collide with the main title
+
     private static final float ROW_START_Y  = 820f;
 
     private static final float ICON_X       = 260f;
@@ -44,7 +44,7 @@ public class AchievementsScreen extends BaseMenuScreen {
 
 
     @Override protected String getTitle()     { return LocalizationManager.get("achievements.title"); }
-    @Override protected int    getItemCount() { return 1; } // Back only — achievement rows aren't selectable
+    @Override protected int    getItemCount() { return 1; }
 
     @Override
     protected float getItemY(int index) { return BACK_Y; }
@@ -76,7 +76,7 @@ public class AchievementsScreen extends BaseMenuScreen {
     private void drawAchievementRow(Achievement achievement, float y) {
         boolean unlocked = achievement.isUnlocked();
 
-        // Only the icon receives the darkened alpha when locked
+
         float iconAlpha = unlocked ? 1f : LOCKED_ALPHA;
 
         if (!unlocked && grayscaleShaderOk) batch.setShader(grayscaleShader);
@@ -84,14 +84,14 @@ public class AchievementsScreen extends BaseMenuScreen {
         batch.draw(achievement.getIcon(), ICON_X, y - ICON_SIZE, ICON_SIZE, ICON_SIZE);
         batch.setShader(null);
 
-        // Text is now forced to be fully opaque (1f) so it looks "normal" and readable
+
         FontManager.getMenu().setColor(TITLE_COLOR.r, TITLE_COLOR.g, TITLE_COLOR.b, 1f);
         FontManager.getMenu().draw(batch, LocalizationManager.get(achievement.getTitleKey()), TEXT_X, y - 20f);
 
         FontManager.getMenuSmall().setColor(1f, 1f, 1f, 1f);
         FontManager.getMenuSmall().draw(batch, LocalizationManager.get(achievement.getDescriptionKey()), TEXT_X, y - 60f);
 
-        // Safely reset states
+
         batch.setColor(1f, 1f, 1f, 1f);
         FontManager.getMenu().setColor(1f, 1f, 1f, 1f);
         FontManager.getMenuSmall().setColor(1f, 1f, 1f, 1f);

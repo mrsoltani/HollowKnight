@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="69" nextobjectid="363">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="73" nextobjectid="373">
  <tileset firstgid="1" source="textures/forgotten crossroads/SimplePath.tsx"/>
  <tileset firstgid="341" source="textures/forgotten crossroads/FlatPath.tsx"/>
  <tileset firstgid="597" source="textures/forgotten crossroads/CdFloor.tsx"/>
@@ -1426,6 +1426,15 @@
     <property name="slide" type="bool" value="false"/>
    </properties>
   </object>
+  <object id="366" name="BOSS_SPAWN" x="1782.88" y="319.213">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="71" name="boss">
+  <object id="369" x="224.242" y="54.5455" width="521.212" height="1542.42"/>
+ </objectgroup>
+ <objectgroup id="72" name="bossRoom">
+  <object id="372" x="224.242" y="45.4545" width="2154.55" height="1542.42"/>
  </objectgroup>
  <objectgroup id="59" name="teleport">
   <object id="213" x="3330" y="550.182" width="34" height="1033.15">
@@ -1443,13 +1452,9 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="68" name="enemies">
-  <object id="362" x="1062" y="1256">
-   <properties>
-    <property name="type" value="crystalguardian"/>
-   </properties>
-   <point/>
-  </object>
+ <objectgroup id="68" name="enemies"/>
+ <objectgroup id="70" name="camera" visible="0">
+  <object id="363" x="12.1212" y="-3.0303" width="2439.39" height="1636.36"/>
  </objectgroup>
  <layer id="1" name="Main" width="420" height="206">
   <data encoding="csv">

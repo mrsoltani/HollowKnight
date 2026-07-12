@@ -91,10 +91,7 @@ public class TiledMapHelper {
         }
         return zones;
     }
-    /**
-     * Reads the "danger" layer for falling_spike triggers.
-     * Each trigger's targetSpike property names a point in the "objectSpawn" layer.
-     */
+
     public Array<FallingSpikeData> getFallingSpikes() {
         Array<FallingSpikeData> result = new Array<>();
 
@@ -110,20 +107,20 @@ public class TiledMapHelper {
             return result;
         }
 
-        // Build a name → position map from objectSpawn layer
+
         Map<String, Vector2> spawnPoints = new HashMap<>();
         for (MapObject obj : spawnLayer.getObjects()) {
             String name = obj.getName();
             if (name == null || name.isEmpty()) continue;
 
-            // Points in Tiled are PointMapObject
+
             if (obj instanceof PointMapObject) {
                 Vector2 p = ((PointMapObject) obj).getPoint();
                 spawnPoints.put(name, new Vector2(p.x, p.y));
             }
         }
 
-        // Now read each falling_spike trigger
+
         for (MapObject obj : dangerLayer.getObjects()) {
             String type = obj.getProperties().get("type", String.class);
             if (!"falling_spike".equals(type)) continue;
@@ -156,7 +153,7 @@ public class TiledMapHelper {
         for (MapObject obj : layer.getObjects()) {
             if (!(obj instanceof RectangleMapObject)) continue;
             Rectangle rect = new Rectangle(((RectangleMapObject) obj).getRectangle());
-            return new BreakableWallEntity(rect); // only one per room
+            return new BreakableWallEntity(rect);
         }
         return null;
     }
@@ -185,7 +182,7 @@ public class TiledMapHelper {
         MapLayer layer = tiledMap.getLayers().get("door");
         if (layer == null) return null;
 
-        // Compute mapPixelHeight locally from map properties
+
         MapProperties props  = tiledMap.getProperties();
         float mapPixelHeight = props.get("height",    Integer.class)
             * props.get("tileheight", Integer.class);
@@ -196,10 +193,10 @@ public class TiledMapHelper {
             if (!(obj instanceof PointMapObject)) continue;
             String name = obj.getName();
 
-            // PointMapObject gives a Point (int x/y) — read via properties instead
+
             float px = obj.getProperties().get("x", Float.class);
             float py = obj.getProperties().get("y", Float.class);
-            float wy = mapPixelHeight - py; // Tiled Y → LibGDX Y
+            float wy = mapPixelHeight - py;
 
             if      ("OPEN_DOOR".equals(name))   open   = new Vector2(px, wy);
             else if ("CLOSED_DOOR".equals(name)) closed = new Vector2(px, wy);
@@ -213,12 +210,7 @@ public class TiledMapHelper {
         public BossDoorData(Vector2 o, Vector2 c) { openPos = o; closedPos = c; }
     }
 
-    /**
-     * Reads the "enemies" object layer. Each object is a spawn point carrying a
-     * "type" custom property (currently only "mosquito"). Point and rectangle
-     * objects are both supported; the returned x/y is the world-space position
-     * of the spawn (bottom-left for rectangles, the point itself for points).
-     */
+
     public Array<EnemySpawnData> getEnemySpawns() {
         Array<EnemySpawnData> result = new Array<>();
         MapLayer layer = tiledMap.getLayers().get("enemies");
@@ -242,7 +234,7 @@ public class TiledMapHelper {
                 Rectangle r = ((RectangleMapObject) obj).getRectangle();
                 x = r.x; y = r.y;
             } else {
-                // Fallback: raw properties (already world-space in this project).
+
                 Float px = obj.getProperties().get("x", Float.class);
                 Float py = obj.getProperties().get("y", Float.class);
                 if (px == null || py == null) continue;
@@ -253,8 +245,31 @@ public class TiledMapHelper {
         }
         return result;
     }
+    public Array<Rectangle> getCameraZones() {
+        Array<Rectangle> zones = new Array<>();
+        MapLayer layer = tiledMap.getLayers().get("camera");
+        if (layer == null) return zones;
 
-    /** One enemy spawn point read from the "enemies" layer. */
+        for (MapObject object : layer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                zones.add(new Rectangle(((RectangleMapObject) object).getRectangle()));
+            }
+        }
+        return zones;
+    }
+
+    public Rectangle getBossTrigger() {
+        MapLayer layer = tiledMap.getLayers().get("boss");
+        if (layer == null) return null;
+
+        for (MapObject obj : layer.getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                return new Rectangle(((RectangleMapObject) obj).getRectangle());
+            }
+        }
+        return null;
+    }
+
     public static class EnemySpawnData {
         public final String type;
         public final float x, y;

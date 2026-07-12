@@ -17,21 +17,21 @@ import static com.Graphic.utils.Constants.V_HEIGHT;
 
 public class StartGameMenuScreen extends BaseMenuScreen {
 
-    // ── Layout Tuning Configuration ──────────────────────────────────────
-    private static final float HIGHER_TITLE_OFFSET   = 150f;  // Pushes the title higher up the screen
-    private static final float NUMBER_COLUMN_PADDING = -90f;  // Distance from the left edge of the slot background
-    private static final float SLOT_SPACING          = 210f; // Vertical space between each slot
-    private static final float STARTING_Y            = V_HEIGHT - 340f;
-    private static final float BACK_BUTTON_Y         = 80f;   // Fixed, independent positioning at the absolute bottom
 
-    // ── Assets & State ───────────────────────────────────────────────────
+    private static final float HIGHER_TITLE_OFFSET   = 150f;
+    private static final float NUMBER_COLUMN_PADDING = -90f;
+    private static final float SLOT_SPACING          = 210f;
+    private static final float STARTING_Y            = V_HEIGHT - 340f;
+    private static final float BACK_BUTTON_Y         = 80f;
+
+
     private Texture texCrossroads;
     private Texture texCrystalPeak;
     private Texture texEmpty;
 
     private final GameSaveData[] saveSlots = new GameSaveData[4];
 
-    // Assuming slot images have a standard width. Adjust if your image dimensions differ.
+
     private float slotDrawWidth  = 600f;
     private float slotDrawHeight = 120f;
 
@@ -41,7 +41,7 @@ public class StartGameMenuScreen extends BaseMenuScreen {
         texCrystalPeak = new Texture(Gdx.files.internal("ui/start game/crystalpeak.png"));
         texEmpty       = new Texture(Gdx.files.internal("ui/start game/empty.png"));
 
-        // Force the slots to be a manageable size on the screen
+
         slotDrawWidth  = 1200f;
         slotDrawHeight = 180f;
 
@@ -52,12 +52,12 @@ public class StartGameMenuScreen extends BaseMenuScreen {
 
     @Override
     protected String getTitle() {
-        return LocalizationManager.get("menu.select_save"); // Or hardcode "Select Save File"
+        return LocalizationManager.get("menu.select_save");
     }
 
     @Override
     protected int getItemCount() {
-        return 5; // 4 Slots + 1 Back Button
+        return 5;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class StartGameMenuScreen extends BaseMenuScreen {
         layout.setText(FontManager.getTitle(), t);
         FontManager.getTitle().setColor(1f, 1f, 1f, 1f);
 
-        // Calculate the raised Y position
+
         float raisedY = TITLE_Y + HIGHER_TITLE_OFFSET;
 
         FontManager.getTitle().draw(batch, t,
@@ -103,31 +103,31 @@ public class StartGameMenuScreen extends BaseMenuScreen {
         BitmapFont titleFont = FontManager.getTitle();
         BitmapFont menuFont  = FontManager.getMenu();
 
-        // 1. Render Save Slots (0 to 3)
+
         for (int i = 0; i < 4; i++) {
             GameSaveData slotData = saveSlots[i];
             float yPos = getItemY(i);
 
-            // Determine Background
+
             Texture slotBg = texEmpty;
             if (slotData.lastArea == GameArea.CROSSROADS) slotBg = texCrossroads;
             else if (slotData.lastArea == GameArea.CRYSTAL_PEAK) slotBg = texCrystalPeak;
 
-            // Dim unselected slots slightly
+
             Color tint = (i == selectedIndex) ? Color.WHITE : new Color(0.6f, 0.6f, 0.6f, 0.9f);
             batch.setColor(tint);
 
-            // Draw background (centered, origin is bottom-left so offset by height/2)
-            batch.draw(slotBg, startX, yPos - (slotDrawHeight / 2f), slotDrawWidth, slotDrawHeight);
-            batch.setColor(Color.WHITE); // Reset for fonts
 
-            // Draw Number Column (Left of background minus your tunable padding)
+            batch.draw(slotBg, startX, yPos - (slotDrawHeight / 2f), slotDrawWidth, slotDrawHeight);
+            batch.setColor(Color.WHITE);
+
+
             titleFont.setColor(tint);
             String numberStr = String.valueOf(i + 1);
             layout.setText(titleFont, numberStr);
             titleFont.draw(batch, numberStr, startX - NUMBER_COLUMN_PADDING - layout.width, yPos + (layout.height / 2f));
 
-            // Draw Play Time (Bottom right of the slot - shifted further left)
+
             if (slotData.lastArea != GameArea.NONE) {
                 int totalSeconds = (int) slotData.timePlayed;
                 int hours   = totalSeconds / 3600;
@@ -137,7 +137,7 @@ public class StartGameMenuScreen extends BaseMenuScreen {
                 menuFont.setColor(tint);
                 layout.setText(menuFont, timeStr);
 
-                // Increased padding from 20f to 70f to push the text further left inside the slot box
+
                 float timeX = (startX + slotDrawWidth) - layout.width - 70f;
                 float timeY = (yPos - (slotDrawHeight / 2f)) + layout.height + 20f;
 
@@ -145,7 +145,7 @@ public class StartGameMenuScreen extends BaseMenuScreen {
             }
         }
 
-        // 2. Draw Independent Back button at the bottom frame
+
         int backIndex = 4;
         menuFont.setColor(backIndex == selectedIndex ? Color.WHITE : new Color(0.35f, 0.35f, 0.4f, 0.75f));
         drawCentered(LocalizationManager.get("menu.back"), getItemY(backIndex), menuFont);
@@ -157,7 +157,7 @@ public class StartGameMenuScreen extends BaseMenuScreen {
         if (selectedIndex == 4) {
             goBack();
         } else {
-            // Load the chosen slot and transition into the game
+
             SaveManager.currentSave = saveSlots[selectedIndex];
 
             if (SaveManager.currentSave.lastArea == GameArea.NONE) {

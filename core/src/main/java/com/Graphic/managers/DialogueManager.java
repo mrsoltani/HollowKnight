@@ -10,12 +10,12 @@ public class DialogueManager {
     private static I18NBundle bundle;
     private static final Random random = new Random();
 
-    // Tracks which NPCs have finished their initial dialogue
+
     private static final Set<String> finishedInitial = new HashSet<>();
 
     public static void load() {
         reload();
-        // Auto-reload when language changes
+
         LocalizationManager.addListener(DialogueManager::reload);
     }
 
@@ -28,7 +28,7 @@ public class DialogueManager {
         );
     }
 
-    // ── Initial dialogue (ordered lines, shown once) ─────────────────────
+
 
     public static String[] getInitialLines(String npcId) {
         int count = Integer.parseInt(bundle.get(npcId + ".initial.count"));
@@ -39,7 +39,7 @@ public class DialogueManager {
         return lines;
     }
 
-    // ── Precepts (random single line, shown on repeat visits) ────────────
+
 
     public static String getRandomPrecept(String npcId) {
         int count = Integer.parseInt(bundle.get(npcId + ".precept.count"));
@@ -47,7 +47,7 @@ public class DialogueManager {
         return bundle.get(npcId + ".precept." + pick);
     }
 
-    // ── State tracking ────────────────────────────────────────────────────
+
 
     public static boolean hasFinishedInitial(String npcId) {
         return finishedInitial.contains(npcId);
@@ -57,7 +57,7 @@ public class DialogueManager {
         finishedInitial.add(npcId);
     }
 
-    // Called by SaveManager to persist/restore state
+
     public static Set<String> getFinishedInitials() {
         return Collections.unmodifiableSet(finishedInitial);
     }

@@ -37,37 +37,37 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
     private OrthographicCamera camera;
     private Viewport viewport;
 
-    // ── HUD sizing/anchoring ──
+
     private static final float DISPLAY_SIZE = 120f;
     private static final float TOP_MARGIN   = 30f;
     private static final float LEFT_MARGIN  = 30f;
     private float orbX, orbY;
 
-    // ── Mask: FIXED, never changes at runtime ──
+
     private final float maskCenterX = 0.5f;
     private final float maskCenterY = 0.4f;
     private final float maskRadius  = 0.42f;
 
-    // ── Liquid pan range — empty/full endpoints, tuned by eye ──
-    private static final float EMPTY_PAN_Y = -0.7f; // your tuned value
-    private static final float FULL_PAN_Y  = 0.3f;  // TUNE THIS: hold UP until it looks full, use that panY
-    private float panY = EMPTY_PAN_Y;
-    private static final float PAN_EASE_SPEED = 3f; // higher = snappier catch-up to target
 
-    // ── Discrete soul levels ──
-    private static final int MAX_LEVEL = 4; // 5 levels: 0..4
+    private static final float EMPTY_PAN_Y = -0.7f;
+    private static final float FULL_PAN_Y  = 0.3f;
+    private float panY = EMPTY_PAN_Y;
+    private static final float PAN_EASE_SPEED = 3f;
+
+
+    private static final int MAX_LEVEL = 4;
     private int currentLevel = 0;
 
-    // ── Animation state machine ──
+
     private enum AnimState { IDLE, GROWING, SHRINKING }
     private AnimState animState = AnimState.IDLE;
 
-    // ── Face reveal ──
-    private Texture faceReferenceTexture; // unused placeholder removed below; kept for clarity
-    private static final float FULL_SOUL_IMG_SIZE = 112f;
-    private static final int HALF_MARK_LEVEL = MAX_LEVEL / 2; // level at/above which the face shows
 
-    // ── SoulContainer.png measurements ──
+    private Texture faceReferenceTexture;
+    private static final float FULL_SOUL_IMG_SIZE = 112f;
+    private static final int HALF_MARK_LEVEL = MAX_LEVEL / 2;
+
+
     private static final float CONTAINER_IMG_WIDTH  = 367f;
     private static final float CONTAINER_IMG_HEIGHT = 239f;
     private static final float CONTAINER_CIRCLE_CENTER_X_PX             = 105.93f;
@@ -75,7 +75,7 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
     private static final float CONTAINER_CIRCLE_RADIUS_PX               = 86f;
     private float containerX, containerY, containerW, containerH;
 
-    // ── Face fine-tune knobs ──
+
     private static final float FACE_OFFSET_X = -8f;
     private static final float FACE_OFFSET_Y = 28f;
     private static final float FACE_SCALE_MULTIPLIER = 1f;
@@ -184,7 +184,7 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
         return shader;
     }
 
-    // ── Level control ──
+
 
     private void riseLevel() {
         if (currentLevel >= MAX_LEVEL) return;
@@ -201,7 +201,7 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
     }
 
     private float targetPanYForLevel(int level) {
-        float t = level / (float) MAX_LEVEL; // 0..1
+        float t = level / (float) MAX_LEVEL;
         return MathUtils.lerp(EMPTY_PAN_Y, FULL_PAN_Y, t);
     }
 
@@ -213,15 +213,15 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
         stateTime += delta;
         animStateTime += delta;
 
-        // ── Test keys ──
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP))   riseLevel();
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) drainLevel();
 
-        // Ease the visible pan toward the current level's target — gives the "rise up" motion.
+
         float targetPanY = targetPanYForLevel(currentLevel);
         panY = MathUtils.lerp(panY, targetPanY, Math.min(1f, PAN_EASE_SPEED * delta));
 
-        // Auto-return to idle once the one-shot grow/shrink clip finishes.
+
         Animation<TextureRegion> growAnim = animations.get("grow");
         Animation<TextureRegion> shrinkAnim = animations.get("shrink");
         if (animState == AnimState.GROWING && growAnim.isAnimationFinished(animStateTime)) {
@@ -243,11 +243,11 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
 
         batch.begin();
 
-        // 1) Container art
+
         batch.setShader(null);
         batch.draw(containerTexture, containerX, containerY, containerW, containerH);
 
-        // 2) Liquid, masked and panned to the current level
+
         batch.setShader(circleMaskShader);
         circleMaskShader.setUniformf("u_uvMin", frame.getU(), frame.getV());
         circleMaskShader.setUniformf("u_uvMax", frame.getU2(), frame.getV2());
@@ -256,7 +256,7 @@ public class AtlasAnimationPreviewScreen extends ScreenAdapter {
         circleMaskShader.setUniformf("u_panOffset", 0f, panY);
         batch.draw(frame, orbX, orbY, DISPLAY_SIZE, DISPLAY_SIZE);
 
-        // 3) Face reveal — level-based, not pan-based
+
         if (currentLevel >= HALF_MARK_LEVEL) {
             batch.setShader(null);
 

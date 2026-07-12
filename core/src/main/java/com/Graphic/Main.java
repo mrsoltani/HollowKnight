@@ -20,7 +20,7 @@ public class Main extends Game {
 
     public SpriteBatch batch;
 
-    // --- Global Brightness & FBO Variables ---
+
     private FrameBuffer fbo;
     private SpriteBatch fboBatch;
     private OrthographicCamera fboCamera;
@@ -70,12 +70,12 @@ public class Main extends Game {
         fboBatch = new SpriteBatch();
         fboCamera = new OrthographicCamera();
 
-        // Initialize the Brightness Shader
-        ShaderProgram.pedantic = false; // avoid crashes on unused varyings/uniforms across GL drivers
+
+        ShaderProgram.pedantic = false;
 
         ShaderProgram defaultShader = SpriteBatch.createDefaultShader();
         String vertexShader = defaultShader.getVertexShaderSource();
-        defaultShader.dispose(); // don't leak the throwaway shader
+        defaultShader.dispose();
 
         String fragmentShader = "#ifdef GL_ES\n"
             + "precision mediump float;\n"
@@ -101,7 +101,7 @@ public class Main extends Game {
         Gdx.graphics.setCursor(cursor);
         cursorImage.dispose();
 
-        //SaveManager.currentSave = SaveManager.loadSlot(1);
+
         Main.getInstance().setScreen(GameViewScreen.MainMenu);
 
     }
@@ -110,18 +110,18 @@ public class Main extends Game {
     public void resize(int width, int height) {
         super.resize(width, height);
 
-        // Guard against LibGDX's zero-pixel crash on minimize/startup
+
         if (width <= 0 || height <= 0) return;
 
-        // Use backbuffer size (matters on HiDPI/Retina displays where it can
-        // differ from the logical window size passed in here)
+
+
         int bbWidth = Gdx.graphics.getBackBufferWidth();
         int bbHeight = Gdx.graphics.getBackBufferHeight();
 
-        // Update the FBO camera to perfectly match the new backbuffer size
+
         fboCamera.setToOrtho(false, bbWidth, bbHeight);
 
-        // Rebuild the FrameBuffer to match the new screen dimensions
+
         if (fbo != null) {
             fbo.dispose();
         }
@@ -130,33 +130,33 @@ public class Main extends Game {
 
     @Override
     public void render() {
-        if (fbo == null) return; // Safety check in case render is called before resize finishes
+        if (fbo == null) return;
 
-        // 1. Redirect all standard rendering to the FBO
+
         fbo.begin();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        super.render(); // This draws your active GameScreen/MenuScreen
+        super.render();
 
         fbo.end();
 
-        // 2. Draw the FBO to the actual screen using the shader
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Extract the texture and flip it (FBOs render upside down by default)
+
         TextureRegion fboRegion = new TextureRegion(fbo.getColorBufferTexture());
         fboRegion.flip(false, true);
 
-        // Apply the camera matrix and shader to the FBO batch
+
         fboBatch.setProjectionMatrix(fboCamera.combined );
         fboBatch.setShader(brightnessShader);
         fboBatch.begin();
 
         brightnessShader.setUniformf("u_brightness", VideoManager.getBrightness());
 
-        // Draw the cleanly flipped texture starting at 0,0 stretching to the window size
+
         fboBatch.draw(fboRegion, 0, 0, fboCamera.viewportWidth, fboCamera.viewportHeight);
 
         fboBatch.end();

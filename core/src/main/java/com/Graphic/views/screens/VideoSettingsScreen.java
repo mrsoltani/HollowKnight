@@ -33,10 +33,10 @@ public class VideoSettingsScreen extends BaseMenuScreen {
 
     private String[] items() {
         return new String[]{
-            LocalizationManager.get("video.brightness"), // 0
-            LocalizationManager.get("video.theme"),       // 1
-            LocalizationManager.get("video.reset"),       // 2
-            LocalizationManager.get("menu.back")          // 3
+            LocalizationManager.get("video.brightness"),
+            LocalizationManager.get("video.theme"),
+            LocalizationManager.get("video.reset"),
+            LocalizationManager.get("menu.back")
         };
     }
 
@@ -96,23 +96,23 @@ public class VideoSettingsScreen extends BaseMenuScreen {
         String[] items = items();
         FontManager.getMenu().setColor(1f, 1f, 1f, 1f);
 
-        // Row 0: Brightness slider
+
         FontManager.getMenu().draw(batch, items[0], LEFT_COL_X, getItemY(0));
         brightnessSlider.setSize(SLIDER_WIDTH, brightnessSlider.getPrefHeight());
         layout.setText(FontManager.getMenu(), "A");
         brightnessSlider.setPosition(RIGHT_VALUE_X,
             (getItemY(0) - layout.height / 2f) - brightnessSlider.getHeight() / 2f);
-        // Row 1: Theme toggle (same pattern as music/sfx)
+
         FontManager.getMenu().draw(batch, items[1], LEFT_COL_X, getItemY(1));
         String currentThemeLabel = themeLabel(MenuAtmosphere.getInstance().getCurrentTheme());
         layout.setText(FontManager.getMenu(), currentThemeLabel);
         FontManager.getMenu().draw(batch, currentThemeLabel,
             RIGHT_COL_END_X - layout.width, getItemY(1));
 
-        // Row 2: Reset (centered)
+
         drawCentered(items[2], getItemY(2), FontManager.getMenu());
 
-        // Row 3: Back (centered)
+
         drawCentered(items[3], getItemY(3), FontManager.getMenu());
     }
 
@@ -120,13 +120,13 @@ public class VideoSettingsScreen extends BaseMenuScreen {
 
     @Override
     protected void handleExtraInput(float delta) {
-        // LEFT/RIGHT cycles theme on row 1
+
         if (selectedIndex == 1) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) cycleTheme(-1);
             if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) cycleTheme(+1);
         }
 
-        // LEFT/RIGHT adjusts brightness on row 0
+
         if (selectedIndex == 0) {
             float mod = 2 * delta;
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT))

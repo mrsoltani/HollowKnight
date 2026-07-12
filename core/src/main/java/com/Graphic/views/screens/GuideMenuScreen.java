@@ -11,8 +11,8 @@ import static com.Graphic.utils.Constants.V_HEIGHT;
 
 public class GuideMenuScreen extends BaseMenuScreen {
 
-    // ── Layout Tuning Configuration ──────────────────────────────────────
-    private static final float CENTER_MENU_SPACING = 120f; // Generous space between the two items
+
+    private static final float CENTER_MENU_SPACING = 120f;
 
     private String[] items() {
         return new String[]{
@@ -35,10 +35,10 @@ public class GuideMenuScreen extends BaseMenuScreen {
     @Override
     protected float getItemY(int index) {
         if (index == 2) {
-            return BACK_Y; // Keep BACK at its fixed designated screen position
+            return BACK_Y;
         }
 
-        // Start from perfect center height, offset index 0 up slightly and index 1 down
+
         float menuCenterY = V_HEIGHT / 2f + 30f;
         return menuCenterY - (index * CENTER_MENU_SPACING);
     }
@@ -57,7 +57,7 @@ public class GuideMenuScreen extends BaseMenuScreen {
     protected void renderItems() {
         String[] items = items();
         for (int i = 0; i < items.length; i++) {
-            // Highlight selection text using white vs unselected muted slate gray tint
+
             FontManager.getMenu().setColor(
                 i == selectedIndex
                     ? new Color(1f, 1f, 1f, 1f)
@@ -66,7 +66,7 @@ public class GuideMenuScreen extends BaseMenuScreen {
             drawCentered(items[i], getItemY(i), FontManager.getMenu());
         }
 
-        // Reset color layout safety defaults
+
         FontManager.getMenu().setColor(1f, 1f, 1f, 1f);
     }
 

@@ -39,7 +39,7 @@ public class BossDoor {
     public void update(float delta) {
         if (!dropping || closed) return;
 
-        currentY -= DROP_SPEED * delta;        // moving down
+        currentY -= DROP_SPEED * delta;
         if (currentY <= closedPos.y) {
             currentY = closedPos.y;
             dropping = false;
@@ -52,11 +52,11 @@ public class BossDoor {
         batch.draw(texture, drawX, currentY, texture.getWidth(), texture.getHeight());
     }
 
-    // Returns solid bounds only when fully closed — add to solidBlocks then
+
     public boolean isClosed()  { return closed;   }
     public boolean isDropping(){ return dropping; }
 
-    // Solid hitbox at current position while dropping or closed
+
     public com.badlogic.gdx.math.Rectangle getBounds() {
         return new com.badlogic.gdx.math.Rectangle(
             openPos.x - texture.getWidth() / 2f,

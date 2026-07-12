@@ -2,30 +2,30 @@ package com.Graphic.models;
 
 public class PlayerStats {
 
-    // ── Soul ──────────────────────────────────────────────────────────────
+
     public int   soulPerHit          = 11;
 
-    // ── Nail (attack) ─────────────────────────────────────────────────────
-    public int   nailDamage          = 10;
-    public float attackCooldown      = 0.5f;   // seconds between nail swings
 
-    // ── Dash ──────────────────────────────────────────────────────────────
+    public int   nailDamage          = 10;
+    public float attackCooldown      = 0.5f;
+
+
     public float dashCooldown        = 0.4f;
     public float dashDuration        = 0.4f;
     public float dashSpeed           = 800f;
-    public boolean sharpShadowActive = false;  // dash-through enemies
+    public boolean sharpShadowActive = false;
 
-    // ── Knockback ─────────────────────────────────────────────────────────
-    public float knockbackMultiplier = 1.0f;   // applied to enemy knockback force
 
-    // ── Focus (heal) ──────────────────────────────────────────────────────
-    public float focusDuration       = 1.5f;   // seconds to hold for one heal
+    public float knockbackMultiplier = 1.0f;
 
-    // ── Spells ────────────────────────────────────────────────────────────
+
+    public float focusDuration       = 1.5f;
+
+
     public float spellDamageMultiplier = 1.0f;
-    public boolean voidHeartActive     = false; // triggers upgraded spell anim
+    public boolean voidHeartActive     = false;
 
-    /** Reset to base values — called before reapplying all active charms. */
+
     public void reset() {
         soulPerHit             = 11;
         nailDamage             = 10;

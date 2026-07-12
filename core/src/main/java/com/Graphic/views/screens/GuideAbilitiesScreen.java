@@ -21,7 +21,7 @@ import static com.Graphic.utils.Constants.V_WIDTH;
 
 public class GuideAbilitiesScreen implements Screen {
 
-    // ── Layout ────────────────────────────────────────────────────────────
+
     private static final float TITLE_Y       = V_HEIGHT * 0.92f;
     private static final float IMAGE_Y       = V_HEIGHT * 0.82f;
     private static final float ABILITY_TITLE_Y = V_HEIGHT * 0.38f;
@@ -31,7 +31,7 @@ public class GuideAbilitiesScreen implements Screen {
     private static final float DOT_SPACING   = 32f;
     private static final float DOT_RADIUS    = 7f;
 
-    // ── Slide data ────────────────────────────────────────────────────────
+
     private static final String[] IMAGE_PATHS = {
         "ui/abilities/Focus_prompt_temp.png",
         "ui/abilities/Fireball_prompt.png",
@@ -56,25 +56,25 @@ public class GuideAbilitiesScreen implements Screen {
         "abilities.scream.desc"
     };
 
-    // ── State ─────────────────────────────────────────────────────────────
-    private int   currentSlide   = 0;
-    private float slideOffset    = 0f;   // 0 = fully on screen, ±V_WIDTH = fully off
-    private float slideTarget    = 0f;
-    private int   direction      = 1;    // +1 = next coming from right, -1 = prev from left
 
-    // ── Rendering ─────────────────────────────────────────────────────────
+    private int   currentSlide   = 0;
+    private float slideOffset    = 0f;
+    private float slideTarget    = 0f;
+    private int   direction      = 1;
+
+
     private SpriteBatch        batch;
     private FitViewport        viewport;
     private OrthographicCamera camera;
     private Texture[]          images;
     private final GlyphLayout  layout = new GlyphLayout();
 
-    // ── Input throttle ────────────────────────────────────────────────────
+
     private float inputCooldown = 0f;
 
-    // =========================================================================
-    // Screen lifecycle
-    // =========================================================================
+
+
+
 
     @Override
     public void show() {
@@ -116,9 +116,9 @@ public class GuideAbilitiesScreen implements Screen {
         MenuAtmosphere.getInstance().update(delta);
     }
 
-    // =========================================================================
-    // Input
-    // =========================================================================
+
+
+
 
     private void handleInput(float delta) {
         inputCooldown -= delta;
@@ -132,12 +132,12 @@ public class GuideAbilitiesScreen implements Screen {
 
         if (right && currentSlide < images.length - 1) {
             currentSlide++;
-            slideOffset   = V_WIDTH;   // next slide enters from the right
+            slideOffset   = V_WIDTH;
             direction     = 1;
             inputCooldown = 0.15f;
         } else if (left && currentSlide > 0) {
             currentSlide--;
-            slideOffset   = -V_WIDTH;  // previous slide enters from the left
+            slideOffset   = -V_WIDTH;
             direction     = -1;
             inputCooldown = 0.15f;
         } else if (back) {
@@ -145,22 +145,22 @@ public class GuideAbilitiesScreen implements Screen {
         }
     }
 
-    // =========================================================================
-    // Slide animation
-    // =========================================================================
+
+
+
 
     private void updateSlide(float delta) {
         if (Math.abs(slideOffset) < 1f) {
             slideOffset = 0f;
             return;
         }
-        // Lerp toward 0 (fully on screen)
+
         slideOffset += (0f - slideOffset) * Math.min(1f, 14f * delta);
     }
 
-    // =========================================================================
-    // Rendering
-    // =========================================================================
+
+
+
 
     private void renderTitle() {
         String title = LocalizationManager.get("guide.abilities.title");
@@ -179,17 +179,17 @@ public class GuideAbilitiesScreen implements Screen {
         float   imgX = (V_WIDTH - imgW) / 2f + xOffset;
         float   imgY = IMAGE_Y - imgH;
 
-        // Image at its natural resolution, centered
+
         batch.draw(img, imgX, imgY, imgW, imgH);
 
-        // Ability title
+
         String titleText = LocalizationManager.get(TITLE_KEYS[index]);
         FontManager.getMenu().setColor(Color.WHITE);
         layout.setText(FontManager.getMenu(), titleText);
         FontManager.getMenu().draw(batch, titleText,
             (V_WIDTH - layout.width) / 2f + xOffset, ABILITY_TITLE_Y);
 
-        // Description — wrapped, centered block
+
         String descText = LocalizationManager.get(DESC_KEYS[index]);
         FontManager.getBody().setColor(new Color(0.8f, 0.8f, 0.85f, 1f));
         FontManager.getBody().draw(
@@ -202,7 +202,7 @@ public class GuideAbilitiesScreen implements Screen {
             true
         );
 
-        // Navigation hints at sides (only show arrows if there's a slide to go to)
+
         FontManager.getBody().setColor(new Color(1f, 1f, 1f, 0.5f));
         if (index > 0) {
             FontManager.getBody().draw(batch, "<",
@@ -225,11 +225,11 @@ public class GuideAbilitiesScreen implements Screen {
             float cx = startX + i * DOT_SPACING;
 
             if (i == currentSlide) {
-                // Active dot — draw as "●" using body font
+
                 FontManager.getBody().setColor(Color.WHITE);
                 FontManager.getBody().draw(batch, "●", cx - 6f, DOT_Y + 10f);
             } else {
-                // Inactive dot — dimmed "○"
+
                 FontManager.getBody().setColor(new Color(1f, 1f, 1f, 0.35f));
                 FontManager.getBody().draw(batch, "○", cx - 6f, DOT_Y + 10f);
             }
@@ -238,17 +238,17 @@ public class GuideAbilitiesScreen implements Screen {
         FontManager.getBody().setColor(Color.WHITE);
     }
 
-    // =========================================================================
-    // Navigation
-    // =========================================================================
+
+
+
 
     private void goBack() {
         AbilitiesScreenController.back();
     }
 
-    // =========================================================================
-    // Boilerplate
-    // =========================================================================
+
+
+
 
     @Override
     public void resize(int w, int h) { viewport.update(w, h, true); }

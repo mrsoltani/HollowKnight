@@ -1,0 +1,61 @@
+shockwave.png
+size: 374, 669
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Shockwave
+  rotate: false
+  xy: 1, 1
+  size: 173, 78
+  orig: 212, 217
+  offset: 5, 9
+  index: 0
+Shockwave
+  rotate: false
+  xy: 176, 1
+  size: 158, 112
+  orig: 212, 217
+  offset: 35, 10
+  index: 1
+Shockwave
+  rotate: false
+  xy: 1, 115
+  size: 206, 216
+  orig: 212, 217
+  offset: 0, 0
+  index: 2
+Shockwave
+  rotate: false
+  xy: 209, 115
+  size: 164, 198
+  orig: 212, 217
+  offset: 41, 7
+  index: 3
+Shockwave
+  rotate: false
+  xy: 1, 333
+  size: 177, 177
+  orig: 212, 217
+  offset: 30, 1
+  index: 4
+Shockwave
+  rotate: false
+  xy: 180, 333
+  size: 174, 161
+  orig: 212, 217
+  offset: 27, 6
+  index: 5
+Shockwave
+  rotate: false
+  xy: 1, 512
+  size: 167, 128
+  orig: 212, 217
+  offset: 43, 7
+  index: 6
+Shockwave
+  rotate: false
+  xy: 170, 512
+  size: 197, 156
+  orig: 212, 217
+  offset: 15, 9
+  index: 7

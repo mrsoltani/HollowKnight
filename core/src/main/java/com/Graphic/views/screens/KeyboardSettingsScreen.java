@@ -16,7 +16,7 @@ import static com.Graphic.utils.Constants.V_WIDTH;
 
 public class KeyboardSettingsScreen extends BaseMenuScreen {
 
-    // ── Grid geometry ────────────────────────────────────────────────────
+
     private static final float KEYCAP_SIZE   = 56f;
     private static final float KEYCAP_RADIUS = 8f;
     private static final float ARROW_HALF    = 11f;
@@ -28,7 +28,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
     private static final float GRID_START_Y  = 700f;
     private static final float GRID_SPACING  = 75f;
 
-    // ── Colors ───────────────────────────────────────────────────────────
+
     private static final Color COLOR_SELECTED  = new Color(1f,    1f,    1f,    1f);
     private static final Color COLOR_REBINDING = new Color(1f, 0.85f, 0.22f,    1f);
     private static final Color COLOR_IDLE      = new Color(1f,    1f,    1f,    1f);
@@ -41,7 +41,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         GameAction.INVENTORY
     };
 
-    private final int totalSelectables = actions.length + 2; // + RESET + BACK
+    private final int totalSelectables = actions.length + 2;
 
     private boolean isRebinding = false;
 
@@ -86,7 +86,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         isRebinding   = false;
     }
 
-    // Override render() fully to inject ShapeRenderer passes
+
     @Override
     public void render(float delta) {
         if (delta > 0.1f) delta = 0.1f;
@@ -97,14 +97,14 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
 
-        // Pass 1: background (blurred game frame if inGame, atmosphere otherwise) + header
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         renderBackground();
         renderHeader();
         batch.end();
 
-        // Pass 2: keycap outlines (ShapeRenderer Line)
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         Gdx.gl.glLineWidth(2f);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -112,12 +112,12 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         shapeRenderer.end();
         Gdx.gl.glLineWidth(1f);
 
-        // Pass 3: arrow triangles (ShapeRenderer Filled)
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < actions.length; i++) renderArrowContent(i);
         shapeRenderer.end();
 
-        // Pass 4: labels + pointers
+
         batch.begin();
         renderItems();
         drawPointers(getRowStartX(selectedIndex), getRowEndX(selectedIndex), currentPointerY);
@@ -165,7 +165,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         }
     }
 
-    // Override handleInput for rebinding mode + custom grid navigation
+
     @Override
     protected void handleInput(float delta) {
         if (isRebinding) {
@@ -180,10 +180,10 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
                     break;
                 }
             }
-            return; // swallow all other input while rebinding
+            return;
         }
 
-        // Custom grid navigation
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             if      (selectedIndex >= 0 && selectedIndex <= 2) selectedIndex++;
             else if (selectedIndex == 3)                       selectedIndex = 8;
@@ -208,7 +208,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
             || Gdx.input.isKeyJustPressed(Input.Keys.Z))   selectCurrent();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) goBack();
 
-        // Mouse hover
+
         float mx = getMouseX();
         float my = getMouseY();
         for (int i = 0; i < totalSelectables; i++) {
@@ -234,7 +234,7 @@ public class KeyboardSettingsScreen extends BaseMenuScreen {
         SettingsMenuController.returnToSettings();
     }
 
-    // ── ShapeRenderer helpers ─────────────────────────────────────────────
+
     private void renderKeycapOutline(int index) {
         boolean left = (index < 4) || (index == 8);
         float   kx   = left ? COL1_KEY_X : COL2_KEY_X;

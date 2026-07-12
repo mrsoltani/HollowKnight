@@ -103,10 +103,10 @@ public class InventoryScreen extends ScreenAdapter {
         List<Charm> equippedCharms = getEquippedCharms();
         int currentUsedNotches = CharmManager.getUsedNotches();
 
-        // ===== LEFT SIDE (existing charm grid UI) =====
+
         Table leftTable = new Table();
 
-        // --- ROW 1: Equipped Charms ---
+
         Table equippedTable = new Table();
         for (int i = 0; i < equippedCharms.size(); i++) {
             Charm charm = equippedCharms.get(i);
@@ -117,7 +117,7 @@ public class InventoryScreen extends ScreenAdapter {
         }
         leftTable.add(equippedTable).colspan(4).minHeight(CELL_SIZE).row();
 
-        // --- ROW 2: Notches & Splitter ---
+
         Table notchTable = new Table();
         Texture usedNotchTex = new Texture(Gdx.files.internal("ui/inventory/UsedNotch.png"));
         Texture unusedNotchTex = new Texture(Gdx.files.internal("ui/inventory/UnusedNotch.png"));
@@ -134,7 +134,7 @@ public class InventoryScreen extends ScreenAdapter {
         Texture splitterTex = new Texture(Gdx.files.internal("ui/inventory/Splitter.png"));
         leftTable.add(new Image(splitterTex)).colspan(4).padBottom(10).row();
 
-        // --- ROW 3 & 4: Charm Grid (2x4) ---
+
         for (int i = 0; i < 8; i++) {
             Charm charm = allCharms.get(i);
 
@@ -155,10 +155,10 @@ public class InventoryScreen extends ScreenAdapter {
             }
         }
 
-        // ===== RIGHT SIDE (selected charm details) =====
+
         Table rightTable = buildDetailTable();
 
-        // ===== COMBINE =====
+
         mainTable.add(leftTable).top();
         mainTable.add(rightTable).top().left().padLeft(90).padTop(0);
     }
@@ -169,8 +169,8 @@ public class InventoryScreen extends ScreenAdapter {
 
         Charm selectedCharm = getSelectedCharm();
 
-        // Row matching the "equipped charms" row level: icon + name, fixed height,
-        // so it never shifts position when a different charm is selected.
+
+
         Table iconNameRow = new Table();
 
         if (selectedCharm != null) {
@@ -186,17 +186,17 @@ public class InventoryScreen extends ScreenAdapter {
             iconNameRow.add(iconContainer).size(CELL_SIZE, CELL_SIZE).padRight(15);
             iconNameRow.add(nameLabel).width(DETAIL_TEXT_WIDTH).left();
         }
-        // minHeight(CELL_SIZE) keeps this row at the same level as the left
-        // side's equipped-charm row, whether or not text/icon is present.
+
+
         rightTable.add(iconNameRow).top().left().minHeight(CELL_SIZE).row();
 
-        // Spacer rows mirroring the notch row + splitter row on the left,
-        // so the description lines up with the same vertical level as the grid.
+
+
         rightTable.add().minHeight(unusedNotchHeightPlaceholder()).padTop(10).padBottom(5).row();
         rightTable.add().minHeight(1f).padBottom(10).row();
 
-        // Description, same level as the charm grid on the left, nudged down
-        // a bit further and left-aligned (libGDX Label has no true "justify").
+
+
         if (selectedCharm != null) {
             String descStr = LocalizationManager.get("charm.desc." + selectedCharm.id.name());
             Label.LabelStyle descStyle = new Label.LabelStyle(FontManager.getBody(), Color.LIGHT_GRAY);
@@ -210,9 +210,9 @@ public class InventoryScreen extends ScreenAdapter {
         return rightTable;
     }
 
-    // Keeps the spacer row the same height as the notch icons on the left side.
+
     private float unusedNotchHeightPlaceholder() {
-        return 32f; // adjust to match your UsedNotch/UnusedNotch texture height
+        return 32f;
     }
 
     private Stack createCharmCell(Charm charm, boolean isSelected, boolean isGridCell) {

@@ -14,11 +14,11 @@ public class SaveManager {
 
     private static String dbUrl;
 
-    // The active save data currently being played
+
     public static GameSaveData currentSave;
 
     public static void init() {
-        // Ensure the saves directory exists in the local writable folder
+
         File saveDir = Gdx.files.local("saves").file();
         if (!saveDir.exists()) saveDir.mkdirs();
         System.out.println("Absolute Save Path: " + Gdx.files.local("saves/savedata.db").file().getAbsolutePath());
@@ -53,22 +53,17 @@ public class SaveManager {
         migrateAddColumnIfMissing("equipped_charm_3");
     }
 
-    /**
-     * Adds a TEXT column to the saves table if it doesn't already exist.
-     * Needed so save files created before this feature was added still load correctly.
-     */
+
     private static void migrateAddColumnIfMissing(String columnName) {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement stmt = conn.createStatement()) {
             stmt.execute("ALTER TABLE saves ADD COLUMN " + columnName + " TEXT;");
         } catch (Exception e) {
-            // Column already exists (or another harmless issue) - safe to ignore.
+
         }
     }
 
-    /**
-     * Loads a save slot from the DB. If it doesn't exist, returns a fresh GameSaveData.
-     */
+
     public static GameSaveData loadSlot(int slotId) {
         String sql = "SELECT * FROM saves WHERE slot_id = ?";
 
@@ -97,13 +92,11 @@ public class SaveManager {
             Gdx.app.error("SaveManager", "Error loading save slot " + slotId, e);
         }
 
-        // If no save exists for this slot, return a brand new one
+
         return new GameSaveData(slotId);
     }
 
-    /**
-     * Commits the currentSave object to the SQLite database.
-     */
+
     public static void saveCurrentGame() {
         if (currentSave == null) return;
 
@@ -129,7 +122,7 @@ public class SaveManager {
             pstmt.setFloat(2, currentSave.timePlayed);
             pstmt.setInt(3, currentSave.enemiesKilled);
             pstmt.setInt(4, currentSave.deaths);
-            pstmt.setInt(5, currentSave.charmAcquired ? 1 : 0); // SQLite doesn't have booleans, use 1/0
+            pstmt.setInt(5, currentSave.charmAcquired ? 1 : 0);
             pstmt.setInt(6, currentSave.wallBroken ? 1 : 0);
             pstmt.setInt(7, currentSave.gameBeaten ? 1 : 0);
             pstmt.setString(8, currentSave.lastArea.name());
@@ -144,9 +137,7 @@ public class SaveManager {
         }
     }
 
-    /**
-     * Deletes the database file from disk and instantly recreates an empty one.
-     */
+
     public static void deleteAndResetDatabase() {
         try {
             com.badlogic.gdx.files.FileHandle dbFile = Gdx.files.local("saves/savedata.db");

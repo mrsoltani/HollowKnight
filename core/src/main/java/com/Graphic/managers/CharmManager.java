@@ -71,7 +71,7 @@ public class CharmManager {
         recomputeStats();
     }
 
-    // ── Equip / unequip ───────────────────────────────────────────────────
+
 
     public static boolean equip(CharmId id) {
         Charm charm = find(id);
@@ -106,17 +106,13 @@ public class CharmManager {
         SaveManager.currentSave.charmAcquired=true;
     }
 
-    // ── Save / Load ──────────────────────────────────────────────────────
 
-    /**
-     * Unequips everything currently equipped and re-equips whatever is stored
-     * in the given save data's equippedCharm1/2/3 fields (NONE slots are skipped).
-     * Call this right after loading a save, once CharmManager.init() has run.
-     */
+
+
     public static void loadCharms(GameSaveData save) {
         if (save == null) return;
 
-        // check if void heart is collected or not
+
         charms.get(7).unlocked=save.charmAcquired;
 
         for (Charm c : charms) {
@@ -144,11 +140,7 @@ public class CharmManager {
         charm.effect.onEquip();
     }
 
-    /**
-     * Writes the currently equipped charms into the given save data's
-     * equippedCharm1/2/3 fields (unused slots are set to NONE).
-     * Call this right before SaveManager.saveCurrentGame().
-     */
+
     public static void writeEquippedCharms(GameSaveData save) {
         if (save == null) return;
 
@@ -162,13 +154,9 @@ public class CharmManager {
         save.equippedCharm3 = equipped.size() > 2 ? equipped.get(2).id : CharmId.NONE;
     }
 
-    // ── Stats recompute ───────────────────────────────────────────────────
 
-    /**
-     * Called every time equip state changes.
-     * Resets to base then applies all active charms in order.
-     * Player just reads getStats() — no charm checks anywhere in Player code.
-     */
+
+
     private static void recomputeStats() {
         stats.reset();
         for (Charm c : charms) {
@@ -178,7 +166,7 @@ public class CharmManager {
         }
     }
 
-    // ── Queries ───────────────────────────────────────────────────────────
+
 
     public static PlayerStats getStats()    { return stats; }
     public static List<Charm> getAll()      { return charms; }

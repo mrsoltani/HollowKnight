@@ -15,7 +15,7 @@ public final class ScreenCapture {
 
     public static void init(int width, int height) {
         if (width <= 0 || height <= 0) {
-            return; // ignore invalid size (e.g. window minimized)
+            return;
         }
         if (fbo != null) fbo.dispose();
         fbo      = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
@@ -25,18 +25,18 @@ public final class ScreenCapture {
         captured = false;
     }
 
-    /** Call FrameBuffer.begin() before rendering the game world. */
+
     public static FrameBuffer beginCapture() {
         fbo.begin();
         return fbo;
     }
 
-    /** Call after rendering the game world into the FBO. */
+
     public static void endCapture() {
         fbo.end();
         Texture t = fbo.getColorBufferTexture();
         region    = new TextureRegion(t);
-        region.flip(false, true); // FBOs are upside-down in OpenGL
+        region.flip(false, true);
         captured  = true;
     }
 

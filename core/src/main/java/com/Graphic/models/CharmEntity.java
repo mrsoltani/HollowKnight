@@ -56,7 +56,7 @@ public class CharmEntity {
             AudioManager.playSFX("charm_pickup");
             AudioManager.playSFX("charm_pickup_2");
             EventBus.emit(EventBus.Event.CHARM_COLLECTED, CharmId.VOID_HEART);
-            // player.acquireCharm(); // Call your player method here
+
         }
     }
 

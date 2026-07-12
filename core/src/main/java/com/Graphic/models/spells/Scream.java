@@ -7,32 +7,20 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-/**
- * Scream (SoulScream / ShadowScream) spell - the "Howling Wraiths" style cone attack.
- *
- * Behaviour:
- *  - Position is fixed at cast time (doesn't move, unlike Fireball).
- *  - Animation plays forward once. As soon as the last frame's duration elapses it is
- *    marked FINISHED (vanishes at the last frame - no hold, no reverse).
- *  - Hitbox is a symmetric isoceles triangle: apex sits at the cast position, opening
- *    upward. HEIGHT is the apex->base distance, ANGLE_DEGREES is the full spread angle.
- *  - Unlike Fireball, the hitbox is only ACTIVE for HITBOX_LIFETIME_TICKS update() calls
- *    (default 3), regardless of how long the full animation keeps playing afterwards.
- *    Each scream instance also only damages a given target once.
- */
+
 public class Scream {
 
     public enum Phase { ACTIVE, FINISHED }
 
-    // ---- Tunable hitbox ----
-    public static float HEIGHT        = 200f;  // apex -> base distance
-    public static float ANGLE_DEGREES = 60f;   // full spread angle of the cone
 
-    // ---- Tunable timing ----
+    public static float HEIGHT        = 200f;
+    public static float ANGLE_DEGREES = 60f;
+
+
     public static float FRAME_DURATION       = 1f / 15f;
-    public static int   HITBOX_LIFETIME_TICKS = 3; // how many update() calls the hitbox stays live for
+    public static int   HITBOX_LIFETIME_TICKS = 3;
 
-    // ---- Damage ----
+
     private static final float BASE_DAMAGE            = 20f;
     private static final float VOID_HEART_DAMAGE_MULT = 1.5f;
 
@@ -75,7 +63,7 @@ public class Scream {
             if (frameIndex < frames.size - 1) {
                 frameIndex++;
             } else {
-                // Already showed the last frame for one full duration -> vanish now.
+
                 phase = Phase.FINISHED;
             }
         }
@@ -88,14 +76,14 @@ public class Scream {
         float baseHalfWidth  = HEIGHT * (float) Math.tan(halfAngleRad);
 
         float[] vertices = {
-            position.x, position.y,                                 // apex
-            position.x - baseHalfWidth, position.y + HEIGHT,         // base left
-            position.x + baseHalfWidth, position.y + HEIGHT          // base right
+            position.x, position.y,
+            position.x - baseHalfWidth, position.y + HEIGHT,
+            position.x + baseHalfWidth, position.y + HEIGHT
         };
         hitboxPolygon.setVertices(vertices);
     }
 
-    /** True while the (short-lived) damage hitbox should still be checked. */
+
     public boolean isHitboxActive() { return hitboxTicksElapsed < HITBOX_LIFETIME_TICKS; }
 
     public boolean hasHit(Damageable target) { return hitTargets.contains(target, true); }
@@ -114,7 +102,7 @@ public class Scream {
         TextureRegion frame = getFrame();
         float w = frame.getRegionWidth();
         float h = frame.getRegionHeight();
-        // Anchored so the bottom-center of the sprite sits at the cast position.
+
         batch.draw(frame, position.x - w / 2f, position.y, w, h);
     }
 }
