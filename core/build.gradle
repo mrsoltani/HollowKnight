@@ -1,0 +1,25 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+  api "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
+  api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.github.kotcrab.vis-ui:vis-ui:$visUiVersion"
+  api "com.github.raeleus.TenPatch:tenpatch:$tenPatchVersion"
+
+  if(enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  }
+}
+
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+task packKnight(type: JavaExec) {
+  mainClass = 'com.badlogic.gdx.tools.texturepacker.TexturePacker'
+  classpath files('path/to/gdx-tools.jar')
+  args = ['assets/sprites/knight', 'assets/sprites', 'knight']
+}

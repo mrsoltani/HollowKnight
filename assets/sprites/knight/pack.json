@@ -1,0 +1,14 @@
+{
+  "pot": false,
+  "paddingX": 2,
+  "paddingY": 2,
+  "bleed": true,
+  "bleedIterations": 2,
+  "filterMin": "Nearest",
+  "filterMag": "Nearest",
+  "stripWhitespaceX": true,
+  "stripWhitespaceY": true,
+  "alphaThreshold": 1,
+  "duplicatePadding": true,
+  "ignoreBlankImages": false
+}

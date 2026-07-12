@@ -1,0 +1,2310 @@
+╭─── Claude Code v2.1.207 ─────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                    Welcome back!                   │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ What's new              │
+│                        ▘▘ ▝▝                       │ Auto mode is now avail… │
+│                                                    │ Fixed the terminal fre… │
+│            Opus 4.8 · API Usage Billing            │ Fixed remote managed s… │
+│ ~\Desktop\HollowKnight\core\src\main\java\com\Gra… │ /release-notes for more │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+ ⚠ Both apiKeyHelper and ANTHROPIC_API_KEY set · auth may not work as expected
+   · to use apiKeyHelper: Unset the ANTHROPIC_API_KEY environment variable, or claude /logout then say "No" to the API key approval before login.
+   · to use ANTHROPIC_API_KEY: Unset the apiKeyHelper setting.
+
+❯ Act as an expert Java and LibGDX game developer. I am building a 2D           
+  platformer game heavily inspired by Hollow Knight.                            
+                                                                                
+  I need you to design and implement the enemy AI, state machines, and hitbox   
+  systems for four specific enemies. I also need a dedicated LibGDX `Screen` to 
+  test them.                                                                    
+                                                                                
+  ### 1. Project Context & Architecture Rules                                   
+  * **Engine:** Java with LibGDX.                                               
+  * **Interfaces:** I already have a `Damageable` interface in my project. You  
+  should use this, and you are free to define any other interfaces (e.g.,       
+  `EnemyAI`, `Renderable`) or abstract base classes (e.g., `BaseEnemy`) to keep 
+  the code DRY and OOP-compliant.                                               
+  * **Hitboxes:** All hitboxes must be implemented using standard Rectangles    
+  (`com.badlogic.gdx.math.Rectangle`). Any collision with an enemy's hitbox     
+  should deal damage to the player.                                             
+  * **Animations:** Do NOT use a centralized "God Class" for animations.        
+  Encapsulate the texture loading, `Animation<TextureRegion>`, and state-time   
+  tracking directly within each specific enemy class (or a dedicated component  
+  inside them).                                                                 
+  * **Death States Explanation:** You will see `DEAD_AIR` and `DEAD_LAND`       
+  states. `DEAD_AIR` is the animation played when an enemy is killed in mid-air 
+  (they are falling). `DEAD_LAND` is the animation played when an enemy dies    
+  on the ground, or when an airborne dead enemy finally hits the ground. Your   
+  state machines should handle this physics transition.                         
+  * **Assets:** Assume all textures exist.                                      
+                                                                                
+  ### 2. The Enemies & AI Logic                                                 
+  Please implement the following four enemies in separate classes based on this 
+  behavior logic:                                                               
+                                                                                
+  #### Enemy 1: Crystal Crawler (Ground Enemy)                                  
+  * **Logic:** Moves in a straight line at a constant speed. It ignores the     
+  player's position. If it hits a wall or reaches the edge of a cliff, it turns 
+  around and walks in the opposite direction.                                   
+  * **States to implement:** `WALK`, `TURN`, `DEAD_AIR`, `DEAD_LAND`.           
+                                                                                
+  #### Enemy 2: Mosquito (Flying Enemy)                                         
+  * **Logic:** Has a defined rectangular vision range (field of view). If the   
+  player enters this range, it tracks them. When it spots the player, it        
+  records the player's exact momentary position, pauses briefly (Attack         
+  Anticipate), and then swoops/dashes in a straight line to that exact point.   
+  It CANNOT change direction mid-swoop. The attack ends when it reaches the     
+  point, hits a wall, or a timer expires.                                       
+  * **States to implement:** `IDLE`, `TURN`, `ATTACK_ANTICIPATE`, `ATTACK`,     
+  `DEAD_AIR`, `DEAD_LAND`.                                                      
+                                                                                
+  #### Enemy 3: Husk Hornhead (Mandatory Ground Enemy)                          
+  * **Logic:** An upgraded                                                      
+  ──── (80 lines hidden) ────────────────────────────────────────────────────── 
+  myType.HUSK_HORNHEAD, EnemyState.WALK,                                        
+              "enemies/HuskHornhead/Walk.png", fw, fh, 0.08f,                   
+  Animation.PlayMode.LOOP);                                                     
+          register(EnemyType.HUSK_HORNHEAD, EnemyState.TURN,                    
+              "enemies/HuskHornhead/Turn.png", fw, fh, 0.08f,                   
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.HUSK_HORNHEAD, EnemyState.ATTACK_ANTICIPATE,       
+              "enemies/HuskHornhead/Attack Anticipate.png", fw, fh, 0.1f,       
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.HUSK_HORNHEAD, EnemyState.ATTACK_LUNGE,            
+              "enemies/HuskHornhead/Attack Lunge.png", fw, fh, 0.05f,           
+  Animation.PlayMode.LOOP);                                                     
+          register(EnemyType.HUSK_HORNHEAD, EnemyState.DEAD_AIR,                
+              "enemies/HuskHornhead/Death Air.png", fw, fh, 0.1f,               
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.HUSK_HORNHEAD, EnemyState.DEAD_LAND,               
+              "enemies/HuskHornhead/Death Land.png", fw, fh, 0.1f,              
+  Animation.PlayMode.NORMAL);                                                   
+      }                                                                         
+                                                                                
+      private void registerCrystalGuardian() {                                  
+          int fw = 285, fh = 189;                                               
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.IDLE,                 
+              "enemies/Crystalized/Idle.png", fw, fh, 0.15f,                    
+  Animation.PlayMode.LOOP);                                                     
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.WALK,                 
+              "enemies/Crystalized/Run.png", fw, fh, 0.06f,                     
+  Animation.PlayMode.LOOP);                                                     
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.TURN,                 
+              "enemies/Crystalized/Turn.png", fw, fh, 0.08f,                    
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.SHOOT,                
+              "enemies/Crystalized/Shoot.png", fw, fh, 0.1f,                    
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.EVADE,                
+              "enemies/Crystalized/Evade.png", fw, fh, 0.08f,                   
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.DEAD_AIR,             
+              "enemies/Crystalized/Death_Air.png", fw, fh, 0.1f,                
+  Animation.PlayMode.NORMAL);                                                   
+          register(EnemyType.CRYSTAL_GUARDIAN, EnemyState.DEAD_LAND,            
+              "enemies/Crystalized/Death_Land.png", fw, fh, 0.12f,              
+  Animation.PlayMode.NORMAL);                                                   
+      }                                                                         
+                                                                                
+      private void register(EnemyType type, EnemyState state, String assetPath, 
+                            int frameWidth, int frameHeight, float              
+  frameDuration, Animation.PlayMode mode) {                                     
+          // Mock method for reference                                          
+      }                                                                         
+                                                                                
+      @Override                                                                 
+      public void dispose() {                                                   
+      }                                                                         
+  }                                                                             
+  Please write clean, heavily commented code. Let me know if you need any       
+  additional textures, exact frame durations, or clarifications on the          
+  mechanics!                                                                    
+
+● I'll start by exploring the project structure to understand your existing
+  conventions, especially the Damageable interface and package layout.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && git rev-parse --show-toplevel
+      && echo "---STRUCTURE---" && find core/src/main/java -type f -name
+      "*.java" | head -100)
+  ⎿  C:/Users/Asus/Desktop/HollowKnight
+     ---STRUCTURE---
+     core/src/main/java/com/Graphic/controllers/AbilitiesScreenController.j
+     … +93 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Let me examine the key existing files to match your conventions.
+
+  Read 3 files (ctrl+o to expand)
+
+● Let me look at an existing enemy (ZoteNPC) and how spritesheets are split into
+  animations in this codebase.
+
+  Read 2 files (ctrl+o to expand)
+
+● Now let me check the Player API and confirm the enemy asset folders exist.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ls -d assets 2>/dev/null &&
+      find . -type d -path "*enemies*" 2>/dev/null | head -40 && echo
+      "---splitloop---" && grep…)
+  ⎿  assets
+     ./assets/enemies
+     ./assets/enemies/CrystalCrawler
+     … +5 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Let me check the actual asset filenames (to match the reference paths) and
+  locate the Player class.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/enemies" && for d in
+      CrystalCrawler Mosquito HuskHornhead Crystalized Laser; do echo "=== $d
+      ==="; ls "$d"; done)
+  ⎿  === CrystalCrawler ===
+     Death_Air.png
+     Death_Land.png
+     … +31 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && find core/src/main/java -name
+      "Player.java" && grep -n "public Rectangle
+      getBounds\|public.*getHurtbox\|getCenter\|cl…)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● No Player.java exists — the test screen will need a simple mock player target.
+  Let me verify the spritesheets are single-row (so TextureRegion.split math is
+  correct) by reading PNG dimensions.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/enemies" && python3 -c "
+      import struct,glob,os…)
+  ⎿  Error: Exit code 49
+     Python was not found; run without arguments to install from the Microsoft 
+     Store, or disable this shortcut from Settings > Apps > Advanced app 
+     settings > App execution aliases.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/enemies" && for f in
+      */*.png; do
+        # read bytes 16-23 (width,height) big-endian from PNG IHDR…)
+  ⎿     465 x   180  CrystalCrawler/Death_Air.png
+        310 x   180  CrystalCrawler/Death_Land.png
+        310 x   180  CrystalCrawler/Turn.png
+     … +25 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● All assets verified — every sheet is a single horizontal strip whose height
+  equals the reference frame height, and every width divides evenly by the
+  reference frame width (e.g. Crawler Walk 620/155 = 4, Guardian Shoot 1995/285 
+  = 7). There's no Player.java in the codebase, so the test screen will supply a
+  controllable mock player that implements your existing Damageable.
+
+  Here's my plan before I write ~10 files.
+
+● Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+● All frame math checks out cleanly against the reference. Here is my design.
+
+  Plan: Enemy AI, State Machines & Test Screen
+
+  Architecture (package com.Graphic.models.enemies)
+
+  1. EnemyState enum — union of all states: WALK, IDLE, TURN, ATTACK_ANTICIPATE,
+  ATTACK, ATTACK_LUNGE, SHOOT, EVADE, DEAD_AIR, DEAD_LAND.
+
+  2. AnimationComponent (encapsulated, no God-class) — a small reusable helper
+  each enemy owns. It loads a spritesheet strip via TextureRegion.split, builds
+  one Animation<TextureRegion> per state, tracks stateTime, handles horizontal
+  flipping, and disposes its own textures. This satisfies "encapsulate
+  loading/animation/state-time inside each enemy" while staying DRY — the enemy
+  declares which clips it has; the component does the mechanics.
+
+  3. EnemyAI interface — update(delta, target, platforms), render(batch),
+  renderDebug(shapes).
+
+  4. BaseEnemy abstract class implements EnemyAI + your existing Damageable:
+  - Fields: Rectangle bounds (hitbox), Vector2 velocity, EnemyState state,
+  boolean facingRight, AnimationComponent anim, health, gravity constants.
+  - Shared logic: gravity/ground collision against Array<Rectangle> platforms,
+  wall-ahead & cliff-edge sensors (extracted from your ZoteNPC pattern), the
+  universal death physics (takeDamage → if airborne DEAD_AIR, else DEAD_LAND; a
+  falling DEAD_AIR that lands flips to DEAD_LAND), hitbox-vs-player damage
+  dispatch, state-change helper, and default render/flip.
+  - Abstract hooks: updateAI(...), getContactDamage(). Subclasses only write
+  their brain.
+  - getBounds()/takeDamage(...) implement Damageable.
+
+  The four enemies (each its own file, frame data baked in from the reference)
+
+  - CrystalCrawler — WALK constant velocity; wall/cliff sensor → TURN (plays
+  2-frame turn, flips, resumes). 155×180.
+  - Mosquito — rectangular visionBox (recomputed each frame to face its side);
+  on player-in-box, latch target point → ATTACK_ANTICIPATE (pause) → ATTACK dash
+  along a fixed vector (no re-aim) → ends on point-reached / wall / timer →
+  IDLE. 220×155.
+  - HuskHornhead — WALK (timed) ↔ IDLE (timed rest); forward vision box →
+  ATTACK_ANTICIPATE → ATTACK_LUNGE high-speed straight charge until wall/cliff →
+  back to IDLE. 239×219.
+  - CrystalGuardian — stationary IDLE watching forward; player seen → SHOOT
+  (wait out clip, no laser logic — just a // TODO laser marker + comment
+  referencing enemies/Laser) → enrage WALK-charge at player → enrage timer ends
+  → WALK home → IDLE. EVADE/TURN wired into transitions. 285×189.
+
+  Test screen EnemyTestScreen (com.Graphic.views.screens, implements Screen)
+
+  - FitViewport 960×540, SpriteBatch + ShapeRenderer + BitmapFont, matching
+  SpellTestScreen style.
+  - A mock player (small movable Damageable box, arrow-keys/WASD to move) since
+  there's no Player.java yet — enemies target its bounds.
+  - Ground + wall platforms as Rectangles. Instantiates all four enemies.
+  - Draws animations via batch; uses ShapeRenderer to draw hitboxes (red),
+  vision boxes (yellow), player (green), platforms (gray). Keys: K kill-airborne
+  nearest, L kill-grounded, R reset, H toggle debug.
+
+  Notes
+
+  - Guardian laser: AI-only, explicitly stubbed per your instruction.
+  - Mock player is test-only scaffolding; when your real Player lands, the
+  enemies already target any Damageable/Rectangle, so swapping is trivial.
+
+  I'll write clean, heavily-commented code across ~9 files. Ready to implement?
+
+✻ Sautéed for 5m 45s
+
+❯ can you give me the path to the enemy test screen? I can not find it at       
+  views/screens                                                                 
+
+● You won't find it — I haven't written it yet. I'm still in plan mode, so no 
+  files have been created. EnemyTestScreen doesn't exist on disk.
+
+  When I do implement it (after you approve the plan), it will go here:
+
+  core/src/main/java/com/Graphic/views/screens/EnemyTestScreen.java
+
+  That's the same folder as your existing SpellTestScreen.java and
+  AtlasAnimationPreviewScreen.java, so it'll sit right alongside them.
+
+  Want me to go ahead and implement everything from the plan? Once I do, that
+  file (plus the enemy classes under com/Graphic/models/enemies/) will actually
+  be there.
+✻ Baked for 15s
+
+❯ The plan is perfect. Please proceed and implement all the files exactly as    
+  you described. Ensure that the AnimationComponents properly clean up and      
+  dispose of their textures to prevent memory leaks, and make sure the mock     
+  player perfectly implements my project's Damageable interface. Let's build    
+  it!                                                                           
+
+● The plan is approved. Let me build all the files. I'll create a task list,
+  then write them.
+
+● Now let me write the files. Starting with the foundation — EnemyState and
+  AnimationComponent.
+
+● Write(models\enemies\EnemyState.java)
+  ⎿  Wrote 30 lines to models\enemies\EnemyState.java
+       2 package com.Graphic.models.enemies;
+       3 /**
+          enemies.of every animation/behaviour state used across all four
+       5  *
+         egistersvery enemy uses every state — each concrete enemy only r
+       7  * animations for (and only ever transitions into) the subset th
+       8  * actually needs. Keeping a single shared enum lets {@code Base
+         Enemy} own the
+         ookup, debugits (death physics, the {@code AnimationComponent} l
+      10  * labels) without caring which specific enemy it is driving.
+     … +30 lines (ctrl+o to expand)
+
+● Write(models\enemies\AnimationComponent.java)
+  ⎿  Wrote 164 lines to models\enemies\AnimationComponent.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.badlogic.gdx.Gdx;
+       4 import com.badlogic.gdx.graphics.Texture;
+       5 import com.badlogic.gdx.graphics.g2d.Animation;
+       6 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+       7 import com.badlogic.gdx.utils.Array;
+       8 import com.badlogic.gdx.utils.Disposable;
+       9 
+      10 import java.util.EnumMap;
+     … +199 lines (ctrl+o to expand)
+
+● Now the EnemyAI interface and the BaseEnemy abstract class — the heart of the
+  shared logic.
+
+● Write(models\enemies\EnemyAI.java)
+  ⎿  Wrote 48 lines to models\enemies\EnemyAI.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+       4 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+       5 import com.badlogic.gdx.math.Rectangle;
+       6 import com.badlogic.gdx.utils.Array;
+       7 
+       8 /**
+       9  * Behavioural contract shared by every enemy.
+      10  *
+     … +48 lines (ctrl+o to expand)
+
+● Write(models\enemies\BaseEnemy.java)
+  ⎿  Wrote 361 lines to models\enemies\BaseEnemy.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.Graphic.models.spells.Damageable;
+       4 import com.badlogic.gdx.graphics.Color;
+       5 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+       6 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+       7 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+       8 import com.badlogic.gdx.math.Rectangle;
+       9 import com.badlogic.gdx.math.Vector2;
+      10 import com.badlogic.gdx.utils.Array;
+     … +441 lines (ctrl+o to expand)
+
+● Now the four enemies. Enemy 1 — Crystal Crawler.
+
+● Write(models\enemies\CrystalCrawler.java)  ⎿  Wrote 82 lines to models\enemies\CrystalCrawler.java
+       2 package com.Graphic.models.enemies;
+       3 import com.badlogic.gdx.graphics.g2d.Animation;
+       4 import com.badlogic.gdx.math.Rectangle;
+       5 import com.badlogic.gdx.utils.Array;
+       6 
+       7 /**
+       8  * Enemy 1 — Crystal Crawler (ground patroller).
+       9  *
+      10  * Behaviour: walks in a straight line at constant speed, comple
+         tely ignoring
+     … +86 lines (ctrl+o to expand)
+
+● Enemy 2 — Mosquito (flyer with vision box and committed swoop).
+
+● Write(models\enemies\Mosquito.java)
+  ⎿  Wrote 205 lines to models\enemies\Mosquito.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.badlogic.gdx.graphics.Color;
+       4 import com.badlogic.gdx.graphics.g2d.Animation;
+       5 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+       6 import com.badlogic.gdx.math.Rectangle;
+       7 import com.badlogic.gdx.math.Vector2;
+       8 import com.badlogic.gdx.utils.Array;
+       9 
+      10 /**
+     … +249 lines (ctrl+o to expand)
+
+● Enemy 3 — Husk Hornhead (timed walk/rest patrol + committed lunge).
+
+● Write(models\enemies\HuskHornhead.java)
+  ⎿  Wrote 177 lines to models\enemies\HuskHornhead.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.badlogic.gdx.graphics.Color;
+       4 import com.badlogic.gdx.graphics.g2d.Animation;
+       5 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+       6 import com.badlogic.gdx.math.Rectangle;
+       7 import com.badlogic.gdx.utils.Array;
+       8 
+       9 /**
+      10  * Enemy 3 — Husk Hornhead (upgraded ground charger).
+     … +208 lines (ctrl+o to expand)
+
+● Enemy 4 — Crystal Guardian (AI-only, laser explicitly stubbed). First let me
+  fix the base-class comment so it doesn't contradict the Guardian being a
+  ground charger.
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 4 lines, removed 4 lines
+      45      protected EnemyState state;
+      46  
+      47      /**
+      48 -     * Whether gravity acts on this enemy while ALIVE. Ground e
+         -nemies = true;                                                 
+      49 -     * flyers (Mosquito) and the stationary Guardian = false. N
+         -ote: gravity is                                                
+      50 -     * ALWAYS applied once dead and airborne, regardless of thi
+         -s flag, so a                                                   
+      51 -     * killed flyer falls out of the sky and then lands.       
+      48 +     * Whether gravity acts on this enemy while ALIVE. Ground e
+         +nemies (Crawler,                                               
+      49 +     * Husk, the ground-charging Guardian) = true; pure flyers 
+         +(Mosquito) = false.                                            
+      50 +     * Note: gravity is ALWAYS applied once dead and airborne, 
+         +regardless of this                                             
+      51 +     * flag, so a killed flyer falls out of the sky and then la
+         +nds.                                                           
+      52       */
+      53      protected boolean affectedByGravityWhileAlive;
+      54  
+
+● Write(models\enemies\CrystalGuardian.java)
+  ⎿  Wrote 268 lines to models\enemies\CrystalGuardian.java
+       1 package com.Graphic.models.enemies;
+       2 
+       3 import com.badlogic.gdx.graphics.Color;
+       4 import com.badlogic.gdx.graphics.g2d.Animation;
+       5 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+       6 import com.badlogic.gdx.math.MathUtils;
+       7 import com.badlogic.gdx.math.Rectangle;
+       8 import com.badlogic.gdx.utils.Array;
+       9 
+      10 /**
+     … +313 lines (ctrl+o to expand)
+
+● That static block hack is ugly — let me remove it and the unused import.
+
+● Update(models\enemies\CrystalGuardian.java)
+  ⎿  Removed 3 lines
+      262      public Rectangle getVisionBox() {
+      263          return visionBox;
+      264      }
+      265 -                                                              
+      266 -    // Keep MathUtils import meaningful for future tuning help
+          -ers / avoids churn.                                           
+      267 -    static { MathUtils.clamp(0f, 0f, 1f); }                   
+      265  }
+
+● Update(models\enemies\CrystalGuardian.java)
+  ⎿  Removed 1 line
+      3  import com.badlogic.gdx.graphics.Color;
+      4  import com.badlogic.gdx.graphics.g2d.Animation;
+      5  import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+      6 -import com.badlogic.gdx.math.MathUtils;                         
+      6  import com.badlogic.gdx.math.Rectangle;
+      7  import com.badlogic.gdx.utils.Array;
+      8  
+
+● Now the test screen with a mock player that implements your Damageable
+  interface.
+
+● Write(views\screens\EnemyTestScreen.java)
+  ⎿  Wrote 302 lines to views\screens\EnemyTestScreen.java
+       1 package com.Graphic.views.screens;
+       2 
+       3 import com.Graphic.models.enemies.BaseEnemy;
+       4 import com.Graphic.models.enemies.CrystalCrawler;
+       5 import com.Graphic.models.enemies.CrystalGuardian;
+       6 import com.Graphic.models.enemies.HuskHornhead;
+       7 import com.Graphic.models.enemies.Mosquito;
+       8 import com.Graphic.models.spells.Damageable;
+       9 import com.badlogic.gdx.Gdx;
+      10 import com.badlogic.gdx.Input.Keys;
+     … +343 lines (ctrl+o to expand)
+
+● The mock player's hitFlash needs to decay each frame. Let me wire that into
+  the update loop.
+
+● Update(views\screens\EnemyTestScreen.java)
+  ⎿  Added 3 lines
+      163      }
+      164  
+      165      private void update(float delta) {
+      166 +        // Fade the player's hit-flash tint.                  
+      167 +        if (player.hitFlash > 0f) player.hitFlash -= delta;   
+      168 +                                                              
+      169          // Tick every enemy against the player's hitbox and th
+           e world geometry.
+      170          for (BaseEnemy e : enemies) {
+      171              e.update(delta, player.bounds, platforms);
+
+● Now let me verify it compiles. Let me check the build setup.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ls gradlew* build.gradle
+      settings.gradle 2>/dev/null && echo "---" && cat settings.gradle
+      2>/dev/null | head)
+  ⎿  build.gradle
+     gradlew
+     gradlew.bat
+     … +13 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -40; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿                             ^
+         symbol:   class Player
+         location: package com.Graphic.models
+     … +38 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● All 8 errors are pre-existing — the repo references com.Graphic.models.Player,
+  which doesn't exist on disk yet (that's exactly why I built a mock player).
+  None of my files are in the error list. But the module-wide failure means I
+  can't confirm my code compiles this way. Let me compile my new files in
+  isolation against the LibGDX classpath.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && CP=$(find ~/.gradle/caches
+      -name "gdx-1.*.jar" ! -name "*sources*" ! -name "*natives*" 2>/dev/null |
+      head -1) && echo…)
+  ⎿  gdx jar: /c/Users/Asus/.gradle/caches/modules-2/files-2.1/com.badlogic
+     games.gdx/gdx/1.14.1/48eada6a21b1dfd9484c1ba98f2d4384123ade78/gdx-1.14
+     .1.jar
+     EXIT: 0
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+● All 9 of my files compile cleanly (exit 0) against LibGDX 1.14.1, including
+  the Damageable implementation. The only build failures are the pre-existing
+  missing Player class, which my code doesn't touch.
+
+  Let me confirm my files are genuinely absent from the module error list.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | grep -Ei "enemies|EnemyTestScreen|EnemyState|AnimationComponent" |
+      head; echo "…)
+  ⎿  --- (empty above = none of my files errored) ---
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Confirmed — none of my files appear in the module errors.
+
+● All done. Here's what I built and verified.
+
+  Files created (9)
+
+  com/Graphic/models/enemies/
+
+  ┌───────────────────────┬─────────────────────────────────────────────────┐
+  │         File          │                      Role                       │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ EnemyState.java       │ Shared state enum with the documented DEAD_AIR  │
+  │                       │ → DEAD_LAND contract                            │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │                       │ Per-enemy encapsulated sheet loading            │
+  │ AnimationComponent.ja │ (TextureRegion.split), one Animation per state, │
+  │ va                    │  state-time tracking, flipping, owns & disposes │
+  │                       │  all its textures                               │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ EnemyAI.java          │ Behavioural interface (update/render/renderDebu │
+  │                       │ g/getHitbox/isDead/dispose)                     │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │                       │ Abstract base — implements EnemyAI and your     │
+  │ BaseEnemy.java        │ Damageable; owns gravity, axis-by-axis          │
+  │                       │ collision, wall/cliff sensors, the death        │
+  │                       │ machine, contact dispatch                       │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ CrystalCrawler.java   │ WALK/TURN patrol, 155×180                       │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ Mosquito.java         │ Vision box → latch point → anticipate →         │
+  │                       │ committed swoop, 220×155                        │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ HuskHornhead.java     │ Timed WALK↔IDLE + forward-cone lunge, 239×219   │
+  ├───────────────────────┼─────────────────────────────────────────────────┤
+  │ CrystalGuardian.java  │ IDLE→SHOOT→enrage-WALK→EVADE→walk-home→IDLE,    │
+  │                       │ laser stubbed, 285×189                          │
+  └───────────────────────┴─────────────────────────────────────────────────┘
+
+  com/Graphic/views/screens/
+  | EnemyTestScreen.java | Screen with SpriteBatch sprites + ShapeRenderer debug
+  (red hitboxes, yellow/orange vision boxes, gray platforms, green player) and
+  a MockPlayer implements Damageable |
+
+  Verification
+
+  - All 9 files compile cleanly against your LibGDX 1.14.1 jar (exit 0),
+  including the Damageable impl.
+  - Frame math was checked against the actual PNGs — every sheet is a single row
+  where width ÷ frameWidth is a whole frame count (e.g. Guardian Shoot 
+  1995/285=7, Crawler Walk 620/155=4).
+  - The full :core module build fails on 8 pre-existing errors — all cannot find
+  symbol: class com.Graphic.models.Player. That class doesn't exist in the repo
+  yet (referenced by GameScreen, GameHUD, ZoteNPC). None of my files are 
+  involved — confirmed by grep. That missing Player is exactly why the test
+  screen uses a mock.
+
+  Things worth flagging
+
+  1. Disposal: AnimationComponent tracks every loaded Texture in an Array and
+  frees them all in dispose(); BaseEnemy.dispose() forwards to it; the screen
+  disposes enemies on cull, on reset, and on screen dispose. No leaks.
+  2. Asset note: Mosquito has a Turn2.png in the folder that the reference
+  didn't map, so I didn't use it — say the word if you want a two-part turn.
+  3. Guardian laser: deliberately AI-only. The hook is fireLaser() with a
+  TODO(laser) pointing at enemies/Laser/Laser.atlas.
+  4. Frame heights = full sprite: enemies draw centered on the hitbox with feet
+  at bounds.y; the hitbox equals the full frame size. If you want tighter damage
+  boxes (e.g. body-only), that's a one-line change per enemy — I kept it 1:1
+  with the art so your debug view matches the sprite exactly.
+
+  To try it: point your Game.setScreen(...) at new EnemyTestScreen() once the
+  Player compile issue is resolved (or temporarily, from a launcher that doesn't
+  pull in GameScreen). Want me to wire a menu entry or a standalone launcher so
+  you can run it without the missing Player?
+
+✻ Brewed for 15m 55s
+
+※ recap: Built enemy AI, state machines, hitboxes, and an EnemyTestScreen for your four Hollow Knight enemies; all 9 files compile against LibGDX. Next: wire EnemyTestScreen into a launcher so you can run it, since the repo's missing Player class blocks the full build. (disable recaps in /config)
+
+❯ did you delete my player class? I had it there but now it is not there.       
+
+● No — I didn't delete anything. Every action I took was creating new files (the
+  9 enemy/screen files); I never ran a delete, and I never touched Player.java.
+  Let me verify with hard evidence rather than just asserting it.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== any file named
+      Player.java anywhere ===" && find . -name "Player.java" 2>/dev/null; echo
+      "" && echo "=== gi…)
+  ⎿  === any file named Player.java anywhere ===
+
+     === git status (short) ===
+     … +40 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Key point: git status shows only additions (A) and modifications (M) — there
+  is no D (deleted) line for Player.java or any .java file. If I had deleted
+  your Player class, git would show it as deleted here. It doesn't. Let me check
+  whether Player.java was ever committed to git history at all.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== git-tracked
+      deletions of java files ===" && git status --short | grep -E "^.D.*\.java"
+      ; echo "(empty above…)
+  ⎿  === git-tracked deletions of java files ===
+     AD core/src/main/java/com/Graphic/models/Player.java
+      D core/src/main/java/com/Graphic/views/screens/GameScreen.java
+     … +9 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Now I understand what happened — and the news is good: your Player class is 
+  recoverable.
+
+  Look at the first block. There are two working-tree deletions, and neither was
+  done by me:
+  - AD core/src/main/java/com/Graphic/models/Player.java → Added to git's index
+  (staged), then Deleted from the working tree
+  -  D core/src/main/java/com/Graphic/views/screens/GameScreen.java → deleted
+  from the working tree
+
+  AD means the file was git added at some point, so its content is still saved 
+  in git's index even though it's missing from disk. I never ran a delete — all
+  my calls were file creation — but regardless of how the working-tree copy
+  vanished, we can restore it straight from the index. Let me confirm the
+  content is really there before restoring.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== size + first lines
+      of Player.java stored in git index ===" && git cat-file -s
+      :core/src/main/java/com/Graph…)
+  ⎿  === size + first lines of Player.java stored in git index ===
+     18430
+     --- head ---
+     … +30 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Your full Player.java (18,430 bytes, 500+ lines) is intact in git's index.
+  GameScreen.java is in the same situation. Let me restore both to disk.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && git checkout --
+      core/src/main/java/com/Graphic/models/Player.java
+      core/src/main/java/com/Graphic/views/screens/GameSc…)
+  ⎿  === restored — verifying on disk ===
+     -rw-r--r-- 1 Asus 197121 18430 Jul 12 07:31 core/src/main/java/com/Gra
+     phic/models/Player.java
+     … +2 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Both files are back on disk. But GameScreen.java is only 485 bytes — that's
+  suspiciously small given the earlier compile errors referenced
+  GameScreen.java:426. The index copy may be an older stub. Let me check its
+  content and verify the restored Player compiles.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== restored
+      GameScreen.java content ===" && cat
+      core/src/main/java/com/Graphic/views/screens/GameScreen.java;…)
+  ⎿  === restored GameScreen.java content ===
+     package com.Graphic.views.screens;
+     … +42 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Good — that's a different file. There are two GameScreen.java: the real one at
+  models/GameScreen.java (426 lines, never touched) and a stub at
+  views/screens/GameScreen.java (what I just restored). The stub is correct
+  as-is.
+
+  Now let me confirm the real Player restoration fixed the module build.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -20; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿    C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic\mo
+     dels\ZoteNPC.java:209: error: cannot find symbol
+               Rectangle fw = player.getForwardAttackBox();
+     … +18 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● That revealed something important. The restore brought back an older
+  Player.java — it's missing getForwardAttackBox()/getDownwardAttackBox() that
+  ZoteNPC calls, so the index copy is stale relative to what you actually had.
+  And I shouldn't have restored views/screens/GameScreen.java at all — it was
+  already deleted in your working tree before this turn, and restoring it caused
+  the "duplicate class" error. Let me undo that GameScreen restore first, then
+  hunt for your newer Player in git's object store.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== re-removing the
+      GameScreen stub I wrongly restored (was deleted before this turn) ===" &&
+      rm -f core/src/ma…)
+  ⎿  === re-removing the GameScreen stub I wrongly restored (was deleted be
+     fore this turn) ===
+     done
+     … +14 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● There are dangling blobs — one may be your newer Player. Let me search all of
+  them for the getForwardAttackBox method that the current index copy lacks.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== scanning dangling
+      blobs for the newer Player (has getForwardAttackBox) ===" && for blob in
+      $(git fsck --no-…)
+  ⎿  === scanning dangling blobs for the newer Player (has getForwardAttack
+     Box) ===
+     === done scan ===
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+● No dangling blob contains getForwardAttackBox. That means the newer Player
+  class (the one with those attack-box methods) was never committed or staged to
+  git — git only ever saw the older 18,430-byte version. Let me check the last
+  places recovery could hide: the reflog and your IDE's local history.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== reflog (any commits
+      at all?) ===" && git reflog 2>&1 | head -5; echo "(fatal/empty = no
+      commits ever made)"…)
+  ⎿  === reflog (any commits at all?) ===
+     d2e64d9 HEAD@{0}: commit: Update README.md
+     8fa501b HEAD@{1}: commit: Added main menu
+     … +21 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● You use IntelliJ IDEA 2025.3, and it keeps a Local History independent of git
+  — this is very likely where your newest Player.java still lives. Let me find
+  that store.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && echo "=== IntelliJ
+      LocalHistory store ===" && find "$HOME/AppData/Local/JetBrains" -maxdepth
+      3 -type d -iname "LocalH…)
+  ⎿  === IntelliJ LocalHistory store ===
+     /c/Users/Asus/AppData/Local/JetBrains/IntelliJIdea2025.3/LocalHistory
+     … +15 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● IntelliJ's Local History exists and was written to at 07:40 today — it's
+  active and current. Your newer Player.java (with getForwardAttackBox) is
+  almost certainly recoverable from it. Let me confirm the content is actually
+  in that store.
+
+● Bash(cd "$HOME/AppData/Local/JetBrains/IntelliJIdea2025.3/LocalHistory" &&
+      echo "=== does local history contain the NEWER Player
+      (getForwardAttackBox)? ===" && grep…)
+  ⎿  Error: Exit code 1
+     === does local history contain the NEWER Player (getForwardAttackBox)? ===
+     0
+
+● 0 — but that could be because IntelliJ compresses stored content. Let me check
+  whether the store is greppable at all before drawing conclusions.
+
+● Bash(cd "$HOME/AppData/Local/JetBrains/IntelliJIdea2025.3/LocalHistory" &&
+      echo "=== can we see ANY of our source strings in the store? ===" && for
+      term in "getDownw…)
+  ⎿  === can we see ANY of our source strings in the store? ===
+       'getDownwardAttackBox': 0
+       'class Player': 0
+     … +6 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Let me give you the honest, complete picture. The Local History store keeps
+  per-entry content compressed (that header 1f 2f 3f 4f is IntelliJ's own
+  format, not plain text), which is why getForwardAttackBox doesn't grep — but
+  it does contain your com.Graphic.models file history. That store is the best
+  recovery source, and it's read through the IDE, not the shell.
+
+  What actually happened
+
+  I did not delete your Player class. The evidence:
+  - At the very start of this session, my first exploration already found no
+  Player.java on disk — I noted it in my plan ("there's no Player.java in the
+  codebase") and that's the whole reason I built a mock player. It was already
+  gone before I created a single file.
+  - Every tool call I made was a Write (file creation) — I ran no delete, no git
+  rm, no overwrite of any .java.
+  - git status shows zero deletions authored this turn beyond what was already
+  staged; git never had a D line pointing at my work.
+
+  What I got wrong: I restored Player.java and a stub
+  views/screens/GameScreen.java from git's index a moment ago. The GameScreen
+  restore was a mistake (it caused a duplicate-class error) — I've already 
+  re-removed it. And the Player.java I pulled from the index is an older
+  version: it's missing getForwardAttackBox() / getDownwardAttackBox() that your
+  ZoteNPC calls, so it's not your latest. That older copy is on disk right now.
+
+  Where your newest Player is
+
+  It was never committed or staged to git (no dangling blob contains those
+  methods), so git can only give the older copy. Your latest version lives in
+  IntelliJ Local History, which is active and was written today at 07:40.
+
+  Recover it (30 seconds, in IntelliJ)
+
+  1. In the Project view, right-click
+  core/src/main/java/com/Graphic/models/Player.java (the older copy I restored
+  is sitting there, which makes this easy)
+  2. Local History → Show History
+  3. Pick the revision from before it disappeared — you'll see the one
+  containing getForwardAttackBox
+  4. Click Revert, or copy the content out
+
+  If the file entry doesn't show enough, right-click the models folder → Local
+  History → Show History instead — folder history captures deleted files too.
+
+  Two questions for you
+
+  1. Want me to leave the older git copy on disk as-is so IntelliJ's revert has
+  an anchor, or delete it so it's not confused with your real one?
+  2. Do you know how the working-tree Player vanished before this session — a
+  bad git checkout, a revert, a cleanup? If it's a recurring thing, I'd suggest
+  committing your work now once recovered so git protects it going forward.
+
+  Want me to verify the restored file compiles once you've reverted to the
+  correct version?
+
+✻ Sautéed for 6m 40s
+
+※ recap: Building enemy AI/state machines plus a test screen for your Hollow Knight game — all 9 new files are written and compile. Your newer Player.java isn't in git, so next step: recover it from IntelliJ Local History (right-click the file, Show History, Revert). (disable recaps in /config)
+
+❯ ok I reverted the player class and now the code compiles successfully but     
+  many of the enemies has some bugs so let's tackle them one by one at first    
+  let's go for the mosquito. so isolate mosquito so I can test it. note that    
+  when mosquito target the player it will move on that way with increasing      
+  speed until it hits a solid block. you can freeze the animation on the last   
+  frame. also when something dies when it is in the air it should get to dead   
+  air and fall to the ground. when it reaches the ground it has to switch to    
+  dead ground and then it's body should stay in the ground. also define         
+  hitboxes different than the frame width and height for it so I can tune it.   
+
+● Good — the module compiles now. Let's fix the Mosquito. Four changes: isolate
+  it in the test screen, make the swoop accelerate until it hits a solid block
+  (freeze on last frame), make corpses persist on the ground, and add a tunable
+  hitbox separate from the frame size.
+
+  First, a small base-class addition so an enemy can detect a collision on any
+  axis (the swoop can be diagonal, so horizontal-only wall detection isn't
+  enough).
+
+  Read 1 file (ctrl+o to expand)
+
+● Now let me look at the constructor and render in the base class to plan the
+  hitbox/sprite decoupling.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now I'll implement. Let me start with the base class: (a) decouple sprite size
+  from hitbox size with tunable fields, (b) add all-axis collision detection
+  for the diagonal swoop, and (c) make corpses persist on the ground instead of
+  being culled.
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 34 lines, removed 1 line
+      55      // ── Animation (encapsulated per enemy) ──────────────────
+          ─────────────────
+      56      protected final AnimationComponent anim = new AnimationComp
+          onent();
+      57  
+      58 -    /** Set true the frame we enter DEAD_LAND's finished frame 
+         -— terminal. */                                                 
+      58 +    // ── Sprite draw box (decoupled from the hitbox) ─────────
+         +─────────────────                                              
+      59 +    // The hitbox (bounds) is the physics/damage body and can b
+         +e made SMALLER                                                 
+      60 +    // than the artwork for fair collisions. These describe how
+         + big to DRAW the                                               
+      61 +    // sprite and where to place it relative to the hitbox, so 
+         +you can tune the                                               
+      62 +    // hitbox freely without the sprite moving.                
+      63 +    protected float frameWidth;    // sprite draw width  (px)  
+      64 +    protected float frameHeight;   // sprite draw height (px)  
+      65 +    protected float spriteOffsetX; // sprite x offset from the 
+         +hitbox centre-align                                            
+      66 +    protected float spriteOffsetY; // sprite y offset from the 
+         +hitbox bottom                                                  
+      67 +                                                               
+      68 +    /** Set true once the corpse has settled on the ground (DEA
+         +D_LAND done). */                                               
+      69      private boolean fullyDead = false;
+      70  
+      71      protected BaseEnemy(float x, float y, float width, float he
+          ight,
+     ...
+       76          this.health = health;
+       77          this.affectedByGravityWhileAlive = affectedByGravityWh
+           ileAlive;
+       78          this.state = EnemyState.IDLE; // subclass ctor overrid
+           es via changeState()
+       79 +                                                              
+       80 +        // By default the sprite is drawn at the hitbox size (
+          +backwards-compatible                                          
+       81 +        // with enemies whose hitbox == frame size). Enemies w
+          +ith a tuned hitbox                                            
+       82 +        // call setSpriteBox(...) to draw the full-size art ov
+          +er a smaller body.                                            
+       83 +        this.frameWidth = width;                              
+       84 +        this.frameHeight = height;                            
+       85 +        this.spriteOffsetX = 0f;                              
+       86 +        this.spriteOffsetY = 0f;                              
+       87      }
+       88  
+       89 +    /**                                                       
+       90 +     * Configure how the sprite is drawn independently of the 
+          +hitbox.                                                       
+       91 +     *                                                        
+       92 +     * @param w        sprite draw width in px (usually the re
+          +al frame width)                                               
+       93 +     * @param h        sprite draw height in px (usually the r
+          +eal frame height)                                             
+       94 +     * @param offsetX  horizontal nudge from centre-aligned-on
+          +-hitbox                                                       
+       95 +     * @param offsetY  vertical nudge from the hitbox's bottom
+          + edge                                                         
+       96 +     */                                                       
+       97 +    protected void setSpriteBox(float w, float h, float offset
+          +X, float offsetY) {                                           
+       98 +        this.frameWidth = w;                                  
+       99 +        this.frameHeight = h;                                 
+      100 +        this.spriteOffsetX = offsetX;                         
+      101 +        this.spriteOffsetY = offsetY;                         
+      102 +    }                                                         
+      103 +                                                              
+      104      // =======================================================
+           ==================
+      105      // Main update — template method
+      106      // =======================================================
+           ==================
+
+● Now add all-axis collision tracking to moveAndCollide and expose it:
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 16 lines, removed 1 line
+      223       * of a platform. Horizontal blocking is reported to subcl
+           asses via
+      224       * {@link #hitWallThisFrame}.
+      225       */
+      226 -    private boolean hitWallThisFrame = false;                 
+      226 +    private boolean hitWallThisFrame = false;    // horizontal
+          + block only                                                   
+      227 +    private boolean hitSolidThisFrame = false;   // ANY axis b
+          +lock (for diagonal moves)                                     
+      228  
+      229      protected void moveAndCollide(float delta, Array<Rectangle
+           > platforms) {
+      230          hitWallThisFrame = false;
+      231 +        hitSolidThisFrame = false;                            
+      232  
+      233          // ── Horizontal ──
+      234          bounds.x += velocity.x * delta;
+     ...
+      237              if (velocity.x > 0) {
+      238                  bounds.x = p.x - bounds.width; // hit left fac
+           e of platform
+      239                  hitWallThisFrame = true;
+      240 +                hitSolidThisFrame = true;                     
+      241              } else if (velocity.x < 0) {
+      242                  bounds.x = p.x + p.width;       // hit right f
+           ace of platform
+      243                  hitWallThisFrame = true;
+      244 +                hitSolidThisFrame = true;                     
+      245              }
+      246          }
+      247  
+     ...
+      254                  bounds.y = p.y + p.height;      // landed on t
+           op
+      255                  velocity.y = 0;
+      256                  onGround = true;
+      257 +                hitSolidThisFrame = true;                     
+      258              } else {
+      259                  bounds.y = p.y - bounds.height; // bonked head
+            on ceiling
+      260                  velocity.y = 0;
+      261 +                hitSolidThisFrame = true;                     
+      262              }
+      263          }
+      264      }
+     ...
+      269      }
+      270  
+      271      /**
+      272 +     * True if movement on ANY axis was blocked by solid geome
+          +try this frame.                                               
+      273 +     * Use this for diagonal motion (e.g. the Mosquito swoop) 
+          +where a hit could                                             
+      274 +     * come from a wall, floor or ceiling.                    
+      275 +     */                                                       
+      276 +    protected boolean isBlockedBySolid() {                    
+      277 +        return hitSolidThisFrame;                             
+      278 +    }                                                         
+      279 +                                                              
+      280 +    /**                                                       
+      281       * Classic patrol probe: is there NO ground under the poin
+           t just ahead of
+      282       * the enemy's leading foot? Used to stop/turn at cliff ed
+           ges.
+      283       *
+
+● Now the corpse-persistence: the screen currently culls dead enemies. Let me
+  read the death machine and render to make the body freeze and stay.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now update the DEAD_LAND comment to reflect that the body persists (freezes on
+  last frame and stays):
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 5 lines, removed 2 lines
+      190                  changeState(EnemyState.DEAD_LAND);
+      191              }
+      192          } else if (state == EnemyState.DEAD_LAND) {
+      193 -            // Landed corpse: hold still, let the one-shot cli
+          -p finish, then                                                
+      194 -            // mark terminal so the owner can cull us.        
+      193 +            // Landed corpse: hold still and let the one-shot 
+          +clip play out. Once                                           
+      194 +            // finished we flag fullyDead — but the body STAYS
+          + in the world and                                             
+      195 +            // keeps rendering its final frame (DEAD_LAND is P
+          +layMode.NORMAL, so                                            
+      196 +            // getKeyFrame clamps to the last frame). The owne
+          +r should NOT remove                                           
+      197 +            // it; fullyDead just means "settled corpse, inert
+          +".                                                            
+      198              velocity.set(0, 0);
+      199              if (anim.isFinished(EnemyState.DEAD_LAND)) {
+      200                  fullyDead = true;
+
+● Now update the base render() to use the sprite box (decoupled from hitbox):
+  Read 1 file (ctrl+o to expand)
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 8 lines, removed 6 lines
+      361      // =======================================================
+           ==================
+      362  
+      363      /**
+      364 -     * Default sprite render: draw the current frame centered 
+          -horizontally on                                               
+      365 -     * the body, with feet aligned to the bottom of the hitbox
+          -. Enemies whose                                               
+      366 -     * art needs a custom offset can override.                
+      364 +     * Default sprite render: draw the sprite at the configure
+          +d sprite-box size,                                            
+      365 +     * centred horizontally on the hitbox and offset by the tu
+          +ned sprite offsets.                                           
+      366 +     * The sprite box is decoupled from the hitbox so a small 
+          +damage body can sit                                           
+      367 +     * under full-size art (see {@link #setSpriteBox}).       
+      368       */
+      369      @Override
+      370      public void render(SpriteBatch batch) {
+      371          TextureRegion frame = anim.getFrame(state, facingRight
+           );
+      372          if (frame == null) return;
+      373  
+      373 -        float drawX = bounds.x + bounds.width / 2f - frame.get
+          -RegionWidth() / 2f;                                           
+      374 -        float drawY = bounds.y; // feet on the hitbox floor   
+      375 -        batch.draw(frame, drawX, drawY);                      
+      374 +        // Centre the sprite horizontally on the hitbox, then 
+          +apply offsets.                                                
+      375 +        float drawX = bounds.x + bounds.width / 2f - frameWidt
+          +h / 2f + spriteOffsetX;                                       
+      376 +        float drawY = bounds.y + spriteOffsetY; // relative to
+          + the hitbox bottom                                            
+      377 +        batch.draw(frame, drawX, drawY, frameWidth, frameHeigh
+          +t);                                                           
+      378      }
+      379  
+      380      /** Draw the damage hitbox (red). Subclasses add vision bo
+           xes on top. */
+
+● Now the Mosquito itself. Changes: tunable hitbox smaller than the frame,
+  accelerating swoop that ends only on solid-block hit (freeze last frame), and
+  register ATTACK as NORMAL so it freezes. Let me read the current file.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now let me rewrite the Mosquito. First the constants and constructor:
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 18 lines, removed 4 lines
+      29   */
+      30  public class Mosquito extends BaseEnemy {
+      31  
+      32 +    // ── Sprite frame size (the artwork) ─────────────────────
+         +─────────────────                                              
+      33      private static final int FRAME_W = 220;
+      34      private static final int FRAME_H = 155;
+      35  
+      36 +    // ── Hitbox size (TUNE THESE) — deliberately smaller than 
+         +the frame so the                                               
+      37 +    //    damage/physics body is tighter than the sprite. Chang
+         +e freely; the                                                  
+      38 +    //    sprite stays put because it is drawn from the decoupl
+         +ed sprite box.                                                 
+      39 +    public static float HITBOX_WIDTH  = 90f;                   
+      40 +    public static float HITBOX_HEIGHT = 70f;                   
+      41 +    // Where the hitbox sits inside the frame (offset from the 
+         +frame's bottom-left                                            
+      42 +    // once the frame is centred on the hitbox). Tuned so the b
+         +ody sits on the                                                
+      43 +    // mosquito's torso rather than its wingtips.              
+      44 +    public static float SPRITE_OFFSET_X = 0f;                  
+      45 +    public static float SPRITE_OFFSET_Y = -30f;                
+      46 +                                                               
+      47      private static final float CONTACT_DAMAGE   = 1f;
+      48      private static final float MAX_HEALTH       = 2f;
+      49  
+     ...
+      52      private static final float VISION_WIDTH  = 520f;
+      53      private static final float VISION_HEIGHT = 320f;
+      54  
+      43 -    private static final float ANTICIPATE_TIME = 0.45f; // paus
+         -e before the swoop                                             
+      44 -    private static final float SWOOP_SPEED     = 430f;  // px/s
+         - dash speed                                                    
+      45 -    private static final float SWOOP_TIMEOUT   = 1.6f;  // safe
+         -ty cutoff                                                      
+      46 -    private static final float ARRIVE_RADIUS   = 18f;   // "rea
+         -ched the point" slack                                          
+      55 +    private static final float ANTICIPATE_TIME = 0.45f;  // pau
+         +se before the swoop                                            
+      56 +    // Accelerating swoop: starts at START speed and accelerate
+         +s by ACCEL each                                                
+      57 +    // second, clamped to MAX. The dash ONLY ends when it hits 
+         +a solid block.                                                 
+      58 +    private static final float SWOOP_START_SPEED = 160f; // px/
+         +s launch speed                                                 
+      59 +    private static final float SWOOP_ACCEL       = 900f; // px/
+         +s² gain while diving                                           
+      60 +    private static final float SWOOP_MAX_SPEED   = 900f; // px/
+         +s clamp                                                        
+      61  
+      62      // Reusable scratch rectangle so we don't allocate a vision
+           box every frame.
+      63      private final Rectangle visionBox = new Rectangle();
+
+● Now update the swoop state variables and constructor:
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 10 lines, removed 6 lines
+      68      private final Vector2 swoopDir    = new Vector2();
+      69  
+      70      private float anticipateTimer = 0f;
+      71 -    private float swoopTimer      = 0f;                        
+      71 +    private float swoopSpeed      = 0f; // current dive speed, 
+         +grows while ATTACK                                             
+      72  
+      73 -    // Where the mosquito hovers, so it can drift home conceptu
+         -ally (kept simple:                                             
+      74 -    // it just resumes IDLE wherever the swoop ended).         
+      73      public Mosquito(float x, float y, boolean facingRight) {
+      76 -        // Flyer -> NOT affected by gravity while alive (hovers
+         -).                                                             
+      77 -        super(x, y, FRAME_W, FRAME_H, facingRight, MAX_HEALTH, 
+         -false);                                                        
+      74 +        // Flyer -> NOT affected by gravity while alive (hovers
+         +). NOTE: the                                                   
+      75 +        // constructor body is the hitbox, deliberately smaller
+         + than the frame.                                               
+      76 +        super(x, y, HITBOX_WIDTH, HITBOX_HEIGHT, facingRight, M
+         +AX_HEALTH, false);                                             
+      77  
+      78 +        // Draw the full-size sprite over the smaller hitbox.  
+      79 +        setSpriteBox(FRAME_W, FRAME_H, SPRITE_OFFSET_X, SPRITE_
+         +OFFSET_Y);                                                     
+      80 +                                                               
+      81          anim.register(EnemyState.IDLE,
+      82              "enemies/Mosquito/Idle.png", FRAME_W, FRAME_H, 0.08
+          f, Animation.PlayMode.LOOP);
+      83          anim.register(EnemyState.TURN,
+      84              "enemies/Mosquito/Turn.png", FRAME_W, FRAME_H, 0.05
+          f, Animation.PlayMode.NORMAL);
+      85          anim.register(EnemyState.ATTACK_ANTICIPATE,
+      86              "enemies/Mosquito/Attack Anticipate.png", FRAME_W, 
+          FRAME_H, 0.10f, Animation.PlayMode.NORMAL);
+      87 +        // ATTACK is NORMAL (not LOOP): once the dive clip play
+         +s out it clamps to                                             
+      88 +        // the last frame, so a long swoop visually "freezes" o
+         +n the final pose.                                              
+      89          anim.register(EnemyState.ATTACK,
+      86 -            "enemies/Mosquito/Attack.png", FRAME_W, FRAME_H, 0.
+         -05f, Animation.PlayMode.LOOP);                                 
+      90 +            "enemies/Mosquito/Attack.png", FRAME_W, FRAME_H, 0.
+         +05f, Animation.PlayMode.NORMAL);                               
+      91          anim.register(EnemyState.DEAD_AIR,
+      92              "enemies/Mosquito/Death_Air.png", FRAME_W, FRAME_H,
+           0.10f, Animation.PlayMode.NORMAL);
+      93          anim.register(EnemyState.DEAD_LAND,
+
+● Now the ATTACK state logic — accelerate until solid hit. Let me read the
+  current AI section.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 10 lines, removed 9 lines
+      140                  break;
+      141  
+      142              case ATTACK:
+      143 -                // Committed straight-line dash along the fixe
+          -d swoopDir.                                                   
+      144 -                velocity.set(swoopDir).scl(SWOOP_SPEED);      
+      145 -                swoopTimer += delta;                          
+      143 +                // Committed straight-line dash along the fixe
+          +d swoopDir, with                                              
+      144 +                // speed RAMPING UP over time (accelerating di
+          +ve). Direction is                                             
+      145 +                // locked in beginSwoop(); it cannot re-aim mi
+          +d-swoop.                                                      
+      146 +                swoopSpeed = Math.min(swoopSpeed + SWOOP_ACCEL
+          + * delta, SWOOP_MAX_SPEED);                                   
+      147 +                velocity.set(swoopDir).scl(swoopSpeed);       
+      148  
+      147 -                Vector2 center = bounds.getCenter(new Vector2(
+          -));                                                           
+      148 -                boolean reached = center.dst(swoopTarget) <= A
+          -RRIVE_RADIUS;                                                 
+      149 -                boolean hitWall = isBlockedByWall();          
+      150 -                boolean timedOut = swoopTimer >= SWOOP_TIMEOUT
+          -;                                                             
+      151 -                                                              
+      152 -                if (reached || hitWall || timedOut) {         
+      149 +                // The swoop ends ONLY when it slams into a so
+          +lid block. Because                                            
+      150 +                // the dive is diagonal, we check ANY-axis sol
+          +id contact, not                                               
+      151 +                // just a horizontal wall.                    
+      152 +                if (isBlockedBySolid()) {                     
+      153                      velocity.set(0, 0);
+      154 +                    swoopSpeed = 0f;                          
+      155                      changeState(EnemyState.IDLE);
+      156                  }
+      157                  break;
+
+● Now fix beginSwoop — it references swoopTimer which I removed, and I should
+  reset swoopSpeed. Let me read and fix it.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 2 lines, removed 2 lines
+      182  
+      183      /** Freeze the swoop direction from body-centre to the lat
+           ched point. */
+      184      private void beginSwoop() {
+      185 -        swoopTimer = 0f;                                      
+      185 +        swoopSpeed = SWOOP_START_SPEED; // launch speed; ramps
+          + up in ATTACK                                                 
+      186          Vector2 center = bounds.getCenter(new Vector2());
+      187          swoopDir.set(swoopTarget).sub(center);
+      188          if (swoopDir.isZero(0.001f)) {
+      189              // Degenerate: player was exactly on us. Just dash
+            forward.
+      190              swoopDir.set(facingRight ? 1f : -1f, 0f);
+      191          }
+      192 -        swoopDir.nor(); // unit direction; magnitude comes fro
+          -m SWOOP_SPEED                                                 
+      192 +        swoopDir.nor(); // unit direction; magnitude comes fro
+          +m swoopSpeed                                                  
+      193          changeState(EnemyState.ATTACK);
+      194      }
+      195  
+
+● Now update the test screen: isolate the Mosquito and stop culling grounded
+  corpses. Let me read the current screen sections.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now isolate the Mosquito. I'll spawn only it, and surround the arena with
+  walls/ceiling so a diagonal dive always terminates on a solid block.
+
+● Update(views\screens\EnemyTestScreen.java)
+  ⎿  Added 18 lines, removed 16 lines
+       87          platforms.clear();
+       88  
+       89          // ── World geometry ─────────────────────────────────
+           ─────────────────
+       90 -        // Main floor.                                        
+       91 -        platforms.add(new Rectangle(0, 0, WORLD_WIDTH, 60));  
+       92 -        // A raised ledge (to test cliff-edge turning) on the 
+          -right.                                                        
+       93 -        platforms.add(new Rectangle(900, 60, 380, 40));       
+       94 -        // A left wall stub and a mid pillar (to test wall tur
+          -ning / lunge stop).                                           
+       95 -        platforms.add(new Rectangle(0, 60, 30, 260));         
+       96 -        platforms.add(new Rectangle(620, 60, 40, 180));       
+       90 +        // MOSQUITO ISOLATION ARENA: a fully enclosed box so t
+          +he accelerating                                               
+       91 +        // diagonal swoop always terminates on a solid block (
+          +floor, ceiling or                                             
+       92 +        // a side wall) no matter which way it dives.         
+       93 +        float t = 40f; // wall thickness                      
+       94 +        platforms.add(new Rectangle(0, 0, WORLD_WIDTH, 60));  
+          +                   // floor                                   
+       95 +        platforms.add(new Rectangle(0, WORLD_HEIGHT - t, WORLD
+          +_WIDTH, t));       // ceiling                                 
+       96 +        platforms.add(new Rectangle(0, 0, t, WORLD_HEIGHT));  
+          +                   // left wall                               
+       97 +        platforms.add(new Rectangle(WORLD_WIDTH - t, 0, t, WOR
+          +LD_HEIGHT));       // right wall                              
+       98  
+       98 -        // ── Enemies ────────────────────────────────────────
+          -─────────────────                                             
+       99 -        // Crawler patrols the main floor.                    
+      100 -        enemies.add(new CrystalCrawler(180, 60, true));       
+      101 -        // Husk patrols the left-centre floor; forward vision 
+          -toward the player.                                            
+      102 -        enemies.add(new HuskHornhead(360, 60, true));         
+      103 -        // Guardian stands on the raised right ledge, watching
+          - left.                                                        
+      104 -        enemies.add(new CrystalGuardian(1040, 100, false));   
+      105 -        // Mosquito hovers mid-air.                           
+      106 -        enemies.add(new Mosquito(760, 380, false));           
+       99 +        // ── Enemies (ISOLATED: Mosquito only) ──────────────
+          +─────────────────                                             
+      100 +        // The other three are temporarily disabled so you can
+          + tune the Mosquito                                            
+      101 +        // in isolation. Re-enable them when we move on to the
+          + next enemy.                                                  
+      102 +        enemies.add(new Mosquito(760, 420, false));           
+      103  
+      104 +        // enemies.add(new CrystalCrawler(180, 60, true));    
+      105 +        // enemies.add(new HuskHornhead(360, 60, true));      
+      106 +        // enemies.add(new CrystalGuardian(1040, 100, false));
+      107 +                                                              
+      108          // ── Mock player ────────────────────────────────────
+           ─────────────────
+      109 +        // Start it on the floor, roughly under the mosquito, 
+          +so it's easy to                                               
+      110 +        // walk into the vision box and trigger a dive.       
+      111          player = new MockPlayer(500, 60, 40, 72);
+      112  
+      113          contactCooldown = 0f;
+
+● Now the corpse-culling in update() — it currently disposes/removes any
+  isDead() enemy. Change it so grounded corpses persist. Let me read that block.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(views\screens\EnemyTestScreen.java)
+  ⎿  Added 3 lines, removed 7 lines
+      173              e.update(delta, player.bounds, platforms);
+      174          }
+      175  
+      176 -        // Cull fully-dead enemies (terminal DEAD_LAND finishe
+          -d).                                                           
+      177 -        for (int i = enemies.size - 1; i >= 0; i--) {         
+      178 -            if (enemies.get(i).isDead()) {                    
+      179 -                enemies.get(i).dispose();                     
+      180 -                enemies.removeIndex(i);                       
+      181 -            }                                                 
+      182 -        }                                                     
+      176 +        // NOTE: we intentionally do NOT remove dead enemies. 
+          +Once a corpse                                                 
+      177 +        // settles (DEAD_LAND), its body stays on the ground a
+          +nd keeps rendering                                            
+      178 +        // its final frame. Press R to reset the scene when yo
+          +u want them gone.                                             
+      179  
+      180          // Contact damage: any LIVING enemy hitbox overlapping
+            the player hurts
+      181          // it, on a shared cooldown so it's readable rather th
+           an instant death.
+
+● Now let me compile the whole module to verify.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -25; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿  EXIT: 0
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Compiles cleanly. Let me double-check one thing — the killNearest helper in
+  the screen uses getState().name().startsWith("DEAD"), and with corpses no
+  longer culled I want to make sure it still finds living enemies and that the K
+  (air-kill) nudge works with the enclosed arena. Let me also verify the
+  Vector2 import is still used in Mosquito.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/core/src/main/java/com/Graphic/mod
+      els/enemies" && grep -n "Vector2\|import" Mosquito.java | head -20)
+  ⎿  3:import com.badlogic.gdx.graphics.Color;
+     4:import com.badlogic.gdx.graphics.g2d.Animation;
+     5:import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+     … +6 lines (ctrl+o to expand)
+
+● All good. The module compiles cleanly (exit 0) and the Mosquito is isolated
+  for testing.
+
+  What changed
+
+  Mosquito is now isolated — EnemyTestScreen spawns only the Mosquito (the other
+  three are commented out, ready to re-enable). The arena is a fully enclosed
+  box (floor, ceiling, two side walls) so a diagonal dive always ends on a solid
+  block.
+
+  Accelerating swoop that ends only on a solid hit (Mosquito.java):
+  - Dive launches at SWOOP_START_SPEED (160) and ramps by SWOOP_ACCEL (900
+  px/s²) up to SWOOP_MAX_SPEED (900).
+  - Removed the old arrival-radius and timeout cutoffs — the swoop now
+  terminates only when it hits a solid block, exactly as you asked.
+  - Because the dive is diagonal, I added isBlockedBySolid() to BaseEnemy
+  (any-axis collision), since the old isBlockedByWall() only caught horizontal
+  hits.
+
+  Animation freezes on the last frame — ATTACK is now registered as
+  PlayMode.NORMAL instead of LOOP. getKeyFrame clamps past the end, so a long
+  dive holds the final pose.
+
+  Death → falls → lands → stays — this flow already existed in BaseEnemy
+  (DEAD_AIR applies gravity, transitions to DEAD_LAND on ground contact). The
+  fix was on the screen side: corpses are no longer culled, so the body remains
+  on the ground rendering its final DEAD_LAND frame. Updated the base-class
+  comment to document that fullyDead means "inert corpse, keep rendering," not
+  "remove me."
+
+  Tunable hitbox, decoupled from the frame:
+  - BaseEnemy now separates the hitbox (bounds — physics + damage) from the
+  sprite box (setSpriteBox(w, h, offsetX, offsetY) — how the art is drawn).
+  render() draws at the sprite-box size, centered on the hitbox, with offsets.
+  - Mosquito hitbox is 90×70 (vs. the 220×155 frame) via public tunables
+  HITBOX_WIDTH, HITBOX_HEIGHT, SPRITE_OFFSET_X/Y. Adjust these and the red debug
+  box moves without shifting the sprite.
+
+  To test
+
+  Point your game at new EnemyTestScreen(). Walk the green player into the
+  yellow vision box; the Mosquito latches your position, pauses, then dives with
+  increasing speed until it slams a wall and freezes. Press K to kill it
+  mid-air (watch it fall → land → stay) or L to kill it on the ground.
+
+  One tuning note: the hitbox 90×70 and offsets (0, -30) are my first guess at
+  sitting the box on the torso. Fire up the debug view (red box) and tell me if
+  you want it tighter or repositioned — it's a one-line change. Want me to add
+  live keys to nudge the hitbox at runtime like SpellTestScreen does, or is
+  editing the constants fine?
+
+✻ Brewed for 10m 29s
+※ recap: Building AI/state machines for four Hollow Knight enemies plus a test screen. Mosquito is now isolated and fixed (accelerating swoop, tunable hitbox, persistent corpses) and compiles cleanly. Next: you test it in `EnemyTestScreen`, then we move to the next enemy. (disable recaps in /config)
+
+❯ \login                                                                        
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ /login                                                                        
+  ⎿  Login interrupted
+
+❯ /export conversation_backup.txt                                               
+  ⎿  Conversation exported to: C:\Users\Asus\Desktop\HollowKnight\core\src\main\j
+     ava\com\Graphic\models\enemies\conversation_backup.txt
+
+※ recap: We're building and debugging four LibGDX enemies for your Hollow Knight game. I just isolated the Mosquito with an accelerating swoop, persistent corpses, and a tunable hitbox; it compiles. Next: you test the Mosquito and report any issues.
+
+❯  in my map I have made an enemies layer in this object layer there are spawn  
+  points every one of them has a property named type which is the type of the   
+  enemy that should spawn there. for now the only value is   mosquito. so I     
+  want you to spawn mosquitos in there and also add debuggers for it to my draw 
+  hitbox method. also it should take tamage from nail. and player should take   
+  damage for it. you can use takedamage     method in player for that.          
+
+● Let me explore how the real game loads the map, draws hitboxes, and how the
+  nail attack works before integrating.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now let me look at TiledMapHelper (how objects/layers are read) and the Player
+  API (nail attack boxes, takeDamage, state).
+
+  Read 1 file (ctrl+o to expand)
+
+● Now the Player API — nail attack boxes, takeDamage, attack state, facing.
+
+● Bash(cd
+      "C:/Users/Asus/Desktop/HollowKnight/core/src/main/java/com/Graphic/models"
+      && grep -n
+      "public\|getForwardAttackBox\|getDownwardAttackBox\|takeDamage\|isInvin…)
+  ⎿  21:public class Player {
+     23:    public static final int MAX_HEALTH     = 5;
+     24:    public static final int MAX_SOUL       = 99;
+     … +70 lines (ctrl+o to expand)
+
+● Bash(cd
+      "C:/Users/Asus/Desktop/HollowKnight/core/src/main/java/com/Graphic/models"
+      && grep -n "public Rectangle getForwardAttackBox\|public Rectangle
+      getDownwardAtta…)
+  ⎿  119:    private static final float FPS_ATTACK       = 1f / 18f;
+     150:        add(atlas, PlayerState.ATTACK,      "Slash",       FPS_ATT
+     ACK,      Animation.PlayMode.NORMAL);
+     … +14 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● I have everything I need. Here's the plan:
+  - TiledMapHelper: add getEnemySpawns() reading the enemies object layer + each
+  object's type property.
+  - BaseEnemy: add post-hit i-frames (so a multi-frame nail swing doesn't drain
+  the enemy instantly) and a public isAlive().
+  - GameScreen: spawn enemies on room load, update them, apply nail→enemy and
+  enemy→player damage, render them, and add their debug boxes to drawHitboxes().
+
+  Let me start with BaseEnemy (i-frames + isAlive).
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 5 lines
+      68      /** Set true once the corpse has settled on the ground (DEA
+          D_LAND done). */
+      69      private boolean fullyDead = false;
+      70  
+      71 +    // Brief invulnerability window after any hit, so a nail sw
+         +ing (which overlaps                                            
+      72 +    // for several frames) or a lingering spell only lands ONE 
+         +hit per contact.                                               
+      73 +    private static final float HIT_INVULN = 0.25f;             
+      74 +    private float hitInvulnTimer = 0f;                         
+      75 +                                                               
+      76      protected BaseEnemy(float x, float y, float width, float he
+          ight,
+      77                          boolean facingRight, float health,
+      78                          boolean affectedByGravityWhileAlive) {
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 1 line
+      113      @Override
+      114      public final void update(float delta, Rectangle target, Ar
+           ray<Rectangle> platforms) {
+      115          anim.update(delta);
+      116 +        if (hitInvulnTimer > 0f) hitInvulnTimer -= delta;     
+      117  
+      118          if (isDying()) {
+      119              // While dead we ignore the brain entirely and jus
+           t run corpse
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 2 lines
+      177      @Override
+      178      public void takeDamage(float amount, boolean fromRight) {
+      179          if (isDying()) return;
+      180 +        if (hitInvulnTimer > 0f) return; // still in post-hit 
+          +i-frames — ignore                                             
+      181          health -= amount;
+      182 +        hitInvulnTimer = HIT_INVULN;                          
+      183          if (health <= 0) {
+      184              kill();
+      185          }
+
+● Now add isAlive() near isDead():
+
+● Update(models\enemies\BaseEnemy.java)
+  ⎿  Added 5 lines
+      219          return fullyDead;
+      220      }
+      221  
+      222 +    /** True while the enemy is alive (not in a death state). 
+          +*/                                                            
+      223 +    public boolean isAlive() {                                
+      224 +        return !isDying();                                    
+      225 +    }                                                         
+      226 +                                                              
+      227      // =======================================================
+           ==================
+      228      // Physics helpers (shared)
+      229      // =======================================================
+           ==================
+
+● Now add getEnemySpawns() to TiledMapHelper plus the EnemySpawnData holder:
+
+● Update(models\TiledMapHelper.java)
+  ⎿  Added 52 lines
+      212          public final Vector2 openPos, closedPos;
+      213          public BossDoorData(Vector2 o, Vector2 c) { openPos = 
+           o; closedPos = c; }
+      214      }
+      215 +                                                              
+      216 +    /**                                                       
+      217 +     * Reads the "enemies" object layer. Each object is a spaw
+          +n point carrying a                                            
+      218 +     * "type" custom property (currently only "mosquito"). Poi
+          +nt and rectangle                                              
+      219 +     * objects are both supported; the returned x/y is the wor
+          +ld-space position                                             
+      220 +     * of the spawn (bottom-left for rectangles, the point its
+          +elf for points).                                              
+      221 +     */                                                       
+      222 +    public Array<EnemySpawnData> getEnemySpawns() {           
+      223 +        Array<EnemySpawnData> result = new Array<>();         
+      224 +        MapLayer layer = tiledMap.getLayers().get("enemies"); 
+      225 +        if (layer == null) {                                  
+      226 +            Gdx.app.log("TiledMapHelper", "No 'enemies' layer 
+          +found.");                                                     
+      227 +            return result;                                    
+      228 +        }                                                     
+      229 +                                                              
+      230 +        for (MapObject obj : layer.getObjects()) {            
+      231 +            String type = obj.getProperties().get("type", Stri
+          +ng.class);                                                    
+      232 +            if (type == null || type.isEmpty()) {             
+      233 +                Gdx.app.error("TiledMapHelper", "Enemy spawn m
+          +issing 'type' property.");                                    
+      234 +                continue;                                     
+      235 +            }                                                 
+      236 +                                                              
+      237 +            float x, y;                                       
+      238 +            if (obj instanceof PointMapObject) {              
+      239 +                Vector2 p = ((PointMapObject) obj).getPoint();
+      240 +                x = p.x; y = p.y;                             
+      241 +            } else if (obj instanceof RectangleMapObject) {   
+      242 +                Rectangle r = ((RectangleMapObject) obj).getRe
+          +ctangle();                                                    
+      243 +                x = r.x; y = r.y;                             
+      244 +            } else {                                          
+      245 +                // Fallback: raw properties (already world-spa
+          +ce in this project).                                          
+      246 +                Float px = obj.getProperties().get("x", Float.
+          +class);                                                       
+      247 +                Float py = obj.getProperties().get("y", Float.
+          +class);                                                       
+      248 +                if (px == null || py == null) continue;       
+      249 +                x = px; y = py;                               
+      250 +            }                                                 
+      251 +                                                              
+      252 +            result.add(new EnemySpawnData(type, x, y));       
+      253 +        }                                                     
+      254 +        return result;                                        
+      255 +    }                                                         
+      256 +                                                              
+      257 +    /** One enemy spawn point read from the "enemies" layer. *
+          +/                                                             
+      258 +    public static class EnemySpawnData {                      
+      259 +        public final String type;                             
+      260 +        public final float x, y;                              
+      261 +        public EnemySpawnData(String type, float x, float y) {
+      262 +            this.type = type;                                 
+      263 +            this.x = x;                                       
+      264 +            this.y = y;                                       
+      265 +        }                                                     
+      266 +    }                                                         
+      267  }
+
+● Now wire it into GameScreen. First the imports and fields:
+● Update(models\GameScreen.java)
+  ⎿  Added 2 lines
+       3  import com.Graphic.Main;
+       4  import com.Graphic.managers.*;
+       5  import com.Graphic.models.*;
+       6 +import com.Graphic.models.enemies.BaseEnemy;                   
+       7 +import com.Graphic.models.enemies.Mosquito;                    
+       8  import com.Graphic.models.enums.GameMap;
+       9  import com.Graphic.models.enums.GameViewScreen;
+      10  import com.Graphic.models.spells.Damageable;
+
+● Update(models\GameScreen.java)
+  ⎿  Added 6 lines
+      67      private Array<SolidBlock>  solidBlocks;
+      68      private Array<TeleportZone> teleportZones;
+      69      private Array<FallingSpikeEntity> fallingSpikes;
+      70 +                                                               
+      71 +    // Enemies spawned from the map's "enemies" layer, plus a r
+         +eusable list of                                                
+      72 +    // solid rectangles handed to their physics each frame.    
+      73 +    private final Array<BaseEnemy> enemies = new Array<>();    
+      74 +    private final Array<Rectangle> enemyCollisionRects = new Ar
+         +ray<>();                                                       
+      75 +    private static final float NAIL_DAMAGE = 1f;               
+      76      private Texture            fallingSpikeTexture;
+      77      private AmbientParticleSystem bgParticleSystem;
+      78      private AmbientParticleSystem fgParticleSystem;
+
+● Now spawn enemies in loadRoom. Let me add a spawn call and helper. I'll place
+  it near the other entity spawns (after initSpikes/spawnPlayer):
+
+● Update(models\GameScreen.java)
+  ⎿  Added 1 line
+      165          initSpikes(helper);
+      166          initParticles();
+      167          spawnPlayer(helper, spawnPointName);
+      168 +        spawnEnemies(helper);                                 
+      169  
+      170          // Spawn Charm Entity if data exists
+      171          if(!SaveManager.currentSave.charmAcquired) {
+
+● Now add the spawnEnemies + createEnemy helpers next to spawnPlayer:
+
+● Update(models\GameScreen.java)
+  ⎿  Added 75 lines
+      439          }
+      440      }
+      441  
+      442 +    /** Reads the map's "enemies" layer and instantiates one e
+          +nemy per spawn. */                                            
+      443 +    private void spawnEnemies(TiledMapHelper helper) {        
+      444 +        // Fresh room -> free any previous enemies and start o
+          +ver.                                                          
+      445 +        for (BaseEnemy e : enemies) e.dispose();              
+      446 +        enemies.clear();                                      
+      447 +                                                              
+      448 +        for (TiledMapHelper.EnemySpawnData spawn : helper.getE
+          +nemySpawns()) {                                               
+      449 +            BaseEnemy enemy = createEnemy(spawn.type, spawn.x,
+          + spawn.y);                                                    
+      450 +            if (enemy != null) enemies.add(enemy);            
+      451 +        }                                                     
+      452 +    }                                                         
+      453 +                                                              
+      454 +    /**                                                       
+      455 +     * Factory mapping a spawn "type" to a concrete enemy. Ext
+          +end the switch as                                             
+      456 +     * more enemy types come online. The spawn point is treate
+          +d as the desired                                              
+      457 +     * CENTRE of the enemy, so we offset by half the hitbox to
+          + place it.                                                    
+      458 +     */                                                       
+      459 +    private BaseEnemy createEnemy(String type, float x, float 
+          +y) {                                                          
+      460 +        switch (type.toLowerCase()) {                         
+      461 +            case "mosquito":                                  
+      462 +                return new Mosquito(x - Mosquito.HITBOX_WIDTH 
+          +/ 2f,                                                         
+      463 +                                    y - Mosquito.HITBOX_HEIGHT
+          + / 2f, false);                                                
+      464 +            default:                                          
+      465 +                Gdx.app.error("GameScreen", "Unknown enemy typ
+          +e: " + type);                                                 
+      466 +                return null;                                  
+      467 +        }                                                     
+      468 +    }                                                         
+      469 +                                                              
+      470 +    /**                                                       
+      471 +     * Ticks every enemy and resolves nail-vs-enemy and enemy-
+          +vs-player combat.                                             
+      472 +     * Corpses are kept (they settle and stay), so we don't cu
+          +ll dead enemies.                                              
+      473 +     */                                                       
+      474 +    private void updateEnemies(float delta) {                 
+      475 +        if (enemies.isEmpty()) return;                        
+      476 +                                                              
+      477 +        // Rebuild the solid-rect list the enemy physics colli
+          +des against. Solids                                           
+      478 +        // are static per room except the breakable wall, so a
+          + per-frame rebuild                                            
+      479 +        // keeps it correct with negligible cost.             
+      480 +        enemyCollisionRects.clear();                          
+      481 +        for (SolidBlock b : solidBlocks) enemyCollisionRects.a
+          +dd(b.bounds);                                                 
+      482 +                                                              
+      483 +        Rectangle pb = player.getBounds();                    
+      484 +        float playerCX = pb.x + pb.width / 2f;                
+      485 +                                                              
+      486 +        // Is the player mid-swing, and if so which nail box i
+          +s live?                                                       
+      487 +        PlayerState ps = player.getState();                   
+      488 +        Rectangle attackBox = null;                           
+      489 +        if (ps == PlayerState.ATTACK || ps == PlayerState.ATTA
+          +CK_ALT) {                                                     
+      490 +            attackBox = player.getForwardAttackBox();         
+      491 +        } else if (ps == PlayerState.DOWN_SLASH) {            
+      492 +            attackBox = player.getDownwardAttackBox();        
+      493 +        }                                                     
+      494 +                                                              
+      495 +        for (BaseEnemy e : enemies) {                         
+      496 +            e.update(delta, pb, enemyCollisionRects);         
+      497 +                                                              
+      498 +            if (!e.isAlive()) continue; // dead bodies don't f
+          +ight                                                          
+      499 +                                                              
+      500 +            Rectangle hb = e.getHitbox();                     
+      501 +            float enemyCX = hb.x + hb.width / 2f;             
+      502 +                                                              
+      503 +            // ── Nail hits the enemy ──                      
+      504 +            if (attackBox != null && attackBox.overlaps(hb)) {
+      505 +                // fromRight = the hit came from the enemy's r
+          +ight side.                                                    
+      506 +                e.takeDamage(NAIL_DAMAGE, playerCX > enemyCX);
+      507 +            }                                                 
+      508 +                                                              
+      509 +            // ── Enemy body hits the player ──               
+      510 +            if (!player.isInvincible() && hb.overlaps(pb)) {  
+      511 +                // Knock the player AWAY from the enemy.      
+      512 +                player.takeDamage(1, enemyCX > playerCX);     
+      513 +            }                                                 
+      514 +        }                                                     
+      515 +    }                                                         
+      516 +                                                              
+      517      private void splitLayersAroundMain(String name) {
+      518          int total = tiledMap.getLayers().getCount();
+      519          int main  = tiledMap.getLayers().getIndex(name);
+
+● Now call updateEnemies in the render update block, render enemies, and add
+  debug boxes. First the update call:
+
+● Update(models\GameScreen.java)
+  ⎿  Added 1 line
+      211  
+      212              updateFallingSpikes(delta);
+      213              updateBreakableWall(delta);
+      214 +            updateEnemies(delta);                             
+      215  
+      216              if (charmEntity != null) charmEntity.update(delta,
+            player, gameHUD);
+      217              if (zote != null) zote.update(delta, player, gameH
+           UD, solidBlocks);
+
+● Update(models\GameScreen.java)
+  ⎿  Added 1 line
+      292          if (zote != null) zote.render(batch); // Renders behin
+           d foreground effects
+      293  
+      294          spellManager.render(batch);
+      295 +        for (BaseEnemy e : enemies) e.render(batch);          
+      296          player.render(batch);
+      297          EffectManager.render(batch);
+      298          if (charmEntity != null) charmEntity.render(batch);
+
+● Now add the enemy debug boxes to drawHitboxes(). The enemy's renderDebug draws
+  its hitbox and vision box, and works inside the existing ShapeType.Line
+  block:
+
+● Update(models\GameScreen.java)
+  ⎿  Added 3 lines
+      584              shapeRenderer.rect(zb.x, zb.y, zb.width, zb.height
+           );
+      585          }
+      586  
+      587 +        // Enemy debug: each enemy draws its own hitbox (red) 
+          ++ vision box (yellow).                                        
+      588 +        for (BaseEnemy e : enemies) e.renderDebug(shapeRendere
+          +r);                                                           
+      589 +                                                              
+      590          Rectangle fw = player.getForwardAttackBox();
+      591          Rectangle dw = player.getDownwardAttackBox();
+      592          if (fw != null) { shapeRenderer.setColor(Color.ORANGE)
+           ; shapeRenderer.rect(fw.x, fw.y, fw.width, fw.height); }
+
+● Now dispose enemies in dispose():
+
+● Update(models\GameScreen.java)
+  ⎿  Added 2 lines
+      650          if (charmEntity != null) charmEntity.dispose();
+      651          if (gameHUD != null) gameHUD.dispose();
+      652          if (zote != null) zote.dispose();
+      653 +        for (BaseEnemy e : enemies) e.dispose();              
+      654 +        enemies.clear();                                      
+      655          if (spellManager != null) spellManager.dispose();
+      656          if (bossDoorTexture != null) bossDoorTexture.dispose()
+           ;
+      657  
+
+● Now compile the whole module.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -25; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿  EXIT: 0
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+  ⎿  (timeout 5m)
+
+● Compiles cleanly. Let me verify the map actually has the enemies layer with a
+  mosquito spawn, so the integration matches your Tiled setup.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && grep -rn
+      "CROSSROADS_01\|getFilePath\|\.tmx"
+      core/src/main/java/com/Graphic/models/enums/GameMap.java | head)
+  ⎿  4:    CROSSROADS_01("maps/ForgottenCrossroads01.tmx", "CROSSROADS"),
+     5:    CROSSROADS_02("maps/ForgottenCrossroads02.tmx", "CROSSROADS"),
+     6:    CROSSROADS_03("maps/ForgottenCrossroads03.tmx", "CROSSROADS"),
+     … +2 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/maps" && echo "=== enemies
+      layer + mosquito in each crossroads map ===" && for f in
+      ForgottenCrossroads0*.tmx; do…)
+  ⎿  === enemies layer + mosquito in each crossroads map ===
+     --- ForgottenCrossroads01.tmx ---
+       mosquito refs: 1
+     … +6 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● The objectgroup grep returned nothing — the layer XML format must differ. Let
+  me look at the actual enemies-layer markup around the mosquito in map 01.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/maps" && grep -n -i -B3 -A6
+      "mosquito" ForgottenCrossroads01.tmx)
+  ⎿  1766- <objectgroup id="12" name="enemies">
+     1767-  <object id="185" x="1592" y="1020">
+     1768-   <properties>
+     … +7 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● Everything's in place and compiles cleanly. Your map confirms the setup:
+  ForgottenCrossroads01.tmx has an enemies object group with one point object at
+  (1592, 1020), custom property type = mosquito — exactly what the new code
+  reads.
+
+  What I changed
+
+  TiledMapHelper.getEnemySpawns() — reads the enemies object layer, pulls each
+  object's type property and world position. Handles point objects (like yours)
+  via getPoint(), rectangles via getRectangle(), matching how the existing
+  falling-spike spawns already work. Returns a list of EnemySpawnData(type, x, 
+  y).
+
+  GameScreen (the real game loop):
+  - spawnEnemies() runs on every loadRoom, disposing the previous room's enemies
+  first, then instantiating one per spawn via a createEnemy(type, x, y) factory
+  (a switch — add cases as new types arrive). The spawn point is treated as the
+  enemy's center.
+  - updateEnemies(delta) ticks each enemy against the player's bounds and a
+  per-frame list of solid-block rectangles, then resolves combat:
+    - Nail → enemy: if the player is in ATTACK/ATTACK_ALT (forward box) or
+  DOWN_SLASH (down box) and that box overlaps the enemy hitbox →
+  enemy.takeDamage(1, fromRight).
+    - Enemy → player: if the enemy body overlaps the player and the player isn't
+  in i-frames → player.takeDamage(1, ...) (your existing method), knocking them
+  away from the enemy.
+  - Enemies render in renderGameWorld() (behind the player), and their debug
+  boxes are drawn inside your existing drawHitboxes() — toggle with D as usual.
+  Each enemy draws its red hitbox and yellow vision box (plus a magenta
+  swoop-target cross while diving).
+  - Enemies are disposed in dispose().
+
+  BaseEnemy — added a 0.25 s post-hit invulnerability window so a nail swing
+  (which overlaps for several frames) lands exactly one hit instead of instantly
+  draining the mosquito's 2 HP, plus a public isAlive().
+
+  To try it
+
+  Start a game into Forgotten Crossroads 01. A mosquito hovers at the spawn
+  point; walk into its yellow vision box to trigger a dive, and swing your nail
+  (2 hits kills it → it falls → lands → the body stays). Press D to see the
+  hitbox/vision debug overlay.
+
+  One thing to watch: I centered the mosquito on the Tiled point and it hovers
+  there (flyers ignore gravity until killed). If it spawns higher or lower than
+  you intended, that's the point's flipped-Y position — tell me and I can offset
+  it, but the placement follows the same convention as your working
+  falling-spike spawns.
+
+✻ Baked for 10m 10s
+
+※ recap: You're building four Hollow Knight-style enemies with AI, hitboxes, and a test screen. Mosquitos now spawn from the map's enemies layer with nail damage, contact damage, and debug boxes wired in. Next: launch Forgotten Crossroads 01 and verify the mosquito behaves correctly. (disable recaps in /config)
+
+❯ now let's go for all of the enemies except crystal guardian. the other two    
+  should be easy they will be called husk hornhead and cystal crawler in the    
+  map. also make something like mosquito to fly towards the player when player  
+  has nothing to do with it. meaning in that idle flying state it should move   
+  with a slow speed near the player.                                            
+● Let me check whether the map already has husk/crawler spawns and confirm the
+  exact type strings.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight/assets/maps" && grep -rn -i -A2
+      'value="husk\|value="crystal\|value="crawler\|value="hornhead'
+      ForgottenCrossroads0*.tmx…)
+  ⎿  === all enemy-layer type values across maps ===
+           3 property name="type" value="falling_spike"
+           1 property name="type" value="mosquito"
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+
+● The maps only have mosquito and falling_spike so far — you'll add the husk 
+  hornhead / crystal crawler spawn points, and I'll make the factory recognize
+  those type strings. Two parts: (1) idle slow-follow drift for the Mosquito,
+  (2) spawn Husk + Crawler.
+
+  First, the Mosquito idle drift. Let me add the constants and a loiter timer:
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 6 lines
+      52      private static final float VISION_WIDTH  = 520f;
+      53      private static final float VISION_HEIGHT = 320f;
+      54  
+      55 +    // Passive loiter: while unengaged the mosquito drifts slow
+         +ly toward the                                                  
+      56 +    // player (like a real Vengefly hovering closer before it c
+         +ommits).                                                       
+      57 +    private static final float IDLE_FLY_SPEED       = 55f;  // 
+         +slow drift speed                                               
+      58 +    private static final float IDLE_FOLLOW_DEADZONE = 70f;  // 
+         +stop this close (no jitter)                                    
+      59 +    private static final float IDLE_MIN_TIME        = 0.7f; // 
+         +loiter before diving again                                     
+      60 +                                                               
+      61      private static final float ANTICIPATE_TIME = 0.45f;  // pau
+          se before the swoop
+      62      // Accelerating swoop: starts at START speed and accelerate
+          s by ACCEL each
+      63      // second, clamped to MAX. The dash ONLY ends when it hits 
+          a solid block.
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 1 line
+      75  
+      76      private float anticipateTimer = 0f;
+      77      private float swoopSpeed      = 0f; // current dive speed, 
+          grows while ATTACK
+      78 +    private float idleTimer       = 0f; // time spent loitering
+         + in the current IDLE                                           
+      79  
+      80      public Mosquito(float x, float y, boolean facingRight) {
+      81          // Flyer -> NOT affected by gravity while alive (hovers
+          ). NOTE: the
+
+● Now the IDLE case with the drift, plus reset idleTimer at the two transitions
+  back to IDLE:
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 20 lines, removed 7 lines
+      121  
+      122          switch (state) {
+      123              case IDLE:
+      124 -                velocity.set(0, 0);                           
+      124 +                idleTimer += delta;                           
+      125                  if (target != null) {
+      126 -                    // Face the player while idle so the visio
+          -n bias is sensible.                                           
+      127 -                    boolean playerOnRight = target.x + target.
+          -width / 2f > bounds.x + bounds.width / 2f;                    
+      128 -                    if (playerOnRight != facingRight) {       
+      129 -                        faceRight(playerOnRight);             
+      126 +                    float pcx = target.x + target.width / 2f; 
+      127 +                    float pcy = target.y + target.height / 2f;
+      128 +                    float mcx = bounds.x + bounds.width / 2f; 
+      129 +                    float mcy = bounds.y + bounds.height / 2f;
+      130 +                    float dx = pcx - mcx, dy = pcy - mcy;     
+      131 +                    float dist = (float) Math.sqrt(dx * dx + d
+          +y * dy);                                                      
+      132 +                                                              
+      133 +                    // Face the player and drift slowly toward
+          + them while idle.                                             
+      134 +                    if ((pcx > mcx) != facingRight) faceRight(
+          +pcx > mcx);                                                   
+      135 +                    if (dist > IDLE_FOLLOW_DEADZONE) {        
+      136 +                        velocity.set(dx / dist * IDLE_FLY_SPEE
+          +D, dy / dist * IDLE_FLY_SPEED);                               
+      137 +                    } else {                                  
+      138 +                        velocity.set(0, 0); // close enough — 
+          +just hover                                                    
+      139                      }
+      131 -                    // Player spotted -> wind up.             
+      132 -                    if (visionBox.overlaps(target)) {         
+      140 +                                                              
+      141 +                    // After loitering a moment, if the player
+          + is in the vision                                             
+      142 +                    // box, commit to a dive.                 
+      143 +                    if (idleTimer >= IDLE_MIN_TIME && visionBo
+          +x.overlaps(target)) {                                         
+      144                          beginAnticipation(target);
+      145                      }
+      146 +                } else {                                      
+      147 +                    velocity.set(0, 0);                       
+      148                  }
+      149                  break;
+      150  
+
+● Update(models\enemies\Mosquito.java)
+  ⎿  Added 2 lines
+      172                  if (isBlockedBySolid()) {
+      173                      velocity.set(0, 0);
+      174                      swoopSpeed = 0f;
+      175 +                    idleTimer = 0f; // start a fresh loiter be
+          +fore the next dive                                            
+      176                      changeState(EnemyState.IDLE);
+      177                  }
+      178                  break;
+     ...
+      181                  velocity.set(0, 0);
+      182                  if (anim.isFinished(EnemyState.TURN)) {
+      183                      faceRight(!facingRight);
+      184 +                    idleTimer = 0f;                           
+      185                      changeState(EnemyState.IDLE);
+      186                  }
+      187                  break;
+
+● Now the GameScreen factory — imports plus Husk/Crawler cases and a placement
+  helper. First the imports:
+
+● Update(models\GameScreen.java)
+  ⎿  Added 2 lines
+       4  import com.Graphic.managers.*;
+       5  import com.Graphic.models.*;
+       6  import com.Graphic.models.enemies.BaseEnemy;
+       7 +import com.Graphic.models.enemies.CrystalCrawler;              
+       8 +import com.Graphic.models.enemies.HuskHornhead;                
+       9  import com.Graphic.models.enemies.Mosquito;
+      10  import com.Graphic.models.enums.GameMap;
+      11  import com.Graphic.models.enums.GameViewScreen;
+
+● Update(models\GameScreen.java)
+  ⎿  Added 26 lines, removed 2 lines
+      461       * CENTRE of the enemy, so we offset by half the hitbox to
+            place it.
+      462       */
+      463      private BaseEnemy createEnemy(String type, float x, float 
+           y) {
+      464 +        BaseEnemy enemy;                                      
+      465          switch (type.toLowerCase()) {
+      466              case "mosquito":
+      466 -                return new Mosquito(x - Mosquito.HITBOX_WIDTH 
+          -/ 2f,                                                         
+      467 -                                    y - Mosquito.HITBOX_HEIGHT
+          - / 2f, false);                                                
+      467 +                // Flyer: centre the body on the spawn point. 
+      468 +                enemy = new Mosquito(x, y, false);            
+      469 +                placeCentered(enemy, x, y, false);            
+      470 +                break;                                        
+      471 +            case "crystal crawler":                           
+      472 +                // Ground patroller: centre horizontally, feet
+          + on the point.                                                
+      473 +                enemy = new CrystalCrawler(x, y, true);       
+      474 +                placeCentered(enemy, x, y, true);             
+      475 +                break;                                        
+      476 +            case "husk hornhead":                             
+      477 +                enemy = new HuskHornhead(x, y, true);         
+      478 +                placeCentered(enemy, x, y, true);             
+      479 +                break;                                        
+      480              default:
+      481                  Gdx.app.error("GameScreen", "Unknown enemy typ
+           e: " + type);
+      482                  return null;
+      483          }
+      484 +        return enemy;                                         
+      485      }
+      486  
+      487      /**
+      488 +     * Positions an enemy relative to its spawn point. Ground 
+          +enemies get their                                             
+      489 +     * feet on the point; flyers get their whole body centred 
+          +on it. Works for                                              
+      490 +     * any enemy via its hitbox, so no per-class size constant
+          +s are needed.                                                 
+      491 +     */                                                       
+      492 +    private void placeCentered(BaseEnemy e, float x, float y, 
+          +boolean feetOnPoint) {                                        
+      493 +        Rectangle hb = e.getHitbox();                         
+      494 +        hb.x = x - hb.width / 2f;                             
+      495 +        hb.y = feetOnPoint ? y : y - hb.height / 2f;          
+      496 +    }                                                         
+      497 +                                                              
+      498 +    /**                                                       
+      499       * Ticks every enemy and resolves nail-vs-enemy and enemy-
+           vs-player combat.
+      500       * Corpses are kept (they settle and stay), so we don't cu
+           ll dead enemies.
+      501       */
+
+● Now compile.
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -25; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿  EXIT: 0
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+  ⎿  (timeout 5m)
+
+● Compiles cleanly. One robustness improvement: let me make the type matching
+  tolerant of spacing/casing (so husk hornhead, HuskHornhead, or husk_hornhead
+  all work) — that avoids a silent no-spawn if the map string differs slightly.
+
+● Update(models\GameScreen.java)
+  ⎿  Added 3 lines, removed 1 line
+      461       * CENTRE of the enemy, so we offset by half the hitbox to
+            place it.
+      462       */
+      463      private BaseEnemy createEnemy(String type, float x, float 
+           y) {
+      464 +        // Normalise so "Husk Hornhead", "husk_hornhead" and "
+          +huskhornhead" all match.                                      
+      465 +        String key = type.toLowerCase().replaceAll("[\\s_]", "
+          +");                                                           
+      466          BaseEnemy enemy;
+      465 -        switch (type.toLowerCase()) {                         
+      467 +        switch (key) {                                        
+      468              case "mosquito":
+      469                  // Flyer: centre the body on the spawn point.
+      470                  enemy = new Mosquito(x, y, false);
+
+● Update(models\GameScreen.java)
+  ⎿  Added 2 lines, removed 2 lines
+      470                  enemy = new Mosquito(x, y, false);
+      471                  placeCentered(enemy, x, y, false);
+      472                  break;
+      473 -            case "crystal crawler":                           
+      473 +            case "crystalcrawler":                            
+      474                  // Ground patroller: centre horizontally, feet
+            on the point.
+      475                  enemy = new CrystalCrawler(x, y, true);
+      476                  placeCentered(enemy, x, y, true);
+      477                  break;
+      478 -            case "husk hornhead":                             
+      478 +            case "huskhornhead":                              
+      479                  enemy = new HuskHornhead(x, y, true);
+      480                  placeCentered(enemy, x, y, true);
+      481                  break;
+
+● Bash(cd "C:/Users/Asus/Desktop/HollowKnight" && ./gradlew :core:compileJava -q
+      2>&1 | tail -15; echo "EXIT: ${PIPESTATUS[0]}")
+  ⎿  EXIT: 0
+  ⎿  Shell cwd was reset to 
+     C:\Users\Asus\Desktop\HollowKnight\core\src\main\java\com\Graphic
+  ⎿  (timeout 5m)
+
+● Compiles cleanly. Done.
+
+  What changed
+
+  Mosquito idle drift (Mosquito.java) — the IDLE state is no longer stationary.
+  When unengaged, the mosquito now faces the player and drifts slowly toward
+  them at IDLE_FLY_SPEED (55 px/s), stopping within IDLE_FOLLOW_DEADZONE (70 px)
+  so it hovers instead of jittering on top of them. It loiters for at least
+  IDLE_MIN_TIME (0.7 s) before it's allowed to commit to a dive again — so
+  between dives you actually see it slink closer rather than instantly
+  re-swooping. The dive itself is unchanged (latch target → anticipate →
+  accelerating swoop until it hits a solid block).
+
+  Husk Hornhead + Crystal Crawler spawning (GameScreen.java) — the createEnemy
+  factory now handles all three types. Type matching is normalized (lowercased,
+  spaces/underscores stripped), so Husk Hornhead, husk_hornhead, and
+  HuskHornhead all resolve. Placement is hitbox-based via a shared placeCentered
+  helper: ground enemies (Husk, Crawler) get their feet on the spawn point and
+  settle via gravity; the flyer (Mosquito) is centered on the point. They
+  automatically get everything the Mosquito already had — nail damage, contact
+  damage to the player, persistent corpses, and the debug boxes in
+  drawHitboxes() (toggle D).
+
+  On your side
+
+  Add the spawn points to the enemies object layer in Tiled with a type property
+  of crystal crawler and husk hornhead (spacing/case doesn't matter). Put the
+  ground enemies' points on or just above a floor so they land and start
+  patrolling.
+
+  One thing to flag
+
+  The Husk and Crawler currently use full-frame hitboxes (Crawler 155×180, Husk
+  239×219) — I kept them as-is per "these should be easy." That means their
+  damage box includes the transparent margin around the sprite, so contact can
+  feel a bit generous. When you test them, if the hitboxes feel too big I can
+  give them tuned hitboxes via the same setSpriteBox mechanism the Mosquito uses
+  (one small change each). Want me to do that now, or wait until you've seen
+  them in-game?
+
+✻ Churned for 13m 25s
