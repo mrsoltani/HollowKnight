@@ -1,0 +1,33 @@
+gentle grass.png
+size: 321, 175
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+grass5_idle
+  rotate: false
+  xy: 1, 1
+  size: 74, 173
+  orig: 74, 173
+  offset: 0, 0
+  index: 0
+grass5_idle
+  rotate: false
+  xy: 77, 1
+  size: 78, 172
+  orig: 78, 172
+  offset: 0, 0
+  index: 7
+grass5_idle
+  rotate: false
+  xy: 157, 1
+  size: 84, 173
+  orig: 84, 173
+  offset: 0, 0
+  index: 15
+grass5_idle
+  rotate: false
+  xy: 243, 1
+  size: 77, 173
+  orig: 77, 173
+  offset: 0, 0
+  index: 23

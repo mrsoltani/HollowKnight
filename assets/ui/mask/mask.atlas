@@ -1,0 +1,131 @@
+mask.png
+size: 244, 690
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+BreakHealth
+  rotate: false
+  xy: 141, 396
+  size: 70, 159
+  orig: 126, 167
+  offset: 25, 8
+  index: 0
+BreakHealth
+  rotate: false
+  xy: 77, 251
+  size: 65, 143
+  orig: 126, 167
+  offset: 30, 24
+  index: 1
+BreakHealth
+  rotate: false
+  xy: 1, 251
+  size: 74, 122
+  orig: 126, 167
+  offset: 27, 36
+  index: 2
+BreakHealth
+  rotate: false
+  xy: 144, 251
+  size: 74, 134
+  orig: 126, 167
+  offset: 27, 24
+  index: 3
+BreakHealth
+  rotate: false
+  xy: 1, 396
+  size: 68, 155
+  orig: 126, 167
+  offset: 27, 3
+  index: 4
+BreakHealth
+  rotate: false
+  xy: 71, 396
+  size: 68, 155
+  orig: 126, 167
+  offset: 27, 3
+  index: 5
+EmptyHealth
+  rotate: false
+  xy: 1, 1
+  size: 59, 72
+  orig: 126, 167
+  offset: 30, 59
+  index: -1
+FilledHealth
+  rotate: false
+  xy: 62, 1
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: -1
+FilledHealthShine
+  rotate: false
+  xy: 123, 1
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: 0
+FilledHealthShine
+  rotate: false
+  xy: 184, 1
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: 1
+FilledHealthShine
+  rotate: false
+  xy: 1, 75
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: 2
+FilledHealthShine
+  rotate: false
+  xy: 62, 75
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: 3
+FilledHealthShine
+  rotate: false
+  xy: 123, 75
+  size: 59, 72
+  orig: 126, 167
+  offset: 31, 59
+  index: 4
+HealthRefill
+  rotate: false
+  xy: 184, 75
+  size: 59, 72
+  orig: 126, 167
+  offset: 30, 59
+  index: 0
+HealthRefill
+  rotate: false
+  xy: 1, 149
+  size: 59, 72
+  orig: 126, 167
+  offset: 30, 59
+  index: 1
+HealthRefill
+  rotate: false
+  xy: 62, 149
+  size: 59, 72
+  orig: 126, 167
+  offset: 30, 59
+  index: 2
+HealthRefill
+  rotate: false
+  xy: 123, 149
+  size: 78, 100
+  orig: 126, 167
+  offset: 21, 45
+  index: 3
+HealthRefill
+  rotate: false
+  xy: 1, 557
+  size: 121, 132
+  orig: 126, 167
+  offset: 1, 29
+  index: 4

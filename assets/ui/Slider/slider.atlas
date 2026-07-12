@@ -1,0 +1,20 @@
+
+slider.png
+size: 64, 64
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+slider_arrow
+  rotate: false
+  xy: 1, 4
+  size: 18, 42
+  orig: 18, 42
+  offset: 0, 0
+  index: -1
+slider_white
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1

@@ -1,18 +1,553 @@
+audio/music/Boss.mp3
+audio/music/Crystal Peak.mp3
+audio/music/Forgotten Crossroads.mp3
+audio/music/Menu.mp3
+audio/music/Sealed Vessel.mp3
+audio/sfx/area/Breakable Wall Death.mp3
+audio/sfx/area/Breakable Wall Hit 1.mp3
+audio/sfx/area/Breakable Wall Hit 2.mp3
+audio/sfx/area/Dream Enter Pt 2.mp3
+audio/sfx/area/Dream Orb Pickup.mp3
+audio/sfx/area/Stalactite Break.mp3
+audio/sfx/area/Stalactite Death.mp3
+audio/sfx/area/Stalactite Impact.mp3
+audio/sfx/enemies/Enemy Damage Over Time.mp3
+audio/sfx/enemies/Enemy Damage.mp3
+audio/sfx/enemies/Enemy Death Sword.mp3
+audio/sfx/enemies/crystal hunter/Crystal Flyer Shoot.mp3
+audio/sfx/false knight/False Knight Attack New 01.mp3
+audio/sfx/false knight/False Knight Attack New 02.mp3
+audio/sfx/false knight/False Knight Attack New 03.mp3
+audio/sfx/false knight/False Knight Attack New 04.mp3
+audio/sfx/false knight/False Knight Attack New 05.mp3
+audio/sfx/false knight/False Knight Ceiling Break.mp3
+audio/sfx/false knight/False Knight Damage Armour Final.mp3
+audio/sfx/false knight/False Knight Damage Armour.mp3
+audio/sfx/false knight/False Knight Head Damage 2.mp3
+audio/sfx/false knight/False Knight Jump.mp3
+audio/sfx/false knight/False Knight Land 1st Time.mp3
+audio/sfx/false knight/False Knight Land.mp3
+audio/sfx/false knight/False Knight Roll.mp3
+audio/sfx/false knight/False Knight Strike Ground.mp3
+audio/sfx/false knight/False Knight Swing.mp3
+audio/sfx/false knight/Fknight Death.mp3
+audio/sfx/false knight/Fknight Hit 01.mp3
+audio/sfx/false knight/Fknight Hit 02.mp3
+audio/sfx/false knight/Fknight Rage.mp3
+audio/sfx/player/Focus Health Heal.mp3
+audio/sfx/player/Hero Damage #1995473.mp3
+audio/sfx/player/Hero Damage Less Harsh #2037362.mp3
+audio/sfx/player/Hero Damage Less Harsh.mp3
+audio/sfx/player/Hero Damage.mp3
+audio/sfx/player/Hero Dash.mp3
+audio/sfx/player/Hero Death Extra Details.mp3
+audio/sfx/player/Hero Death V2.mp3
+audio/sfx/player/Hero Double Damage.mp3
+audio/sfx/player/Hero Down Slash.mp3
+audio/sfx/player/Hero Falling.mp3
+audio/sfx/player/Hero Fireball.mp3
+audio/sfx/player/Hero Jump.mp3
+audio/sfx/player/Hero Land Hard #2055994.mp3
+audio/sfx/player/Hero Land Hard Mono Test.mp3
+audio/sfx/player/Hero Land Hard.mp3
+audio/sfx/player/Hero Land Soft.mp3
+audio/sfx/player/Hero Mantis Claw.mp3
+audio/sfx/player/Hero Run Footsteps Stone.mp3
+audio/sfx/player/Hero Scream Spell.mp3
+audio/sfx/player/Hero Shade Dash 1.mp3
+audio/sfx/player/Hero Shade Dash 2.mp3
+audio/sfx/player/Hero Slash.mp3
+audio/sfx/player/Hero SlashAlt.mp3
+audio/sfx/player/Hero Void Scream Spell.mp3
+audio/sfx/player/Hero Walk Footsteps Stone.mp3
+audio/sfx/player/Hero Wall Jump.mp3
+audio/sfx/player/Hero Wall Slide.mp3
+audio/sfx/player/Hero Wings.mp3
+audio/sfx/player/Sword Hit Reject.mp3
+audio/sfx/player/Sword Hit Window 1.mp3
+audio/sfx/player/Sword Hit Window 2.mp3
+audio/sfx/player/Sword Hit Window 3.mp3
+audio/sfx/player/Sword Hit Window 4.mp3
+audio/sfx/ui/Ui Button Confirm.mp3
+audio/sfx/ui/Ui Change Selection.mp3
+audio/sfx/ui/Ui Option Click.mp3
+audio/sfx/ui/Ui Save.mp3
+audio/sfx/zote/Bretta Zote Stare.mp3
+audio/sfx/zote/Gg Main Menu Zote Sing.mp3
+audio/sfx/zote/Gg Zote Salubra.mp3
+audio/sfx/zote/S81-195 Grey Prince Zote.mp3
+audio/sfx/zote/Zote 01.mp3
+audio/sfx/zote/Zote 02.mp3
+audio/sfx/zote/Zote 03 #2037781.mp3
+audio/sfx/zote/Zote 03.mp3
+audio/sfx/zote/Zote 04.mp3
+audio/sfx/zote/Zote 05.mp3
+audio/sfx/zote/Zote Balloon Idle 02.mp3
+audio/sfx/zote/Zote Balloon Idle 03.mp3
+audio/sfx/zote/Zote Balloon Pre Burst 01.mp3
+audio/sfx/zote/Zote Balloon Pre Burst 02.mp3
+audio/sfx/zote/Zote Balloon Pre Burst 03.mp3
+audio/sfx/zote/Zote Battle Attack Loop.mp3
+audio/sfx/zote/Zote Battle Death.mp3
+audio/sfx/zote/Zote Battle Defeat End.mp3
+audio/sfx/zote/Zote Battle Defeated Loop.mp3
+audio/sfx/zote/Zote Battle Fall 01.mp3
+audio/sfx/zote/Zote Battle Fall 02.mp3
+audio/sfx/zote/Zote Battle Leap 01.mp3
+audio/sfx/zote/Zote Battle Leap 02.mp3
+audio/sfx/zote/Zote Battle Leap 03.mp3
+audio/sfx/zote/Zote Battle Roar.mp3
+audio/sfx/zote/Zote Battle Wound 01.mp3
+audio/sfx/zote/Zote Battle Wound 02.mp3
+audio/sfx/zote/Zote Battle Wound 03.mp3
+audio/sfx/zote/Zote Battle Wound 04.mp3
+audio/sfx/zote/Zote Ceiling Drop 01.mp3
+audio/sfx/zote/Zote Ceiling Drop 02.mp3
+audio/sfx/zote/Zote Complain Combined.mp3
+audio/sfx/zote/Zote Crowd Murmur.mp3
+audio/sfx/zote/Zote Final Town Loop.mp3
+audio/sfx/zote/Zote Floor Fall 01.mp3
+audio/sfx/zote/Zote Floor Fall 02.mp3
+audio/sfx/zote/Zote Floor Fall 03.mp3
+audio/sfx/zote/Zote Get Up.mp3
+audio/sfx/zote/Zote Land.mp3
+audio/sfx/zote/Zote Pirouette 01.mp3
+audio/sfx/zote/Zote Pirouette 02.mp3
+audio/sfx/zote/Zote Pirouette 03.mp3
+audio/sfx/zote/Zote Runloop 02.mp3
+audio/sfx/zote/Zote Stun 02.mp3
+audio/sfx/zote/Zote Summon Roar.mp3
+audio/sfx/zote/Zote Tonk Big.mp3
+audio/sfx/zote/Zote Tonk.mp3
+audio/sfx/zote/Zoteling Loop.mp3
+audio/sfx/zote/Zoteling Yelp 01.mp3
+audio/sfx/zote/Zoteling Yelp 02.mp3
+audio/sfx/zote/Zoteling Yelp 03.mp3
+audio/sfx/zote/Zoteling Yelp 04.mp3
+audio/structure.txt
+effects/effects-0.png
+effects/effects.atlas
+enemies/CrystalCrawler/Death_Air.png
+enemies/CrystalCrawler/Death_Land.png
+enemies/CrystalCrawler/Turn.png
+enemies/CrystalCrawler/Walk.png
+enemies/Crystalized/CrystalLaser.png
+enemies/Crystalized/Death_Air.png
+enemies/Crystalized/Death_Land.png
+enemies/Crystalized/Evade.png
+enemies/Crystalized/Idle.png
+enemies/Crystalized/LaserCircle.png
+enemies/Crystalized/Run.png
+enemies/Crystalized/Shoot.png
+enemies/Crystalized/Turn.png
+enemies/HuskHornhead/Attack Anticipate.png
+enemies/HuskHornhead/Attack Lunge.png
+enemies/HuskHornhead/Death Air.png
+enemies/HuskHornhead/Death Land.png
+enemies/HuskHornhead/Idle.png
+enemies/HuskHornhead/Turn.png
+enemies/HuskHornhead/Walk.png
+enemies/Laser/Laser.atlas
+enemies/Laser/Laser.png
+enemies/Mosquito/Attack Anticipate.png
+enemies/Mosquito/Attack.png
+enemies/Mosquito/Death_Air.png
+enemies/Mosquito/Death_Land.png
+enemies/Mosquito/Idle.png
+enemies/Mosquito/Turn.png
+enemies/Mosquito/Turn2.png
 fonts/Cinzel-VariableFont_wght.ttf
 fonts/Perpetua Regular.otf
 fonts/TrajanPro-Regular.ttf
+i18n/dialogues_en.properties
+i18n/dialogues_fr.properties
+i18n/strings.properties
+i18n/strings_fr.properties
 icons/logo.png
 libgdx.png
+maps.rar
+maps/ForgottenCrossroads01.tmx
+maps/ForgottenCrossroads02.tmx
+maps/ForgottenCrossroads03.tmx
+maps/ForgottenCrossroads04.tmx
+maps/Glow.tsx
+maps/Holder.tsx
+maps/crystal peak/2189-2@2x.png
+maps/crystal peak/2189-2@2x.tsx
+maps/crystal peak/CrystalPeak.tiled-project
+maps/crystal peak/CrystalPeak.tiled-session
+maps/crystal peak/Grimm_Main_tent_0005_7.png
+maps/crystal peak/Grimm_Main_tent_0005_7.tsx
+maps/crystal peak/Grimm_nightmare__0025_1.png
+maps/crystal peak/Grimm_nightmare__0025_1.tsx
+maps/crystal peak/Grimm_tent_ext_0007_6.png
+maps/crystal peak/Grimm_tent_ext_0007_6.tsx
+maps/crystal peak/Hallownest_Gate_0010_10.png
+maps/crystal peak/Hallownest_Gate_0010_10.tsx
+maps/crystal peak/Main_tent_chain.png
+maps/crystal peak/Main_tent_chain.tsx
+maps/crystal peak/Map.tmx
+maps/crystal peak/Mines_Layered_0080_a.png
+maps/crystal peak/Mines_Layered_0080_a.tsx
+maps/crystal peak/Road.tsx
+maps/crystal peak/amelitia_flowers_0001_7.png
+maps/crystal peak/amelitia_flowers_0001_7.tsx
+maps/crystal peak/atlas0 #26003.png
+maps/crystal peak/atlas0 #26003.tsx
+maps/crystal peak/big_lamp.png
+maps/crystal peak/big_lamp.tsx
+maps/crystal peak/black_grass0007.png
+maps/crystal peak/black_grass0007.tsx
+maps/crystal peak/black_grass40004.png
+maps/crystal peak/black_grass40004.tsx
+maps/crystal peak/brk_Crystal1.png
+maps/crystal peak/brk_Crystal1.tsx
+maps/crystal peak/cabinet.tsx
+maps/crystal peak/conveyor_base_04.png
+maps/crystal peak/conveyor_base_04.tsx
+maps/crystal peak/credits flash_round.png
+maps/crystal peak/credits flash_round.tsx
+maps/crystal peak/elev_chain.png
+maps/crystal peak/elev_chain.tsx
+maps/crystal peak/fungd_floor_01.png
+maps/crystal peak/fungd_floor_01.tsx
+maps/crystal peak/game_over_flash_round.png
+maps/crystal peak/game_over_flash_round.tsx
+maps/crystal peak/glow_bug_01.png
+maps/crystal peak/glow_bug_01.tsx
+maps/crystal peak/hot_spring_layers_0080_01-copy-72.png
+maps/crystal peak/hot_spring_layers_0080_01-copy-72.tsx
+maps/crystal peak/jelly_light_particle.png
+maps/crystal peak/jelly_light_particle.tsx
+maps/crystal peak/lamp_cave_01_l.png
+maps/crystal peak/lamp_cave_01_l.tsx
+maps/crystal peak/lift_01_layered_0002_Layer-0.png
+maps/crystal peak/lift_01_layered_0002_Layer-0.tsx
+maps/crystal peak/mine_break_wall.png
+maps/crystal peak/mine_break_wall_03.png
+maps/crystal peak/mine_break_wall_03.tsx
+maps/crystal peak/mine_crystal_04.png
+maps/crystal peak/mine_crystal_04.tsx
+maps/crystal peak/mine_crystal_08.png
+maps/crystal peak/mine_crystal_08.tsx
+maps/crystal peak/mine_floor_01.png
+maps/crystal peak/mine_floor_01.tsx
+maps/crystal peak/mine_globe_02.png
+maps/crystal peak/mine_globe_02.tsx
+maps/crystal peak/mine_spike_FG_02.png
+maps/crystal peak/mine_spike_FG_02.tsx
+maps/crystal peak/mines_floor_rocks_0003_Layer-1.png
+maps/crystal peak/mines_floor_rocks_0003_Layer-1.tsx
+maps/crystal peak/nailmaster_03_cloth #01904.png
+maps/crystal peak/nailmaster_03_cloth #01904.tsx
+maps/crystal peak/ruins_fancy_shelf_0000_2.png
+maps/crystal peak/ruins_fancy_shelf_0000_2.tsx
+maps/crystal peak/shelf_short.png
+maps/crystal peak/shelf_short.tsx
+maps/crystal peak/shelf_tall.png
+maps/crystal peak/shelf_tall.tsx
+maps/crystal peak/summit_spikes_0000_4.png
+maps/crystal peak/summit_spikes_0000_4.tsx
+maps/crystal peak/u_chart_0001_2_base.png
+maps/crystal peak/u_chart_0001_2_base.tsx
+maps/crystal peak/white_light.png
+maps/crystal peak/white_light.tsx
+maps/crystal peak/wood_plank_01.png
+maps/crystal peak/wood_plank_01.tsx
+maps/dynamic/door.png
+maps/dynamic/falling_spike.png
+maps/textures/forgotten crossroads/ArchWay.tsx
+maps/textures/forgotten crossroads/Background Spikes.tsx
+maps/textures/forgotten crossroads/BigArchHalf.tsx
+maps/textures/forgotten crossroads/BlueBackground.tsx
+maps/textures/forgotten crossroads/Bone01.tsx
+maps/textures/forgotten crossroads/Break Wall.tsx
+maps/textures/forgotten crossroads/BreakableWall.tsx
+maps/textures/forgotten crossroads/CaveLamp.tsx
+maps/textures/forgotten crossroads/CdArchbase.tsx
+maps/textures/forgotten crossroads/CdArchway.tsx
+maps/textures/forgotten crossroads/CdFloor.tsx
+maps/textures/forgotten crossroads/CdWall04.tsx
+maps/textures/forgotten crossroads/ClassicWall.tsx
+maps/textures/forgotten crossroads/CrumbleFloor.tsx
+maps/textures/forgotten crossroads/Egg01.tsx
+maps/textures/forgotten crossroads/Egg02.tsx
+maps/textures/forgotten crossroads/EndCave.tsx
+maps/textures/forgotten crossroads/EndDoor.tsx
+maps/textures/forgotten crossroads/FG01.tsx
+maps/textures/forgotten crossroads/FG02.tsx
+maps/textures/forgotten crossroads/Fence.tsx
+maps/textures/forgotten crossroads/FlatPath.tsx
+maps/textures/forgotten crossroads/Forgotten Crossroads/927-2@2x.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/BG_egg_07_0000_Layer-1.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/BG_egg_07_0003_Layer-4.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Blue Background.jpg
+maps/textures/forgotten crossroads/Forgotten Crossroads/FG_eggs_04_0001_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/FG_eggs_11_0001_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/FK_break__0000_wall_default.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/FK_break__0005_wall_back.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/FK_break__0006_wall_metal.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/gentle grass - Copy.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/gentle grass.atlas
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/gentle grass.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/grass1.atlas
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/grass1.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/grass2.atlas
+maps/textures/forgotten crossroads/Forgotten Crossroads/Grass/grass2.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Ouiji_Cave_0012_ouiji_ext_door.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Ouiji_Cave_0013_ouiji_ext_cave.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Spikes & thorns/cd_spikes_BG.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Spikes & thorns/spikes.atlas
+maps/textures/forgotten crossroads/Forgotten Crossroads/Spikes & thorns/spikes.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Spikes & thorns/spikes_still.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/Stalagmite.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/atlas0 #24911.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/big_arch_half.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_BG_well_shaft.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_FG_bone_08.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_FG_bone_09.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_FG_rock_20.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_archbase_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_archway_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_archway_04_r.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_broken_wall.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_floor_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_mid_wall_detail_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_mid_wall_detail_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_mid_wall_detail_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_tollbooth_lamp.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_wall_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cd_wall_04.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cliff_mid_wall_main_0000_3.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/col_0002_cage_back.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/core_extras_0009_wp.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/cr10_break_wall.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/deep_crumble_floor.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/dream_believer_fence.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/floor_FG_rock_06_0003_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/highway_01_layered_0004_Layer-5.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/highway_02_layered_0003_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/lamp_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/lamp_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/lamp_cave_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/mask_shard_plinth_0000_2.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/mine_break_wall_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_05.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_06.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_07.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_float_09.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/plat_lifts_0000_a.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/rocks_BG_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/sign_post_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/sign_post_03.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/statue_06.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/tut_wall_r_0001_05.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/tut_wall_r_0004_02.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/vil_BG_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/vil_BG_05.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/vil_floor_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/vil_sign_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/wall_01.png
+maps/textures/forgotten crossroads/Forgotten Crossroads/well_extension_0000_2.png
+maps/textures/forgotten crossroads/House01.tsx
+maps/textures/forgotten crossroads/House02.tsx
+maps/textures/forgotten crossroads/Lamp01.tsx
+maps/textures/forgotten crossroads/Lamp02.tsx
+maps/textures/forgotten crossroads/LampCave.tsx
+maps/textures/forgotten crossroads/LittleRock01.tsx
+maps/textures/forgotten crossroads/LongSymmetricWall.tsx
+maps/textures/forgotten crossroads/LongWall.tsx
+maps/textures/forgotten crossroads/Metal Break Wall.tsx
+maps/textures/forgotten crossroads/MidWallDetail02.tsx
+maps/textures/forgotten crossroads/MidWallDetail03.tsx
+maps/textures/forgotten crossroads/MidWallDetial01.tsx
+maps/textures/forgotten crossroads/MineWall.tsx
+maps/textures/forgotten crossroads/PathBlock.tsx
+maps/textures/forgotten crossroads/Platform01.tsx
+maps/textures/forgotten crossroads/Platform03.tsx
+maps/textures/forgotten crossroads/Platform04.tsx
+maps/textures/forgotten crossroads/Platform05.tsx
+maps/textures/forgotten crossroads/Platfrom02.tsx
+maps/textures/forgotten crossroads/Rock01.tsx
+maps/textures/forgotten crossroads/Rock02.tsx
+maps/textures/forgotten crossroads/ShortWall.tsx
+maps/textures/forgotten crossroads/SignPost.tsx
+maps/textures/forgotten crossroads/SimplePath.tsx
+maps/textures/forgotten crossroads/SimpleTile.tsx
+maps/textures/forgotten crossroads/Spike Still.tsx
+maps/textures/forgotten crossroads/Spikes.tsx
+maps/textures/forgotten crossroads/Stalagmite.tsx
+maps/textures/forgotten crossroads/Stalagmite01.tsx
+maps/textures/forgotten crossroads/Stalagmite02.tsx
+maps/textures/forgotten crossroads/Statue.tsx
+maps/textures/forgotten crossroads/Statue01.tsx
+maps/textures/forgotten crossroads/Still Spike.tsx
+maps/textures/forgotten crossroads/Stone Road.tsx
+maps/textures/forgotten crossroads/StoneMineWall.tsx
+maps/textures/forgotten crossroads/TufWall01.tsx
+maps/textures/forgotten crossroads/TufWall02.tsx
+maps/textures/forgotten crossroads/TufWall03.tsx
+maps/textures/forgotten crossroads/VilFloor.tsx
+maps/textures/forgotten crossroads/VilSign.tsx
+maps/textures/forgotten crossroads/Wall01.tsx
+maps/textures/forgotten crossroads/WallBack.tsx
+maps/textures/forgotten crossroads/WallExtension.tsx
+maps/textures/forgotten crossroads/WellBackground.tsx
+maps/textures/forgotten crossroads/cd_archbase_01.tsx
+maps/textures/forgotten crossroads/col_0002_cage_back.tsx
+maps/textures/forgotten crossroads/gentle grass - Copy.tsx
+maps/textures/forgotten crossroads/grass1.tsx
+maps/textures/forgotten crossroads/run.py
+saves/savedata.db
+shaders/blur.frag
+shaders/blur.vert
+shaders/grayscale.frag
+sprites/dust_dot.png
+sprites/knight-0.png
+sprites/knight-default.png
+sprites/knight.atlas
+sprites/knight.png
+sprites/knight/Airborne_000.png
+sprites/knight/Airborne_001.png
+sprites/knight/Airborne_002.png
+sprites/knight/Airborne_003.png
+sprites/knight/Airborne_004.png
+sprites/knight/Airborne_005.png
+sprites/knight/Airborne_006.png
+sprites/knight/Airborne_007.png
+sprites/knight/Airborne_008.png
+sprites/knight/Airborne_009.png
+sprites/knight/Airborne_010.png
+sprites/knight/Airborne_011.png
+sprites/knight/Death_000.png
+sprites/knight/Death_001.png
+sprites/knight/Death_002.png
+sprites/knight/Death_003.png
+sprites/knight/Death_004.png
+sprites/knight/Death_005.png
+sprites/knight/Death_006.png
+sprites/knight/Death_007.png
+sprites/knight/Death_008.png
+sprites/knight/Death_009.png
+sprites/knight/Death_010.png
+sprites/knight/Death_011.png
+sprites/knight/Death_012.png
+sprites/knight/Death_013.png
+sprites/knight/Death_014.png
+sprites/knight/Death_015.png
+sprites/knight/Death_016.png
+sprites/knight/Death_017.png
+sprites/knight/Idle Hurt_000.png
+sprites/knight/Idle Hurt_001.png
+sprites/knight/Idle Hurt_002.png
+sprites/knight/Idle Hurt_003.png
+sprites/knight/Idle Hurt_004.png
+sprites/knight/Idle Hurt_005.png
+sprites/knight/Idle Hurt_006.png
+sprites/knight/Idle Hurt_007.png
+sprites/knight/Idle Hurt_008.png
+sprites/knight/Idle Hurt_009.png
+sprites/knight/Idle Hurt_010.png
+sprites/knight/Idle Hurt_011.png
+sprites/knight/Idle_000.png
+sprites/knight/Idle_001.png
+sprites/knight/Idle_002.png
+sprites/knight/Idle_003.png
+sprites/knight/Idle_004.png
+sprites/knight/Idle_005.png
+sprites/knight/Idle_006.png
+sprites/knight/Idle_007.png
+sprites/knight/Idle_008.png
+sprites/knight/Knight Animations.tps
+sprites/knight/Run To Idle_000.png
+sprites/knight/Run To Idle_001.png
+sprites/knight/Run To Idle_002.png
+sprites/knight/Run To Idle_003.png
+sprites/knight/Run To Idle_004.png
+sprites/knight/Run To Idle_005.png
+sprites/knight/Run_000.png
+sprites/knight/Run_001.png
+sprites/knight/Run_002.png
+sprites/knight/Run_003.png
+sprites/knight/Run_004.png
+sprites/knight/Run_005.png
+sprites/knight/Run_006.png
+sprites/knight/Run_007.png
+sprites/knight/Run_008.png
+sprites/knight/Run_009.png
+sprites/knight/Run_010.png
+sprites/knight/Run_011.png
+sprites/knight/Run_012.png
+sprites/knight/Slash_000.png
+sprites/knight/Slash_001.png
+sprites/knight/Slash_002.png
+sprites/knight/Slash_003.png
+sprites/knight/Slash_004.png
+sprites/knight/pack.json
+sprites/objects/glowing_object.atlas
+sprites/objects/glowing_object.png
+sprites/spells/Ball.atlas
+sprites/spells/Ball.png
+sprites/spells/Scream.atlas
+sprites/spells/Scream.png
+sprites/zote/zote.atlas
+sprites/zote/zote.png
+ui/Cursor.png
+ui/Slider/slider.atlas
+ui/Slider/slider.json
+ui/Slider/slider.png
+ui/Slider/slider_arrow.png
+ui/Slider/slider_white.png
+ui/Splitter.png
+ui/abilities/Dash_Prompt.png
+ui/abilities/Fireball_prompt.png
+ui/abilities/Focus_prompt_temp.png
+ui/abilities/Wall_Jump_Prompt.png
+ui/abilities/_0006_scream_spell.png
+ui/achievements/charm master.png
+ui/achievements/completion.png
+ui/achievements/false knight.png
+ui/achievements/speedrun.png
+ui/achievements/true hunter.png
 ui/font-list.fnt
 ui/font-subtitle.fnt
 ui/font-window.fnt
 ui/font.fnt
-ui/menu/background.png
-ui/menu/main menu/beam.png
-ui/menu/main menu/logo.png
-ui/menu/main menu/pointer.png
-ui/menu/settingBottom.png
-ui/menu/titleBottom.png
+ui/inventory/CharmBackboard.png
+ui/inventory/Glow.png
+ui/inventory/Seperator.png
+ui/inventory/Splitter.png
+ui/inventory/UnusedNotch.png
+ui/inventory/UsedNotch.png
+ui/inventory/background.png
+ui/inventory/charms/CharmBackboard.png
+ui/inventory/charms/Dashmaster.png
+ui/inventory/charms/Heavy Blow.png
+ui/inventory/charms/Quick Focus.png
+ui/inventory/charms/Quick Slash.png
+ui/inventory/charms/Sharp Shadow.png
+ui/inventory/charms/Soul Catcher.png
+ui/inventory/charms/Unbreakable Strength.png
+ui/inventory/charms/Void Heart.png
+ui/mask/mask.atlas
+ui/mask/mask.png
+ui/menu/Beam.png
+ui/menu/Crystal Peak Background.png
+ui/menu/Green Path Background.png
+ui/menu/Logo.png
+ui/menu/Pointer.png
+ui/menu/Title Bottom.png
+ui/menu/Void Heart BackGround.png
+ui/soul/FullSoul.png
+ui/soul/SoulContainer.png
+ui/soul/SoulOrbFull.png
+ui/soul/Soulorb.atlas
+ui/soul/Soulorb.png
+ui/start game/crossroads.png
+ui/start game/crystalpeak.png
+ui/start game/empty.png
 ui/uiskin.atlas
 ui/uiskin.json
 ui/uiskin.png

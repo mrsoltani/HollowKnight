@@ -1,0 +1,173 @@
+Scream.png
+size: 1780, 1152
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ShadowScream
+  rotate: false
+  xy: 1, 1
+  size: 218, 260
+  orig: 357, 292
+  offset: 57, 9
+  index: 1
+ShadowScream
+  rotate: false
+  xy: 221, 1
+  size: 288, 278
+  orig: 357, 292
+  offset: 33, 7
+  index: 2
+ShadowScream
+  rotate: false
+  xy: 511, 1
+  size: 301, 280
+  orig: 357, 292
+  offset: 23, 5
+  index: 3
+ShadowScream
+  rotate: false
+  xy: 814, 1
+  size: 301, 277
+  orig: 357, 292
+  offset: 20, 8
+  index: 4
+ShadowScream
+  rotate: false
+  xy: 1117, 1
+  size: 302, 279
+  orig: 357, 292
+  offset: 19, 6
+  index: 5
+ShadowScream
+  rotate: false
+  xy: 1421, 1
+  size: 304, 278
+  orig: 357, 292
+  offset: 18, 7
+  index: 6
+ShadowScream
+  rotate: false
+  xy: 1, 283
+  size: 307, 278
+  orig: 357, 292
+  offset: 18, 7
+  index: 7
+ShadowScream
+  rotate: false
+  xy: 310, 283
+  size: 302, 278
+  orig: 357, 292
+  offset: 19, 7
+  index: 8
+ShadowScream
+  rotate: false
+  xy: 614, 283
+  size: 302, 274
+  orig: 357, 292
+  offset: 18, 8
+  index: 9
+ShadowScream
+  rotate: false
+  xy: 918, 283
+  size: 280, 268
+  orig: 357, 292
+  offset: 38, 10
+  index: 10
+ShadowScream
+  rotate: false
+  xy: 1200, 283
+  size: 263, 266
+  orig: 357, 292
+  offset: 41, 13
+  index: 11
+ShadowScream
+  rotate: false
+  xy: 1465, 283
+  size: 28, 31
+  orig: 357, 292
+  offset: 240, 103
+  index: 12
+SoulScream
+  rotate: false
+  xy: 1495, 283
+  size: 284, 286
+  orig: 332, 306
+  offset: 28, 20
+  index: 1
+SoulScream
+  rotate: false
+  xy: 1, 571
+  size: 317, 289
+  orig: 332, 306
+  offset: 2, 17
+  index: 2
+SoulScream
+  rotate: false
+  xy: 320, 571
+  size: 313, 287
+  orig: 332, 306
+  offset: 13, 18
+  index: 3
+SoulScream
+  rotate: false
+  xy: 635, 571
+  size: 303, 288
+  orig: 332, 306
+  offset: 15, 17
+  index: 4
+SoulScream
+  rotate: false
+  xy: 940, 571
+  size: 316, 288
+  orig: 332, 306
+  offset: 7, 18
+  index: 5
+SoulScream
+  rotate: false
+  xy: 1258, 571
+  size: 316, 288
+  orig: 332, 306
+  offset: 7, 18
+  index: 6
+SoulScream
+  rotate: false
+  xy: 1, 862
+  size: 308, 289
+  orig: 332, 306
+  offset: 17, 17
+  index: 7
+SoulScream
+  rotate: false
+  xy: 311, 862
+  size: 318, 289
+  orig: 332, 306
+  offset: 14, 17
+  index: 8
+SoulScream
+  rotate: false
+  xy: 631, 862
+  size: 319, 285
+  orig: 332, 306
+  offset: 13, 21
+  index: 9
+SoulScream
+  rotate: false
+  xy: 952, 862
+  size: 313, 270
+  orig: 332, 306
+  offset: 14, 36
+  index: 10
+SoulScream
+  rotate: false
+  xy: 1267, 862
+  size: 249, 211
+  orig: 332, 306
+  offset: 11, 43
+  index: 11
+SoulScream
+  rotate: false
+  xy: 1518, 862
+  size: 54, 66
+  orig: 332, 306
+  offset: 206, 43
+  index: 12
