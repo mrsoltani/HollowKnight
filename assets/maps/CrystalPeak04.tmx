@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="700" height="200" tilewidth="8" tileheight="8" infinite="0" nextlayerid="74" nextobjectid="311">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="700" height="200" tilewidth="8" tileheight="8" infinite="0" nextlayerid="74" nextobjectid="319">
  <tileset firstgid="1" source="textures/forgotten crossroads/SimplePath.tsx"/>
  <tileset firstgid="341" source="textures/forgotten crossroads/FlatPath.tsx"/>
  <tileset firstgid="597" source="textures/forgotten crossroads/CdFloor.tsx"/>
@@ -1290,54 +1290,54 @@
  </layer>
  <objectgroup id="42" name="logical">
   <object id="270" x="3910.67" y="1105.33" width="190.667" height="44"/>
-  <object id="273" x="3925.33" y="1042.67" width="166.667" height="62.6667">
+  <object id="273" x="3910.33" y="1042.67" width="197.667" height="62.6667">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
   <object id="274" x="3418.67" y="853.33" width="190.667" height="44"/>
-  <object id="275" x="3433.33" y="790.67" width="166.667" height="62.6667">
+  <object id="275" x="3421.33" y="790.67" width="190.667" height="62.6667">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
   <object id="276" x="470.667" y="897.33" width="190.667" height="44"/>
-  <object id="277" x="471.327" y="834.67" width="180.667" height="62.6667">
+  <object id="277" x="461.994" y="834.67" width="199.334" height="62.6667">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
   <object id="278" x="2965" y="960.5" width="39.5" height="196.5"/>
-  <object id="279" x="2896" y="954.5" width="64.5" height="207">
+  <object id="279" x="2896" y="954.5" width="69" height="207">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
   <object id="280" x="2494" y="768" width="189" height="56"/>
-  <object id="281" x="2501" y="812" width="182" height="62">
+  <object id="281" x="2501" y="812" width="191.5" height="62">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
   <object id="282" x="1975.5" y="592" width="189" height="56"/>
-  <object id="283" x="1982.5" y="636" width="182" height="62">
+  <object id="283" x="1971.17" y="636" width="193.333" height="62">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="284" x="1484" y="712" width="44" height="177.333"/>
+  <object id="284" x="1484" y="708" width="44" height="190.666"/>
   <object id="285" x="1526.67" y="697.333" width="65.3333" height="204">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="286" x="1011.33" y="592.667" width="44" height="177.333"/>
+  <object id="286" x="1011.33" y="580.667" width="44" height="189.333"/>
   <object id="287" x="1054" y="578" width="65.3333" height="204">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="290" x="354.667" y="1448" width="3801.33" height="140">
+  <object id="290" x="352" y="1456" width="3801.33" height="140">
    <properties>
     <property name="deadly" type="bool" value="true"/>
    </properties>
@@ -1362,6 +1362,46 @@
   </object>
   <object id="310" name="SPAWN_WEST" x="101" y="1445">
    <point/>
+  </object>
+  <object id="311" x="980.333" y="1367.33" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="312" x="1332.33" y="1363.33" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="313" x="2304.33" y="1371.33" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="314" x="3092.33" y="1370" width="352.667" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="315" x="2843" y="1388.67" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="316" x="3635" y="1387.33" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="317" x="1774.76" y="1356.3" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="318" x="356.575" y="1377.52" width="135.334" height="81.3334">
+   <properties>
+    <property name="deadly" type="bool" value="true"/>
+   </properties>
   </object>
  </objectgroup>
  <objectgroup id="68" name="enemies"/>

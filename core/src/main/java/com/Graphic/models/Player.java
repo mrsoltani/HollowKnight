@@ -869,6 +869,7 @@ public class Player {
         PlayerState previous = state;
 
         if (state == PlayerState.FOCUS || state == PlayerState.FOCUS_START) focusTimer = 0f;
+        if (state == PlayerState.FIREBALL_CAST || state == PlayerState.SCREAM_CAST) CameraManager.shake(20f, 0.25f);
 
         state     = next;
         stateTime = 0f;

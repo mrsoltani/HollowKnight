@@ -28,7 +28,7 @@ public class PlayerStats {
 
     public void reset() {
         soulPerHit             = 11;
-        nailDamage             = 10;
+        nailDamage             = 100;
         attackCooldown         = 0.5f;
         dashCooldown           =0.4f;
         dashDuration           = 0.4f;

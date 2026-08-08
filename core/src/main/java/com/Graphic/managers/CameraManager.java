@@ -28,7 +28,6 @@ public class CameraManager {
 
     public static void shake(float intensity, float duration) {
         if (intensity <= 0f || duration <= 0f) return;
-
         // Keep the strongest active shake instead of allowing a weaker hit to
         // truncate a dramatic death/boss impact.
         shakeIntensity = Math.max(shakeIntensity, intensity);

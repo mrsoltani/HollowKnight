@@ -20,7 +20,6 @@ public class Main extends Game {
 
     public SpriteBatch batch;
 
-
     private FrameBuffer fbo;
     private SpriteBatch fboBatch;
     private OrthographicCamera fboCamera;
@@ -54,6 +53,12 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        /*
+        // Clear java.util.prefs Preferences on app start
+        com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("achievements");
+        prefs.clear();
+        prefs.flush();
+*/
         InputManager.init();
         FontManager.load();
         LocalizationManager.load();
@@ -65,11 +70,9 @@ public class Main extends Game {
         AchievementManager.init();
         SaveManager.init();
 
-
         batch = new SpriteBatch();
         fboBatch = new SpriteBatch();
         fboCamera = new OrthographicCamera();
-
 
         ShaderProgram.pedantic = false;
 
@@ -101,26 +104,19 @@ public class Main extends Game {
         Gdx.graphics.setCursor(cursor);
         cursorImage.dispose();
 
-
         Main.getInstance().setScreen(GameViewScreen.MainMenu);
-
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
 
-
         if (width <= 0 || height <= 0) return;
-
-
 
         int bbWidth = Gdx.graphics.getBackBufferWidth();
         int bbHeight = Gdx.graphics.getBackBufferHeight();
 
-
         fboCamera.setToOrtho(false, bbWidth, bbHeight);
-
 
         if (fbo != null) {
             fbo.dispose();
@@ -132,7 +128,6 @@ public class Main extends Game {
     public void render() {
         if (fbo == null) return;
 
-
         fbo.begin();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -141,21 +136,17 @@ public class Main extends Game {
 
         fbo.end();
 
-
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         TextureRegion fboRegion = new TextureRegion(fbo.getColorBufferTexture());
         fboRegion.flip(false, true);
 
-
-        fboBatch.setProjectionMatrix(fboCamera.combined );
+        fboBatch.setProjectionMatrix(fboCamera.combined);
         fboBatch.setShader(brightnessShader);
         fboBatch.begin();
 
         brightnessShader.setUniformf("u_brightness", VideoManager.getBrightness());
-
 
         fboBatch.draw(fboRegion, 0, 0, fboCamera.viewportWidth, fboCamera.viewportHeight);
 

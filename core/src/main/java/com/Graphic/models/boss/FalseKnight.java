@@ -504,7 +504,7 @@ public class FalseKnight {
     public Rectangle getVulnerableBox() {
         if (state == State.STUN || state == State.STUN_RECOVER) {
             Rectangle v = new Rectangle();
-            v.set(x + spriteW / 2f - 50f, y + 20f, 100f, 80f);
+            v.set(x + spriteW / 2f - 200f, y + 20f, 100f, 80f);
             return v;
         }
         return getBodyBox();
