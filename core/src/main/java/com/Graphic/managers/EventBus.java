@@ -44,6 +44,11 @@ public class EventBus {
 
         ENEMY_HIT,
         ENEMY_KILLED,
+        ENEMY_MOSQUITO_ATTACK,
+        ENEMY_GROUND_STEP,
+        ENEMY_CRYSTAL_LASER_CHARGE,
+        ENEMY_CRYSTAL_LASER_START,
+        ENEMY_CRYSTAL_LASER_STOP,
 
 
         BOSS_FK_JUMP,

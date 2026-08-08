@@ -27,9 +27,13 @@ public class CameraManager {
     }
 
     public static void shake(float intensity, float duration) {
-        shakeIntensity = intensity;
-        shakeDuration = duration;
-        shakeTimer = duration;
+        if (intensity <= 0f || duration <= 0f) return;
+
+        // Keep the strongest active shake instead of allowing a weaker hit to
+        // truncate a dramatic death/boss impact.
+        shakeIntensity = Math.max(shakeIntensity, intensity);
+        shakeDuration = Math.max(shakeDuration, duration);
+        shakeTimer = Math.max(shakeTimer, duration);
     }
 
     public static void update(float targetX, float targetY, float delta) {
@@ -99,10 +103,15 @@ public class CameraManager {
 
 
         if (shakeTimer > 0) {
-            float currentIntensity = shakeIntensity * (shakeTimer / shakeDuration);
+            float duration = Math.max(shakeDuration, 0.0001f);
+            float currentIntensity = shakeIntensity * MathUtils.clamp(shakeTimer / duration, 0f, 1f);
             camera.position.x += MathUtils.random(-currentIntensity, currentIntensity);
             camera.position.y += MathUtils.random(-currentIntensity, currentIntensity);
-            shakeTimer -= delta;
+            shakeTimer = Math.max(0f, shakeTimer - delta);
+            if (shakeTimer <= 0f) {
+                shakeIntensity = 0f;
+                shakeDuration = 0f;
+            }
         }
 
         camera.update();

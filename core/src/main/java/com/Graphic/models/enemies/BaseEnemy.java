@@ -1,6 +1,7 @@
 package com.Graphic.models.enemies;
 
 import com.Graphic.managers.EventBus;
+import com.Graphic.managers.SaveManager;
 import com.Graphic.models.spells.Damageable;
 import com.Graphic.utils.EffectSpawnData;
 import com.badlogic.gdx.graphics.Color;
@@ -67,6 +68,7 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
 
     private static final float DEATH_KNOCKBACK_X = 1600f;
     private static final float DEATH_KNOCKBACK_Y = 500f;
+    private float groundStepTimer = 0f;
 
     protected BaseEnemy(float x, float y, float width, float height,
                         boolean facingRight, float health,
@@ -128,6 +130,7 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
             applyGravity(delta);
         }
         moveAndCollide(delta, platforms);
+        updateGroundSteps(delta);
 
 
         dispatchContactDamage(target);
@@ -167,10 +170,33 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
 
 
         EventBus.emit(EventBus.Event.ENEMY_KILLED, enemyTypeName());
+        onKilled();
 
         changeState(EnemyState.DEAD_AIR);
     }
 
+
+    protected float groundStepInterval() {
+        return 0f;
+    }
+
+    private void updateGroundSteps(float delta) {
+        float interval = groundStepInterval();
+        boolean movingOnGround = interval > 0f && onGround && Math.abs(velocity.x) > 1f && isAlive();
+        if (!movingOnGround) {
+            groundStepTimer = 0f;
+            return;
+        }
+
+        groundStepTimer -= delta;
+        if (groundStepTimer <= 0f) {
+            EventBus.emit(EventBus.Event.ENEMY_GROUND_STEP, enemyTypeName());
+            groundStepTimer = interval;
+        }
+    }
+
+    protected void onKilled() {
+    }
 
     @Override
     public void takeDamage(float amount, boolean fromRight) {
@@ -185,6 +211,7 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
 
         if (health <= 0) {
             kill(fromRight);
+            SaveManager.currentSave.enemiesKilled++;
             return;
         }
 

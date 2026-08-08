@@ -42,6 +42,7 @@ public class AudioManager {
         long id;
     }
     private static final Map<String, ChannelState> channels = new HashMap<>();
+    private static boolean bossEventsSubscribed = false;
 
 
 
@@ -104,11 +105,8 @@ public class AudioManager {
 
         loadSFX("hero_damage_1",    "audio/sfx/player/Hero Damage Less Harsh.mp3");
         loadSFX("hero_damage_2",    "audio/sfx/player/Hero Damage.mp3");
-        loadSFX("hero_death",       "audio/sfx/player/Hero Death V2.mp3");
-
-        loadSFX("hero_damage_1",    "audio/sfx/player/Hero Damage Less Harsh.mp3");
-        loadSFX("hero_damage_2",    "audio/sfx/player/Hero Damage.mp3");
-        loadSFX("hero_death",       "audio/sfx/player/Hero Death V2.mp3");
+        loadSFX("hero_death_main",  "audio/sfx/player/Hero Death V2.mp3");
+        loadSFX("hero_death_detail","audio/sfx/player/Hero Death Extra Details.mp3");
 
 
         loadSFX("soul_1",    "audio/sfx/player/Soul Pickup 1.mp3");
@@ -143,7 +141,13 @@ public class AudioManager {
 
 
         loadSFX("enemy_hit", "audio/sfx/enemies/Enemy Damage.mp3");
-        loadSFX("enemy_death",  "audio/sfx/enemies/Enemy Death Sword.mp3");
+        loadSFX("enemy_death", "audio/sfx/enemies/Enemy Death Sword.mp3");
+        loadSFX("enemy_ground_step", "audio/sfx/player/Hero Walk Footsteps Stone.mp3");
+        loadSFX("crystal_break_1", "audio/sfx/enemies/Crystal Break 1.mp3");
+        loadSFX("crystal_break_2", "audio/sfx/enemies/Crystal Break 2.mp3");
+        loadSFX("mosquito_attack", "audio/sfx/enemies/crystal hunter/Crystal Flyer Shoot.mp3");
+        loadSFX("crystal_laser_prepare", "audio/sfx/enemies/Mines Pink Laser Prepare.mp3");
+        loadSFX("crystal_laser_loop", "audio/sfx/enemies/Mines Pink Laser Loop.mp3");
 
 
         loadSFX("fk_attack_1", "audio/sfx/false knight/False Knight Attack New 01.mp3");
@@ -207,14 +211,51 @@ public class AudioManager {
 
 
         EventBus.subscribe(EventBus.Event.PLAYER_DAMAGED,      e -> playRandomSFX("hero_damage_1", "hero_damage_2"));
-        EventBus.subscribe(EventBus.Event.PLAYER_DEATH,        e -> playSFX("hero_death"));
+        EventBus.subscribe(EventBus.Event.PLAYER_DEATH,        e -> playLayeredSFX("hero_death_main", "hero_death_detail"));
 
-        EventBus.subscribe(EventBus.Event.ENEMY_HIT,      e -> playSFX("enemy_hit"));
-        EventBus.subscribe(EventBus.Event.ENEMY_KILLED,        e -> playSFX("enemy_death"));
-        EventBus.subscribe(EventBus.Event.PLAYER_SOUL_GAIN,        e ->playRandomSFX("soul_1","soul_2","soul_3","soul_4"));
+        EventBus.subscribe(EventBus.Event.ENEMY_HIT, e -> playSFX("enemy_hit"));
+        EventBus.subscribe(EventBus.Event.ENEMY_KILLED, e -> playEnemyDeath(e));
+        EventBus.subscribe(EventBus.Event.ENEMY_MOSQUITO_ATTACK,
+            e -> playPitchedSFX(0.96f, 1.04f, 0.5f, "mosquito_attack"));
+        EventBus.subscribe(EventBus.Event.ENEMY_GROUND_STEP, AudioManager::playEnemyGroundStep);
+        EventBus.subscribe(EventBus.Event.ENEMY_CRYSTAL_LASER_CHARGE,
+            e -> playSFX("crystal_laser_prepare", 0.85f));
+        EventBus.subscribe(EventBus.Event.ENEMY_CRYSTAL_LASER_START,
+            e -> playChannelSFX("crystal_laser", 0.98f, 1.02f, 0.75f, "crystal_laser_loop"));
+        EventBus.subscribe(EventBus.Event.ENEMY_CRYSTAL_LASER_STOP,
+            e -> stopChannel("crystal_laser"));
+        EventBus.subscribe(EventBus.Event.PLAYER_SOUL_GAIN, e -> playRandomSFX("soul_1", "soul_2", "soul_3", "soul_4"));
 
     }
+    private static void playEnemyDeath(Object data) {
+        String type = data == null ? "" : data.toString().toLowerCase();
+        switch (type) {
+            case "crystalcrawler":
+            case "crystalguardian":
+                playRandomSFX("crystal_break_1", "crystal_break_2");
+                break;
+            default:
+                playSFX("enemy_death");
+                break;
+        }
+    }
+
+    private static void playEnemyGroundStep(Object data) {
+        String type = data == null ? "" : data.toString().toLowerCase();
+        if ("huskhornhead".equals(type)) {
+            playPitchedSFX(0.82f, 0.92f, 0.18f, "enemy_ground_step");
+        } else if ("crystalguardian".equals(type) || "crystalcrawler".equals(type)) {
+            playPitchedSFX(1.05f, 1.16f, 0.14f, "enemy_ground_step");
+        }
+    }
+
+    public static void stopEnemyChannels() {
+        stopChannel("crystal_laser");
+    }
+
     public static void subscribeToBossEvents() {
+        if (bossEventsSubscribed) return;
+        bossEventsSubscribed = true;
         EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_ATTACK_WINDUP,
             e -> playRandomSFX("fk_attack_1", "fk_attack_2", "fk_attack_3", "fk_attack_4", "fk_attack_5"));
         EventBus.subscribe(EventBus.Event.FALSE_KNIGHT_CHARGE_SWING, e -> playSFX("fk_swing"));
@@ -255,6 +296,13 @@ public class AudioManager {
 
     public static void playPitchedSFX(float minPitch, float maxPitch, float volumeScale, String name) {
         playSFXInternal(name, MathUtils.random(minPitch, maxPitch), volumeScale, null);
+    }
+
+    public static void playLayeredSFX(String... names) {
+        if (!sfxEnabled || names == null) return;
+        for (String name : names) {
+            playSFXInternal(name, 1.0f, 1.0f, null);
+        }
     }
 
     public static void playRandomSFX(String... names) {
@@ -467,6 +515,7 @@ public class AudioManager {
 
     public static void setSFXEnabled(boolean enabled) {
         sfxEnabled = enabled;
+        if (!enabled) stopEnemyChannels();
         save();
     }
 
@@ -489,6 +538,7 @@ public class AudioManager {
     }
 
     public static void dispose() {
+        stopEnemyChannels();
         sounds.values().forEach(Sound::dispose);
         musicMap.values().forEach(Music::dispose);
         sounds.clear();
@@ -497,5 +547,6 @@ public class AudioManager {
         currentMusic = null;
         currentMusicKey = "";
         clearFades();
+        bossEventsSubscribed = false;
     }
 }

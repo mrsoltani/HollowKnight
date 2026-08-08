@@ -1,5 +1,6 @@
 package com.Graphic.models.enemies;
 
+import com.Graphic.managers.EventBus;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -191,6 +192,7 @@ public class Mosquito extends BaseEnemy {
         }
         swoopDir.nor();
         changeState(EnemyState.ATTACK);
+        EventBus.emit(EventBus.Event.ENEMY_MOSQUITO_ATTACK, enemyTypeName());
     }
 
     @Override

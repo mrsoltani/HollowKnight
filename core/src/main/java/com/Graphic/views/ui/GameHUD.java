@@ -88,6 +88,16 @@ public class GameHUD {
         charmCutsceneTimer = 0f;
     }
 
+    public void resetEndScreen() {
+        showingEndScreen = false;
+        endScreenTimer = 0f;
+        endScreenBgAlpha = 0f;
+    }
+
+    public boolean isShowingEndScreen() {
+        return showingEndScreen;
+    }
+
     public void triggerEndScreen() {
         showingEndScreen = true;
         endScreenTimer = 0f;

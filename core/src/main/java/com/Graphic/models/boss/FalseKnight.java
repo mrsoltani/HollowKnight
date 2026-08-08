@@ -1,5 +1,6 @@
 package com.Graphic.models.boss;
 
+import com.Graphic.managers.CameraManager;
 import com.Graphic.managers.EventBus;
 import com.Graphic.models.SolidBlock;
 import com.badlogic.gdx.Gdx;
@@ -35,15 +36,6 @@ public class FalseKnight {
 
     private static final float DEFENSIVE_LEAP_DISTANCE = 250f;
 
-
-
-
-
-
-
-
-
-
     private static final float FPS_IDLE            = 1f / 8f;
     private static final float FPS_RUN              = 1f / 12f;
     private static final float FPS_ATTACK_ANTIC     = 1f / 14f;
@@ -56,37 +48,12 @@ public class FalseKnight {
     private static final float FPS_DEATH             = 1f / 10f;
 
 
-
-
-
-
     private static final float BODY_W = 160f;
     private static final float BODY_H = 220f;
 
-
-
-
-
-
-
     private static final float BODY_HITBOX_Y_OFFSET = 0f;
 
-
-
-
-
-
-
-
-
     private static final float SPRITE_DRAW_Y_OFFSET = -50f;
-
-
-
-
-
-
-
 
     private static final float MACE_W        = 200f;
     private static final float MACE_H        = 200f;
@@ -109,6 +76,7 @@ public class FalseKnight {
     private static final float CHARGE_H      = 420f;
     private static final float CHARGE_OFF_X  = -30f;
     private static final float CHARGE_OFF_Y  = -10f;
+    private static final float PHASE2_SPEED_MULT = 1.3f;
     private boolean hasLandedOnce = false;
     private final Array<Shockwave> shockwaves = new Array<>();
 
@@ -121,19 +89,6 @@ public class FalseKnight {
         STUN, STUN_RECOVER,
         DEAD
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private State   state     = State.IDLE;
@@ -151,12 +106,6 @@ public class FalseKnight {
 
     private Array<SolidBlock> solidBlocks = new Array<>();
     private SolidBlock currentGroundBlock = null;
-
-
-
-
-
-
 
     private Rectangle roomBounds = null;
 
@@ -231,6 +180,7 @@ public class FalseKnight {
         if (!stunTriggered && hp <= MAX_HP * STUN_AT_PCT) {
             stunTriggered = true;
             enterState(State.STUN);
+            EventBus.emit(EventBus.Event.FALSE_KNIGHT_CEILING_BREAK);
             EventBus.emit(EventBus.Event.FALSE_KNIGHT_STUN_ENTER);
             return;
         }
@@ -247,9 +197,18 @@ public class FalseKnight {
                 float targetX = playerBounds.x + playerBounds.width / 2f;
                 float myX     = x + spriteW / 2f;
                 float dir     = targetX > myX ? 1f : -1f;
-                x += dir * WALK_SPEED * delta;
-                x  = clampToRoom(clampToGroundPlatform(x));
-                if (Math.abs(targetX - myX) < 180f) enterState(State.ATTACK_ANTIC);
+                float speed   = isPhase2 ? WALK_SPEED * PHASE2_SPEED_MULT : WALK_SPEED;
+                float attemptedX = x + dir * speed * delta;
+                float resolvedX = clampToRoom(clampToGroundPlatform(attemptedX));
+                boolean reachedRoomBorder = reachedRoomBorder(attemptedX, resolvedX, dir);
+                x = resolvedX;
+
+                if (reachedRoomBorder) {
+                    enterState(State.ATTACK_ANTIC);
+                    EventBus.emit(EventBus.Event.FALSE_KNIGHT_ATTACK_WINDUP);
+                } else if (Math.abs(targetX - (x + spriteW / 2f)) < 180f) {
+                    enterState(State.ATTACK_ANTIC);
+                }
                 break;
             }
 
@@ -258,7 +217,10 @@ public class FalseKnight {
                 break;
 
             case ATTACK_ANTIC:
-                if (isFinished()) enterState(State.ATTACK);
+                if (isFinished()) {
+                    enterState(State.ATTACK);
+                    EventBus.emit(EventBus.Event.FALSE_KNIGHT_CHARGE_SWING);
+                }
                 break;
 
             case ATTACK:
@@ -279,7 +241,7 @@ public class FalseKnight {
                 break;
 
             case AIRBORNE:
-                x += (leapTargetX - (x + spriteW / 2f)) * 2.5f * delta;
+                x += (leapTargetX - (x + spriteW / 2f)) * (isPhase2 ? 2.5f * PHASE2_SPEED_MULT : 2.5f) * delta;
                 x  = clampToRoom(clampToGroundPlatform(x));
                 break;
 
@@ -288,7 +250,7 @@ public class FalseKnight {
                 break;
 
             case JUMP_ATTACK:
-                x += (leapTargetX - (x + spriteW / 2f)) * 2.5f * delta;
+                x += (leapTargetX - (x + spriteW / 2f)) * (isPhase2 ? 2.5f * PHASE2_SPEED_MULT : 2.5f) * delta;
                 x  = clampToRoom(clampToGroundPlatform(x));
                 break;
 
@@ -397,6 +359,16 @@ public class FalseKnight {
         return MathUtils.clamp(targetX, left, right);
     }
 
+    private boolean reachedRoomBorder(float attemptedX, float resolvedX, float direction) {
+        if (roomBounds == null) return false;
+        float left = roomBounds.x;
+        float right = roomBounds.x + roomBounds.width - spriteW;
+        if (right < left) return false;
+
+        if (direction < 0f) return attemptedX <= left && resolvedX <= left;
+        return attemptedX >= right && resolvedX >= right;
+    }
+
 
     private float clampCenterToRoom(float centerX) {
         if (roomBounds == null) return centerX;
@@ -454,7 +426,7 @@ public class FalseKnight {
                 facePlayer(playerBounds);
                 leapTargetX = clampCenterToRoom(clampCenterToGroundPlatform(
                     myCX + (predictedPlayerCX - myCX) * LEAP_DISTANCE_SCALE));
-                velY = JUMP_VELOCITY;
+                velY = isPhase2 ? JUMP_VELOCITY * PHASE2_SPEED_MULT : JUMP_VELOCITY;
                 onGround = false;
                 enterState(State.JUMP_ANTIC);
                 break;
@@ -463,7 +435,7 @@ public class FalseKnight {
                 float backDir = (playerCX > myCX) ? -1f : 1f;
                 leapTargetX = clampCenterToRoom(clampCenterToGroundPlatform(
                     myCX + backDir * DEFENSIVE_LEAP_DISTANCE));
-                velY = JUMP_VELOCITY * 0.8f;
+                velY = (isPhase2 ? JUMP_VELOCITY * PHASE2_SPEED_MULT : JUMP_VELOCITY) * 0.8f;
                 onGround = false;
                 enterState(State.JUMP_ANTIC);
                 break;
@@ -473,7 +445,7 @@ public class FalseKnight {
                 facePlayer(playerBounds);
                 leapTargetX = clampCenterToRoom(clampCenterToGroundPlatform(
                     myCX + (predictedPlayerCX - myCX) * LEAP_DISTANCE_SCALE));
-                velY = JUMP_VELOCITY * 1.2f;
+                velY = (isPhase2 ? JUMP_VELOCITY * PHASE2_SPEED_MULT : JUMP_VELOCITY) * 1.2f;
                 onGround = false;
                 enterState(State.JUMP_ATTACK);
                 EventBus.emit(EventBus.Event.FALSE_KNIGHT_JUMP_TAKEOFF);
@@ -580,6 +552,15 @@ public class FalseKnight {
 
     private void enterState(State next) {
         if (state == next) return;
+        if(state==State.ATTACK){
+            CameraManager.shake(15,0.2f);
+        }
+        else if(state==State.JUMP_ATTACK || state==State.JUMP_ATTACK_ANTIC){
+            CameraManager.shake(40,0.5f);
+        }
+        else{
+            CameraManager.shake(5,0.1f);
+        }
         state     = next;
         stateTime = 0f;
     }

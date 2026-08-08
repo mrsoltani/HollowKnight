@@ -11,9 +11,19 @@ audio/sfx/area/Dream Orb Pickup.mp3
 audio/sfx/area/Stalactite Break.mp3
 audio/sfx/area/Stalactite Death.mp3
 audio/sfx/area/Stalactite Impact.mp3
+audio/sfx/enemies/Col Flyer Death 01.mp3
+audio/sfx/enemies/Col Flyer Death 02.mp3
+audio/sfx/enemies/Crystal Break 1.mp3
+audio/sfx/enemies/Crystal Break 2.mp3
 audio/sfx/enemies/Enemy Damage Over Time.mp3
 audio/sfx/enemies/Enemy Damage.mp3
 audio/sfx/enemies/Enemy Death Sword.mp3
+audio/sfx/enemies/Grave Zombie Death 01.mp3
+audio/sfx/enemies/Grave Zombie Death 02.mp3
+audio/sfx/enemies/Grave Zombie Death 03.mp3
+audio/sfx/enemies/Grave Zombie Death 04.mp3
+audio/sfx/enemies/Mines Pink Laser Loop.mp3
+audio/sfx/enemies/Mines Pink Laser Prepare.mp3
 audio/sfx/enemies/crystal hunter/Crystal Flyer Shoot.mp3
 audio/sfx/false knight/False Knight Attack New 01.mp3
 audio/sfx/false knight/False Knight Attack New 02.mp3
@@ -135,6 +145,7 @@ enemies/CrystalCrawler/Death_Air.png
 enemies/CrystalCrawler/Death_Land.png
 enemies/CrystalCrawler/Turn.png
 enemies/CrystalCrawler/Walk.png
+enemies/Crystalized/ChargedOrbClean.png
 enemies/Crystalized/CrystalLaser.png
 enemies/Crystalized/Death_Air.png
 enemies/Crystalized/Death_Land.png
@@ -170,14 +181,45 @@ i18n/strings_fr.properties
 icons/logo.png
 libgdx.png
 maps.rar
+maps/CrystalPeak01.tmx
+maps/CrystalPeak02.tmx
+maps/CrystalPeak03.tmx
+maps/CrystalPeak04.tmx
+maps/CrystalPeak05.tmx
 maps/ForgottenCrossroads01.tmx
 maps/ForgottenCrossroads02.tmx
 maps/ForgottenCrossroads03.tmx
 maps/ForgottenCrossroads04.tmx
 maps/Glow.tsx
 maps/Holder.tsx
+maps/Mines_Layered_0068_a.tsx
+maps/Mines_Layered_0069_a.tsx
+maps/Mines_Layered_0075_a.tsx
+maps/Mines_Layered_0077_a.tsx
+maps/Mines_Layered_0082_a.tsx
+maps/Transition.tmx
+maps/brk_Crystal2.tsx
+maps/brk_Crystal3.tsx
+maps/conveyor_belt0000.tsx
+maps/conveyor_cog_010000.tsx
+maps/conveyor_cog_020000.tsx
+maps/crys_cave_small_BG.tsx
+maps/cryst_cave_0000_Layer-8.tsx
+maps/cryst_cave_0002_Layer-3.tsx
+maps/cryst_cave_0003_Layer-7.tsx
+maps/cryst_cave_0004_Layer-6.tsx
+maps/crystal peak/1821-1@2x.png
+maps/crystal peak/1829-1@2x.png
+maps/crystal peak/1831-1@2x.png
+maps/crystal peak/1833-1@2x.png
+maps/crystal peak/2189-0@2x.png
+maps/crystal peak/2189-1@2x.png
 maps/crystal peak/2189-2@2x.png
 maps/crystal peak/2189-2@2x.tsx
+maps/crystal peak/Cryst_Shaman_0000_crst_shaman_base.png
+maps/crystal peak/Cryst_Shaman_Ext_0000_4.png
+maps/crystal peak/Cryst_Shaman_Ext_0001_3.png
+maps/crystal peak/Cryst_Shaman_Ext_0003_1.png
 maps/crystal peak/CrystalPeak.tiled-project
 maps/crystal peak/CrystalPeak.tiled-session
 maps/crystal peak/Grimm_Main_tent_0005_7.png
@@ -188,12 +230,131 @@ maps/crystal peak/Grimm_tent_ext_0007_6.png
 maps/crystal peak/Grimm_tent_ext_0007_6.tsx
 maps/crystal peak/Hallownest_Gate_0010_10.png
 maps/crystal peak/Hallownest_Gate_0010_10.tsx
+maps/crystal peak/Hallownest_s Crown/mine_summit_statue.png
+maps/crystal peak/Hallownest_s Crown/summit__0000_arch2.png
+maps/crystal peak/Hallownest_s Crown/summit__0001_arch1.png
+maps/crystal peak/Hallownest_s Crown/summit__0002_lore_stone_03_shine.png
+maps/crystal peak/Hallownest_s Crown/summit__0003_lore_stone_02_shine.png
+maps/crystal peak/Hallownest_s Crown/summit__0004_lore_stone_01_shine.png
+maps/crystal peak/Hallownest_s Crown/summit__0005_lore_stone_03.png
+maps/crystal peak/Hallownest_s Crown/summit__0006_lore_stone_02.png
+maps/crystal peak/Hallownest_s Crown/summit__0007_lore_stone_01.png
+maps/crystal peak/Hallownest_s Crown/summit_crystals_0002_2.png
+maps/crystal peak/Hallownest_s Crown/summit_crystals_0003_1.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0000_9.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0001_8.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0002_7.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0003_6.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0004_5.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0005_4.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0006_3.png
+maps/crystal peak/Hallownest_s Crown/summit_plinth_0007_2.png
+maps/crystal peak/Hallownest_s Crown/summit_spikes_0000_4.png
+maps/crystal peak/Hallownest_s Crown/summit_spikes_0001_3.png
+maps/crystal peak/Hallownest_s Crown/summit_stones_right_0000_4.png
+maps/crystal peak/Hallownest_s Crown/summit_stones_right_0001_3.png
+maps/crystal peak/Hallownest_s Crown/summit_stones_right_0002_2.png
+maps/crystal peak/Hallownest_s Crown/summit_stones_right_0003_1.png
 maps/crystal peak/Main_tent_chain.png
 maps/crystal peak/Main_tent_chain.tsx
 maps/crystal peak/Map.tmx
+maps/crystal peak/Mines_20_extras_0000_2.png
+maps/crystal peak/Mines_20_extras_0001_1.png
+maps/crystal peak/Mines_20_extras_0002_3.png
+maps/crystal peak/Mines_20_extras_0003_4.png
+maps/crystal peak/Mines_20_extras_0004_5.png
+maps/crystal peak/Mines_Layered_0000_Layer-7.png
+maps/crystal peak/Mines_Layered_0001_Layer-8.png
+maps/crystal peak/Mines_Layered_0002_Layer-6.png
+maps/crystal peak/Mines_Layered_0003_a.png
+maps/crystal peak/Mines_Layered_0004_a.png
+maps/crystal peak/Mines_Layered_0005_a.png
+maps/crystal peak/Mines_Layered_0006_a.png
+maps/crystal peak/Mines_Layered_0007_a.png
+maps/crystal peak/Mines_Layered_0008_a.png
+maps/crystal peak/Mines_Layered_0009_a.png
+maps/crystal peak/Mines_Layered_0010_a.png
+maps/crystal peak/Mines_Layered_0011_a.png
+maps/crystal peak/Mines_Layered_0012_a.png
+maps/crystal peak/Mines_Layered_0013_a.png
+maps/crystal peak/Mines_Layered_0016_a.png
+maps/crystal peak/Mines_Layered_0017_a.png
+maps/crystal peak/Mines_Layered_0018_a.png
+maps/crystal peak/Mines_Layered_0019_a.png
+maps/crystal peak/Mines_Layered_0020_a.png
+maps/crystal peak/Mines_Layered_0020_a_small.png
+maps/crystal peak/Mines_Layered_0021_a.png
+maps/crystal peak/Mines_Layered_0022_a.png
+maps/crystal peak/Mines_Layered_0023_a.png
+maps/crystal peak/Mines_Layered_0024_a.png
+maps/crystal peak/Mines_Layered_0025_a.png
+maps/crystal peak/Mines_Layered_0026_a.png
+maps/crystal peak/Mines_Layered_0027_a.png
+maps/crystal peak/Mines_Layered_0028_a.png
+maps/crystal peak/Mines_Layered_0029_a.png
+maps/crystal peak/Mines_Layered_0030_a.png
+maps/crystal peak/Mines_Layered_0031_a.png
+maps/crystal peak/Mines_Layered_0032_a.png
+maps/crystal peak/Mines_Layered_0033_a.png
+maps/crystal peak/Mines_Layered_0034_a.png
+maps/crystal peak/Mines_Layered_0035_a.png
+maps/crystal peak/Mines_Layered_0036_a.png
+maps/crystal peak/Mines_Layered_0037_a.png
+maps/crystal peak/Mines_Layered_0038_a.png
+maps/crystal peak/Mines_Layered_0039_a.png
+maps/crystal peak/Mines_Layered_0040_a.png
+maps/crystal peak/Mines_Layered_0041_a.png
+maps/crystal peak/Mines_Layered_0042_a.png
+maps/crystal peak/Mines_Layered_0043_a.png
+maps/crystal peak/Mines_Layered_0044_a.png
+maps/crystal peak/Mines_Layered_0045_a.png
+maps/crystal peak/Mines_Layered_0046_a.png
+maps/crystal peak/Mines_Layered_0047_a.png
+maps/crystal peak/Mines_Layered_0048_a.png
+maps/crystal peak/Mines_Layered_0049_a.png
+maps/crystal peak/Mines_Layered_0050_a.png
+maps/crystal peak/Mines_Layered_0051_a.png
+maps/crystal peak/Mines_Layered_0052_a.png
+maps/crystal peak/Mines_Layered_0053_a.png
+maps/crystal peak/Mines_Layered_0054_c.png
+maps/crystal peak/Mines_Layered_0055_a.png
+maps/crystal peak/Mines_Layered_0056_a.png
+maps/crystal peak/Mines_Layered_0057_a.png
+maps/crystal peak/Mines_Layered_0058_a.png
+maps/crystal peak/Mines_Layered_0059_a.png
+maps/crystal peak/Mines_Layered_0064_a.png
+maps/crystal peak/Mines_Layered_0066_a.png
+maps/crystal peak/Mines_Layered_0067_a.png
+maps/crystal peak/Mines_Layered_0068_a.png
+maps/crystal peak/Mines_Layered_0069_a.png
+maps/crystal peak/Mines_Layered_0070_a.png
+maps/crystal peak/Mines_Layered_0072_a.png
+maps/crystal peak/Mines_Layered_0073_a.png
+maps/crystal peak/Mines_Layered_0075_a.png
+maps/crystal peak/Mines_Layered_0077_a.png
+maps/crystal peak/Mines_Layered_0079_a.png
+maps/crystal peak/Mines_Layered_0080_a copy.png
+maps/crystal peak/Mines_Layered_0080_a copy.tsx
 maps/crystal peak/Mines_Layered_0080_a.png
 maps/crystal peak/Mines_Layered_0080_a.tsx
+maps/crystal peak/Mines_Layered_0081_a.png
+maps/crystal peak/Mines_Layered_0082_a.png
+maps/crystal peak/Mines_Layered_0083_a.png
+maps/crystal peak/Mines_Layered_0084_b.png
+maps/crystal peak/Mines_Layered_0087_c.png
+maps/crystal peak/Mines_Layered_0088_c.png
+maps/crystal peak/Mines_Layered_0089_c.png
+maps/crystal peak/Mines_Layered_0090_a.png
 maps/crystal peak/Road.tsx
+maps/crystal peak/SpriteAtlasTexture-Break_Mines-512x1024-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Cryst_Shaman_front-2048x1024-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Crystal_Spikes (Group 0)-512x256-fmt4.png
+maps/crystal peak/SpriteAtlasTexture-Crystal_Spikes (Group 1)-1024x512-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-GG_mine-512x1024-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Mines_Core-512x1024-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Mines_entrance-1024x1024-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Mines_struts-1024x512-fmt12.png
+maps/crystal peak/SpriteAtlasTexture-Outlook-1024x1024-fmt12.png
 maps/crystal peak/amelitia_flowers_0001_7.png
 maps/crystal peak/amelitia_flowers_0001_7.tsx
 maps/crystal peak/atlas0 #26003.png
@@ -206,50 +367,232 @@ maps/crystal peak/black_grass40004.png
 maps/crystal peak/black_grass40004.tsx
 maps/crystal peak/brk_Crystal1.png
 maps/crystal peak/brk_Crystal1.tsx
+maps/crystal peak/brk_Crystal2.png
+maps/crystal peak/brk_Crystal3.png
+maps/crystal peak/brk_Crystal4.png
 maps/crystal peak/cabinet.tsx
+maps/crystal peak/conveyor_base_01.png
+maps/crystal peak/conveyor_base_02.png
+maps/crystal peak/conveyor_base_02_02.png
+maps/crystal peak/conveyor_base_03.png
 maps/crystal peak/conveyor_base_04.png
 maps/crystal peak/conveyor_base_04.tsx
+maps/crystal peak/conveyor_belt0000.png
+maps/crystal peak/conveyor_belt0001.png
+maps/crystal peak/conveyor_belt0002.png
+maps/crystal peak/conveyor_belt0003.png
+maps/crystal peak/conveyor_belt0004.png
+maps/crystal peak/conveyor_belt0005.png
+maps/crystal peak/conveyor_belt0006.png
+maps/crystal peak/conveyor_belt_simple0000.png
+maps/crystal peak/conveyor_belt_simple0001.png
+maps/crystal peak/conveyor_belt_simple0002.png
+maps/crystal peak/conveyor_belt_simple0003.png
+maps/crystal peak/conveyor_belt_simple0004.png
+maps/crystal peak/conveyor_belt_simple0005.png
+maps/crystal peak/conveyor_belt_simple0006.png
+maps/crystal peak/conveyor_cog_010000.png
+maps/crystal peak/conveyor_cog_010001.png
+maps/crystal peak/conveyor_cog_010002.png
+maps/crystal peak/conveyor_cog_010003.png
+maps/crystal peak/conveyor_cog_02.png
+maps/crystal peak/conveyor_cog_020000.png
+maps/crystal peak/conveyor_cog_020001.png
+maps/crystal peak/conveyor_cog_020002.png
+maps/crystal peak/conveyor_cog_020003.png
 maps/crystal peak/credits flash_round.png
 maps/crystal peak/credits flash_round.tsx
+maps/crystal peak/crys_cave_small_BG.png
+maps/crystal peak/cryst_cave_0000_Layer-8.png
+maps/crystal peak/cryst_cave_0001_Layer-5.png
+maps/crystal peak/cryst_cave_0002_Layer-3.png
+maps/crystal peak/cryst_cave_0002_Layer-3_v02.png
+maps/crystal peak/cryst_cave_0003_Layer-7.png
+maps/crystal peak/cryst_cave_0004_Layer-6.png
+maps/crystal peak/cryst_shaman_glow_door.png
+maps/crystal peak/crystal_barrel.png
+maps/crystal peak/crystal_barrel_02.png
+maps/crystal peak/crystal_barrel_03.png
+maps/crystal peak/crystal_shot.png
+maps/crystal peak/crystal_spike_fg_02.png
+maps/crystal peak/crystal_spike_shadow.png
+maps/crystal peak/crystal_spike_short.png
 maps/crystal peak/elev_chain.png
 maps/crystal peak/elev_chain.tsx
+maps/crystal peak/elev_mine_wood_back.png
+maps/crystal peak/far_bg_mines_plats_0000_5.png
+maps/crystal peak/far_bg_mines_plats_0001_4.png
+maps/crystal peak/far_bg_mines_plats_0002_3.png
+maps/crystal peak/far_bg_mines_plats_0003_2.png
+maps/crystal peak/far_bg_mines_plats_0003_2.tsx
+maps/crystal peak/far_bg_mines_plats_0004_1.png
 maps/crystal peak/fungd_floor_01.png
 maps/crystal peak/fungd_floor_01.tsx
 maps/crystal peak/game_over_flash_round.png
 maps/crystal peak/game_over_flash_round.tsx
+maps/crystal peak/gg_mines_bits_0000_3.png
+maps/crystal peak/gg_mines_bits_0001_2.png
+maps/crystal peak/gg_mines_bits_0002_1.png
 maps/crystal peak/glow_bug_01.png
 maps/crystal peak/glow_bug_01.tsx
+maps/crystal peak/golems_0000_ropes.png
+maps/crystal peak/golems_0001_hanging.png
+maps/crystal peak/golems_0002_Layer-12.png
+maps/crystal peak/golems_0003_lit.png
+maps/crystal peak/golems_0004_unlit.png
+maps/crystal peak/golems_0005_core_BG.png
+maps/crystal peak/golems_0006_BG_legs.png
 maps/crystal peak/hot_spring_layers_0080_01-copy-72.png
 maps/crystal peak/hot_spring_layers_0080_01-copy-72.tsx
 maps/crystal peak/jelly_light_particle.png
 maps/crystal peak/jelly_light_particle.tsx
+maps/crystal peak/king_shrine.png
+maps/crystal peak/king_shrine_broken.png
+maps/crystal peak/laer_bug_scenery_bit.png
 maps/crystal peak/lamp_cave_01_l.png
 maps/crystal peak/lamp_cave_01_l.tsx
 maps/crystal peak/lift_01_layered_0002_Layer-0.png
 maps/crystal peak/lift_01_layered_0002_Layer-0.tsx
+maps/crystal peak/mine_break_bridge_02_0000_mine_bridge_02.png
+maps/crystal peak/mine_break_bridge_02_0001_mine_bridge_01.png
 maps/crystal peak/mine_break_wall.png
+maps/crystal peak/mine_break_wall_02.png
 maps/crystal peak/mine_break_wall_03.png
 maps/crystal peak/mine_break_wall_03.tsx
+maps/crystal peak/mine_crystal_01.png
 maps/crystal peak/mine_crystal_04.png
 maps/crystal peak/mine_crystal_04.tsx
+maps/crystal peak/mine_crystal_06.png
 maps/crystal peak/mine_crystal_08.png
 maps/crystal peak/mine_crystal_08.tsx
+maps/crystal peak/mine_entrance_0011_22.png
+maps/crystal peak/mine_entrance_0012_21.png
+maps/crystal peak/mine_entrance_0014_19.png
+maps/crystal peak/mine_entrance_0015_18.png
+maps/crystal peak/mine_entrance_0016_17.png
+maps/crystal peak/mine_entrance_0017_16.png
+maps/crystal peak/mine_entrance_0018_15.png
+maps/crystal peak/mine_entrance_0019_14.png
+maps/crystal peak/mine_entrance_0020_13.png
+maps/crystal peak/mine_entrance_0021_12.png
+maps/crystal peak/mine_entrance_0026_07.png
+maps/crystal peak/mine_entrance_0030_03.png
+maps/crystal peak/mine_entrance_0031_02.png
+maps/crystal peak/mine_entrance_0032_01.png
 maps/crystal peak/mine_floor_01.png
 maps/crystal peak/mine_floor_01.tsx
+maps/crystal peak/mine_globe_01.png
+maps/crystal peak/mine_globe_01_base.png
 maps/crystal peak/mine_globe_02.png
 maps/crystal peak/mine_globe_02.tsx
+maps/crystal peak/mine_loose_stones.png
+maps/crystal peak/mine_platform.png
+maps/crystal peak/mine_platform_02.png
+maps/crystal peak/mine_rail_01.png
+maps/crystal peak/mine_rail_02.png
+maps/crystal peak/mine_rail_03.png
+maps/crystal peak/mine_rail_joint.png
+maps/crystal peak/mine_small_crystal_break_0008_c_break.png
+maps/crystal peak/mine_small_crystal_break_0009_c.png
+maps/crystal peak/mine_spike_02.png
+maps/crystal peak/mine_spike_02_bg.png
 maps/crystal peak/mine_spike_FG_02.png
 maps/crystal peak/mine_spike_FG_02.tsx
+maps/crystal peak/mine_spike_fg_clear.png
+maps/crystal peak/mine_strut_01 #32822.png
+maps/crystal peak/mine_strut_01 #80622.png
+maps/crystal peak/mine_strut_01.png
+maps/crystal peak/mine_strut_02 #32833.png
+maps/crystal peak/mine_strut_02 #32833.tsx
+maps/crystal peak/mine_strut_02 #80633.png
+maps/crystal peak/mine_strut_02.png
+maps/crystal peak/mine_strut_03 #32814.png
+maps/crystal peak/mine_strut_03 #80614.png
+maps/crystal peak/mine_strut_03.png
+maps/crystal peak/mine_strut_05 #12406.png
+maps/crystal peak/mine_strut_05 #61906.png
+maps/crystal peak/mine_strut_05.png
+maps/crystal peak/mine_strut_07_BG.png
+maps/crystal peak/mine_table_01.png
+maps/crystal peak/mine_table_02.png
+maps/crystal peak/mine_wall_01.png
+maps/crystal peak/mine_wall_01_r.png
+maps/crystal peak/mine_wall_02.png
+maps/crystal peak/mine_wall_02_r.png
+maps/crystal peak/mine_wall_03.png
+maps/crystal peak/mine_wall_03.tsx
+maps/crystal peak/mine_wall_03_r.png
+maps/crystal peak/mine_wood_back.png
+maps/crystal peak/miner_glow_bit.png
+maps/crystal peak/mines_BG_blur_02.png
+maps/crystal peak/mines_FG_beams.png
+maps/crystal peak/mines_additions_02_0000_a.png
+maps/crystal peak/mines_additions_02_0001_a.png
+maps/crystal peak/mines_additions_02_0002_a #22826.png
+maps/crystal peak/mines_additions_02_0002_a #71426.png
+maps/crystal peak/mines_additions_02_0002_a.png
+maps/crystal peak/mines_additions_02_0003_a #22950.png
+maps/crystal peak/mines_additions_02_0003_a #71550.png
+maps/crystal peak/mines_additions_02_0003_a.png
+maps/crystal peak/mines_additions_02_0004_a.png
+maps/crystal peak/mines_additions_02_0005_a.png
+maps/crystal peak/mines_additions_02_0006_a #12409.png
+maps/crystal peak/mines_additions_02_0006_a #61909.png
+maps/crystal peak/mines_additions_02_0006_a.png
+maps/crystal peak/mines_additions_02_0007_a.png
+maps/crystal peak/mines_additions_02_0009_a.png
+maps/crystal peak/mines_additions_02_0010_a.png
+maps/crystal peak/mines_additions_02_0011_a #12408.png
+maps/crystal peak/mines_additions_02_0011_a #61908.png
+maps/crystal peak/mines_additions_02_0011_a.png
+maps/crystal peak/mines_additions_03_0000_a.png
+maps/crystal peak/mines_additions_03_0001_a.png
+maps/crystal peak/mines_additions_03_0002_a.png
+maps/crystal peak/mines_additions_metal_wall_simple.png
+maps/crystal peak/mines_flip_platform_BG.png
+maps/crystal peak/mines_floor_rocks_0000_Layer-4.png
+maps/crystal peak/mines_floor_rocks_0001_Layer-2.png
+maps/crystal peak/mines_floor_rocks_0002_Layer-3.png
 maps/crystal peak/mines_floor_rocks_0003_Layer-1.png
 maps/crystal peak/mines_floor_rocks_0003_Layer-1.tsx
+maps/crystal peak/mines_metal_additions_0000_a.png
+maps/crystal peak/mines_metal_additions_0001_a.png
+maps/crystal peak/mines_metal_additions_0002_a.png
+maps/crystal peak/mines_metal_additions_0004_a.png
+maps/crystal peak/mines_metal_grate_01_0000_a.png
+maps/crystal peak/mines_metal_grate_01_0001_a.png
+maps/crystal peak/mines_metal_grate_02.png
+maps/crystal peak/mines_metal_thin_floors_0000_a.png
+maps/crystal peak/mines_metal_thin_floors_0001_a #3014.png
+maps/crystal peak/mines_metal_thin_floors_0001_a #3014.tsx
+maps/crystal peak/mines_metal_thin_floors_0001_a #7804.png
+maps/crystal peak/mines_metal_thin_floors_0001_a.png
+maps/crystal peak/mines_metal_thin_floors_0002_a #32824.png
+maps/crystal peak/mines_metal_thin_floors_0002_a #80624.png
+maps/crystal peak/mines_metal_thin_floors_0002_a.png
+maps/crystal peak/mines_metal_thin_floors_0003_a.png
+maps/crystal peak/mines_metal_thin_floors_0004_a #32832.png
+maps/crystal peak/mines_metal_thin_floors_0004_a #80632.png
+maps/crystal peak/mines_metal_thin_floors_0004_a.png
+maps/crystal peak/mines_quake_floor.png
+maps/crystal peak/mines_small_rock.png
+maps/crystal peak/mines_stomper_01.png
+maps/crystal peak/mines_stomper_02.png
+maps/crystal peak/mines_workshop_table.png
 maps/crystal peak/nailmaster_03_cloth #01904.png
 maps/crystal peak/nailmaster_03_cloth #01904.tsx
 maps/crystal peak/ruins_fancy_shelf_0000_2.png
 maps/crystal peak/ruins_fancy_shelf_0000_2.tsx
+maps/crystal peak/shaft_02.png
+maps/crystal peak/shaft_03.png
 maps/crystal peak/shelf_short.png
 maps/crystal peak/shelf_short.tsx
+maps/crystal peak/shelf_short_bits_0000_a.png
+maps/crystal peak/shelf_short_bits_0003_a.png
 maps/crystal peak/shelf_tall.png
 maps/crystal peak/shelf_tall.tsx
+maps/crystal peak/shelf_tall_bits_0003_a.png
+maps/crystal peak/shelf_tall_bits_0004_a.png
 maps/crystal peak/summit_spikes_0000_4.png
 maps/crystal peak/summit_spikes_0000_4.tsx
 maps/crystal peak/u_chart_0001_2_base.png
@@ -260,6 +603,17 @@ maps/crystal peak/wood_plank_01.png
 maps/crystal peak/wood_plank_01.tsx
 maps/dynamic/door.png
 maps/dynamic/falling_spike.png
+maps/mine_platform.tsx
+maps/mine_small_crystal_break_0009_c.tsx
+maps/mine_strut_05.tsx
+maps/mine_summit_statue.tsx
+maps/mine_wall_03.tsx
+maps/mine_wall_03_r.tsx
+maps/mines_additions_02_0000_a.tsx
+maps/mines_additions_02_0007_a.tsx
+maps/mines_additions_02_0010_a.tsx
+maps/mines_floor_rocks_0001_Layer-2.tsx
+maps/shelf_tall.tsx
 maps/textures/forgotten crossroads/ArchWay.tsx
 maps/textures/forgotten crossroads/Background Spikes.tsx
 maps/textures/forgotten crossroads/BigArchHalf.tsx

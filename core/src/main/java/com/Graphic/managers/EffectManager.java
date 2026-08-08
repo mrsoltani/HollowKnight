@@ -55,6 +55,7 @@ public class EffectManager {
 
 
         register(EventBus.Event.PLAYER_FIREBALL,     1f / 20f,  -120f,   -100f, true, "Blast");
+        register(EventBus.Event.PLAYER_DEATH,        1f / 18f,     0f,   -146f, false, "ShadowScream");
 
 
 
@@ -66,6 +67,7 @@ public class EffectManager {
         EventBus.subscribe(EventBus.Event.PLAYER_DOWN_SLASH,   data -> spawn(EventBus.Event.PLAYER_DOWN_SLASH, data));
 
         EventBus.subscribe(EventBus.Event.PLAYER_FIREBALL,     data -> spawn(EventBus.Event.PLAYER_FIREBALL, data));
+        EventBus.subscribe(EventBus.Event.PLAYER_DEATH,        data -> spawn(EventBus.Event.PLAYER_DEATH, data));
 
     }
 

@@ -105,6 +105,14 @@ public class GameScreen implements Screen {
     private static final float TRANSITION_SPEED = 2.5f;
     private GameMap            pendingTargetMap;
     private String             pendingSpawnName;
+
+    private enum DeathTransitionState { NONE, FADING_OUT, BLACK_HOLD, FADING_IN }
+    private DeathTransitionState deathTransitionState = DeathTransitionState.NONE;
+    private float deathTransitionAlpha = 0f;
+    private float deathBlackHoldTimer = 0f;
+    private static final float DEATH_FADE_OUT_DURATION = 0.65f;
+    private static final float DEATH_BLACK_HOLD_DURATION = 0.45f;
+    private static final float DEATH_FADE_IN_DURATION = 0.75f;
     private BreakableWallEntity breakableWall;
     private TiledMapTileLayer breakableWallLayer;
 
@@ -117,6 +125,21 @@ public class GameScreen implements Screen {
     private boolean bossActive = false;
     private Vector2 bossSpawnPoint;
     private Rectangle bossRoomBounds;
+
+    private Array<LaserHazard> lasers;
+
+    private static final Color BG_CROSSROADS   = new Color(0.1f, 0.1f, 0.3f, 1f);   // existing blue
+    private static final Color BG_CRYSTAL_PEAK = new Color(0.07f, 0.11f, 0.17f, 1.0f);// Rich Plum// Dark Violet-Magenta
+    private static final Color BG_TRANSITION   = new Color(
+        (BG_CROSSROADS.r + BG_CRYSTAL_PEAK.r) / 2f,
+        (BG_CROSSROADS.g + BG_CRYSTAL_PEAK.g) / 2f,
+        (BG_CROSSROADS.b + BG_CRYSTAL_PEAK.b) / 2f,
+        1f
+    );
+    private static final float BG_LERP_SPEED = 1.2f; // higher = snappier transition
+
+    private final Color currentBgColor = new Color(BG_CROSSROADS);
+    private final Color targetBgColor  = new Color(BG_CROSSROADS);
 
     @Override
     public void show() {
@@ -141,12 +164,13 @@ public class GameScreen implements Screen {
     }
 
     public void spawn(){
+        if (gameHUD != null) gameHUD.resetEndScreen();
         if(SaveManager.currentSave.lastArea==GameArea.CROSSROADS){
             loadRoom(GameMap.CROSSROADS_01, "SpawnPlayer");
         }
 
         if(SaveManager.currentSave.lastArea==GameArea.CRYSTAL_PEAK){
-            loadRoom(GameMap.CRYSTAL_PEAK, "SpawnPlayer");
+            loadRoom(GameMap.CRYSTAL_PEAK_01, "SpawnPlayer");
         }
         player.reset();
 
@@ -193,9 +217,11 @@ public class GameScreen implements Screen {
             ? new BossDoor(bossDoorTexture, doorData.openPos, doorData.closedPos)
             : null;
         teleportZones = helper.getTeleportZones();
+        AudioManager.stopEnemyChannels();
         splitLayersAroundMain("Main");
 
         initSpikes(helper);
+        initLasers(helper);
         initParticles();
         spawnPlayer(helper, spawnPointName);
         spawnEnemies(helper);
@@ -211,6 +237,7 @@ public class GameScreen implements Screen {
         Vector2 zoteSpawn = helper.findObjectPosition("logical", "SPAWN_ZOTE");
         if (zote != null) zote.dispose();
         zote = (zoteSpawn != null) ? new ZoteNPC(zoteSpawn) : null;
+        if (falseKnight != null) falseKnight.dispose();
         falseKnight = null;
         falseKnightDamageable = null;
         bossActive = false;
@@ -235,8 +262,16 @@ public class GameScreen implements Screen {
             SaveManager.currentSave.lastArea= GameArea.CRYSTAL_PEAK;
             EventBus.emit(EventBus.Event.ENTER_CRYSTAL_PEAK);
         }
+        Color newTarget = resolveBgColorForTag(targetMap.getAreaTag());
+        targetBgColor.set(newTarget);
     }
 
+    private Color resolveBgColorForTag(String areaTag) {
+        if ("CROSSROADS".equals(areaTag))   return BG_CROSSROADS;
+        if ("CRYSTAL_PEAK".equals(areaTag)) return BG_CRYSTAL_PEAK;
+        if ("TRANSITION".equals(areaTag))   return BG_TRANSITION;
+        return currentBgColor; // unknown tag: don't fight it, just hold current
+    }
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
@@ -244,28 +279,49 @@ public class GameScreen implements Screen {
             bossActive=false;
             triggerEndGame();
         }
+        if (gameHUD.isShowingEndScreen()) {
+            gameHUD.update(delta, player);
+            AudioManager.update(delta);
+            renderGameWorld();
+            gameHUD.render(batch, shapeRenderer, screenCam.combined);
+            return;
+        }
+
         handleTransitions(delta);
+        currentBgColor.lerp(targetBgColor, Math.min(1f, delta * BG_LERP_SPEED));
+        player.updateDeathSequence(delta);
+        updateDeathTransition(delta);
         handleInput();
 
         if (pause) { enterPause(); pause = false; return; }
 
-        if (transitionState != TransitionState.FADING_OUT) {
+        boolean deathFreeze = player.isDeathFreezeActive();
+        boolean respawnRevealLocked = deathTransitionState == DeathTransitionState.BLACK_HOLD
+            || deathTransitionState == DeathTransitionState.FADING_IN;
+        if (transitionState != TransitionState.FADING_OUT && !deathFreeze && !respawnRevealLocked) {
             SaveManager.currentSave.timePlayed += delta;
             Rectangle wallBounds = (breakableWall != null) ? breakableWall.getBounds() : null;
+            Rectangle doorBounds = (bossDoor != null && bossDoor.isCollisionActive())
+                ? bossDoor.getBounds()
+                : null;
 
-            player.update(delta, solidBlocks, wallBounds, enemies);
-            handleSpellCasts();
-            updateSpellTargets();
-            spellManager.update(delta, solidBlocks, spellTargets);
-            handleNailDamage();
+            player.update(delta, solidBlocks, wallBounds, doorBounds, enemies, mapPixelWidth, mapPixelHeight);
+            if (!player.isDead()) {
+                handleSpellCasts();
+                updateSpellTargets();
+                spellManager.update(delta, solidBlocks, spellTargets);
+                handleNailDamage();
 
-            updateFallingSpikes(delta);
-            updateBreakableWall(delta);
-            updateEnemies(delta);
+                updateFallingSpikes(delta);
+                updateBreakableWall(delta);
+                updateEnemies(delta);
+                updateLasers(delta);
 
-            if (charmEntity != null) charmEntity.update(delta, player, gameHUD);
-            if (zote != null) zote.update(delta, player, gameHUD, solidBlocks);
-            if (!bossActive && bossTrigger != null && bossSpawnPoint != null) {
+                if (charmEntity != null) charmEntity.update(delta, player, gameHUD);
+                if (zote != null) zote.update(delta, player, gameHUD, solidBlocks);
+            }
+            if (!player.isDead() && !player.isGodMode()
+                && !bossActive && bossTrigger != null && bossSpawnPoint != null) {
                 if (bossTrigger.overlaps(player.getBounds())) {
                     bossActive = true;
                     EventBus.emit(EventBus.Event.ENTER_BOSS);
@@ -290,18 +346,13 @@ public class GameScreen implements Screen {
                     EventBus.emit(EventBus.Event.ENTER_BOSS);
                 }
             }
-            checkRoomTransitions();
+            if (!player.isDead()) checkRoomTransitions();
         }
-        if (bossDoor != null) {
+        if (!deathFreeze && !respawnRevealLocked && bossDoor != null) {
             bossDoor.update(delta);
-
-            if ((bossDoor.isDropping() || bossDoor.isClosed()) && !player.isInvincible()) {
-                if (bossDoor.getBounds().overlaps(player.getBounds())) {
-                    player.takeDamage(1, true);
-                }
-            }
         }
-        if (falseKnight != null && !falseKnight.isDead()) {
+        if (!respawnRevealLocked && !player.isDead() && !player.isGodMode()
+            && falseKnight != null && !falseKnight.isDead()) {
             if (bossActive) {
                 falseKnight.update(delta, player.getBounds());
 
@@ -314,29 +365,38 @@ public class GameScreen implements Screen {
                         if (swBox.overlaps(player.getBounds())) { shockHit = true; break; }
                     }
                     if (bodyHit || weapHit || shockHit) {
-                        player.takeDamage(1, falseKnight.getBounds().x < player.getBounds().x);
+                        Rectangle fkBounds = falseKnight.getBounds();
+                        float fkCX = fkBounds.x + fkBounds.width / 2f;
+                        float plCX = player.getBounds().x + player.getBounds().width / 2f;
+                        player.takeDamage(1, fkCX > plCX, true);
                     }
                 }
             }
         }
-        bgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
-        fgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
+        if (!deathFreeze && !respawnRevealLocked) {
+            bgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
+            fgParticleSystem.update(delta, mapPixelWidth, mapPixelHeight);
+            EffectManager.update(delta);
+        }
         gameHUD.update(delta, player);
 
 
         updateCamera(delta);
 
-        EffectManager.update(delta);
         AudioManager.update(delta);
 
         renderGameWorld();
         gameHUD.render(batch, shapeRenderer, screenCam.combined);
         renderTransitionOverlay();
+        renderDeathOverlay();
 
         if (showHitboxes) drawHitboxes();
         drawSpellHitboxes();
 
-        if(player.isReadyToRespawn()) respawn();
+        if (player.isReadyForDeathFade() && deathTransitionState == DeathTransitionState.NONE) {
+            deathTransitionState = DeathTransitionState.FADING_OUT;
+            deathTransitionAlpha = 0f;
+        }
 
     }
 
@@ -344,6 +404,42 @@ public class GameScreen implements Screen {
         player.reset();
         loadRoom(GameMap.CROSSROADS_01, "SpawnPlayer");
         SaveManager.currentSave.deaths++;
+    }
+
+    private void updateDeathTransition(float delta) {
+        switch (deathTransitionState) {
+            case FADING_OUT:
+                deathTransitionAlpha = MathUtils.clamp(
+                    deathTransitionAlpha + delta / DEATH_FADE_OUT_DURATION,
+                    0f,
+                    1f
+                );
+                if (deathTransitionAlpha >= 1f) {
+                    respawn();
+                    deathBlackHoldTimer = 0f;
+                    deathTransitionState = DeathTransitionState.BLACK_HOLD;
+                }
+                break;
+            case BLACK_HOLD:
+                deathBlackHoldTimer += delta;
+                if (deathBlackHoldTimer >= DEATH_BLACK_HOLD_DURATION) {
+                    deathTransitionState = DeathTransitionState.FADING_IN;
+                }
+                break;
+            case FADING_IN:
+                deathTransitionAlpha = MathUtils.clamp(
+                    deathTransitionAlpha - delta / DEATH_FADE_IN_DURATION,
+                    0f,
+                    1f
+                );
+                if (deathTransitionAlpha <= 0f) {
+                    deathTransitionState = DeathTransitionState.NONE;
+                }
+                break;
+            case NONE:
+            default:
+                break;
+        }
     }
 
     private void handleSpellCasts() {
@@ -404,15 +500,13 @@ public class GameScreen implements Screen {
             boolean fromRight = playerCX > targetCX;
             target.takeDamage(CharmManager.getStats().nailDamage, fromRight);
             hitThisSwing.add(target);
-
-
             player.gainSoul();
             EventBus.emit(EventBus.Event.PLAYER_SOUL_GAIN);
         }
     }
 
     private void renderGameWorld() {
-        ScreenUtils.clear(0.1f, 0.1f, 0.3f, 1f);
+        ScreenUtils.clear(currentBgColor.r, currentBgColor.g, currentBgColor.b, 1f);
 
         mapRenderer.setView(camera);
         mapRenderer.render(backgroundLayers);
@@ -420,6 +514,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (FallingSpikeEntity spike : fallingSpikes) spike.render(batch);
+        for (LaserHazard laser : lasers) laser.render(batch);
         bgParticleSystem.draw(batch);
 
         if (zote != null) zote.render(batch);
@@ -485,6 +580,18 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void updateLasers(float delta) {
+        if (lasers == null || lasers.size == 0) return;
+        Rectangle pb = player.getBounds();
+        for (LaserHazard laser : lasers) {
+            laser.update(delta, solidBlocks);
+            if (player.isGodMode() || player.isInvincible()) continue;
+            if (laser.consumeDamageOnPlayer(pb)) {
+                player.takeDamage(1, true);
+            }
+        }
+    }
+
     private void updateBreakableWall(float delta) {
         if (breakableWall == null || breakableWall.isBroken()) return;
 
@@ -538,6 +645,14 @@ public class GameScreen implements Screen {
         if (fallingSpikeTexture == null) fallingSpikeTexture = new Texture(Gdx.files.internal("maps/dynamic/falling_spike.png"));
         fallingSpikes = new Array<>();
         for (FallingSpikeData data : helper.getFallingSpikes()) fallingSpikes.add(new FallingSpikeEntity(data, fallingSpikeTexture));
+    }
+
+    private void initLasers(TiledMapHelper helper) {
+        if (lasers == null) lasers = new Array<>();
+        lasers.clear();
+        for (LaserSpawnData data : helper.getLaserSpawns()) {
+            lasers.add(new LaserHazard(data.x, data.y, data.beamWidth, data.beamHeight));
+        }
     }
 
     private void initParticles() {
@@ -672,6 +787,18 @@ public class GameScreen implements Screen {
         gameHUD.triggerEndScreen();
     }
 
+    private void renderDeathOverlay() {
+        if (deathTransitionAlpha <= 0f) return;
+
+        Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+        shapeRenderer.setProjectionMatrix(screenCam.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0f, 0f, 0f, deathTransitionAlpha);
+        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.end();
+        Gdx.gl.glDisable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+    }
+
     private void renderTransitionOverlay() {
         if (transitionAlpha <= 0f) return;
         Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
@@ -703,10 +830,18 @@ public class GameScreen implements Screen {
             Rectangle sb = spike.getBounds();
             shapeRenderer.rect(sb.x, sb.y, sb.width, sb.height);
         }
+        if (lasers != null) {
+            for (LaserHazard laser : lasers) laser.drawDebugHitbox(shapeRenderer);
+        }
         if (breakableWall != null && breakableWall.isIntact()) {
             shapeRenderer.setColor(Color.CYAN);
             Rectangle wb = breakableWall.getBounds();
             shapeRenderer.rect(wb.x, wb.y, wb.width, wb.height);
+        }
+        if (bossDoor != null && bossDoor.isCollisionActive()) {
+            shapeRenderer.setColor(Color.GOLD);
+            Rectangle db = bossDoor.getBounds();
+            shapeRenderer.rect(db.x, db.y, db.width, db.height);
         }
         if (zote != null) {
             shapeRenderer.setColor(Color.CORAL);
@@ -787,6 +922,8 @@ public class GameScreen implements Screen {
         if (spellManager != null) spellManager.dispose();
         if (bossDoorTexture != null) bossDoorTexture.dispose();
         if (falseKnight != null) falseKnight.dispose();
+        if (lasers != null) lasers.clear();
+        LaserHazard.disposeSharedAssets();
 
         ScreenCapture.dispose();
     }

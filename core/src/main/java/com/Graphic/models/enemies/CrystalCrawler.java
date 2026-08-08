@@ -74,6 +74,11 @@ public class CrystalCrawler extends BaseEnemy {
     }
 
     @Override
+    protected float groundStepInterval() {
+        return state == EnemyState.WALK ? 0.38f : 0f;
+    }
+
+    @Override
     protected float getContactDamage() {
         return CONTACT_DAMAGE;
     }

@@ -1393,8 +1393,8 @@
   </object>
   <object id="222" x="3322" y="30" width="36" height="664">
    <properties>
-    <property name="location" value="CRYSTAL_PEAK"/>
-    <property name="targetSpawn" value="SpawnPlayer"/>
+    <property name="location" value="TRANSITION"/>
+    <property name="targetSpawn" value="SPAWN_WEST"/>
    </properties>
   </object>
   <object id="223" x="3580" y="1024" height="94"/>

@@ -1,5 +1,6 @@
 package com.Graphic.models.enemies;
 
+import com.Graphic.managers.EventBus;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -145,6 +146,11 @@ public class HuskHornhead extends BaseEnemy {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected float groundStepInterval() {
+        return state == EnemyState.WALK ? 0.48f : 0f;
     }
 
     @Override

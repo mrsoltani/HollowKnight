@@ -3,15 +3,18 @@ package com.Graphic.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class BossDoor {
 
     private static final float DROP_SPEED = 600f;
+    private static final float HITBOX_WIDTH_RATIO = 0.5f;
 
     private final Texture texture;
     private final Vector2 openPos;
     private final Vector2 closedPos;
+    private final Rectangle bounds = new Rectangle();
 
     private float   currentY;
     private boolean dropping = false;
@@ -25,6 +28,7 @@ public class BossDoor {
         this.openPos.y=1080-this.openPos.y;
         this.closedPos.y=1080- this.closedPos.y;
         this.currentY  = openPos.y;
+        updateBounds();
     }
 
     public void trigger() {
@@ -45,6 +49,7 @@ public class BossDoor {
             dropping = false;
             closed   = true;
         }
+        updateBounds();
     }
 
     public void render(SpriteBatch batch) {
@@ -55,14 +60,19 @@ public class BossDoor {
 
     public boolean isClosed()  { return closed;   }
     public boolean isDropping(){ return dropping; }
+    public boolean isCollisionActive() { return dropping || closed; }
 
-
-    public com.badlogic.gdx.math.Rectangle getBounds() {
-        return new com.badlogic.gdx.math.Rectangle(
-            openPos.x - texture.getWidth() / 2f,
+    private void updateBounds() {
+        float hitboxWidth = texture.getWidth() * HITBOX_WIDTH_RATIO;
+        bounds.set(
+            openPos.x - hitboxWidth / 2f,
             currentY,
-            texture.getWidth(),
+            hitboxWidth,
             texture.getHeight()
         );
+    }
+
+    public Rectangle getBounds() {
+        return bounds;
     }
 }

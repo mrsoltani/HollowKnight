@@ -279,4 +279,60 @@ public class TiledMapHelper {
             this.y = y;
         }
     }
+
+    /**
+     * Reads the "laserSpawn" object layer and returns one entry per authored
+     * spawn point. Each entry holds the spawn position in game-space
+     * coordinates (y-up), converted from Tiled's y-down coordinate system.
+     *
+     * Object types supported:
+     *   - PointMapObject (preferred): one laser per point, using its x/y.
+     *   - RectangleMapObject: a one-cell laser placed at the rectangle origin.
+     *   - Generic MapObject with explicit x/y properties.
+     *
+     * Optional properties per object:
+     *   - "width"  / "height" : beam rectangle size (defaults below).
+     *   - "name"             : free-form label; preserved in the data class.
+     */
+    public Array<LaserSpawnData> getLaserSpawns() {
+        Array<LaserSpawnData> result = new Array<>();
+        MapLayer layer = tiledMap.getLayers().get("laserSpawn");
+        if (layer == null) {
+            Gdx.app.log("TiledMapHelper", "No 'laserSpawn' layer found.");
+            return result;
+        }
+
+        final float defaultWidth  = 26f;
+        final float defaultHeight = 16f;
+
+        for (MapObject obj : layer.getObjects()) {
+            float x, y;
+            if (obj instanceof PointMapObject) {
+                Vector2 p = ((PointMapObject) obj).getPoint();
+                x = p.x; y = p.y;
+            } else if (obj instanceof RectangleMapObject) {
+                Rectangle r = ((RectangleMapObject) obj).getRectangle();
+                x = r.x; y = r.y;
+            } else {
+                Float px = obj.getProperties().get("x", Float.class);
+                Float py = obj.getProperties().get("y", Float.class);
+                if (px == null || py == null) continue;
+                x = px; y = py;
+            }
+
+            float w = defaultWidth;
+            float h = defaultHeight;
+            Float wProp = obj.getProperties().get("width", Float.class);
+            Float hProp = obj.getProperties().get("height", Float.class);
+            if (wProp != null) w = wProp;
+            if (hProp != null) h = hProp;
+
+            // No y-flip: the game uses Tiled's native y-down screen-pixel
+            // coords throughout (player collision, enemy positions, solid
+            // blocks are all read directly from Tiled), so the spawn sits at
+            // exactly the same physical location the designer clicked in Tiled.
+            result.add(new LaserSpawnData(x, y, w, h));
+        }
+        return result;
+    }
 }

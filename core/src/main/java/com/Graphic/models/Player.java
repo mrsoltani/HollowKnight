@@ -36,11 +36,17 @@ public class Player {
 
     private static final float GRAVITY        = -1500f;
     private static final float MAX_FALL_SPEED = -900f;
-    private static final float MOVE_SPEED     = 250f;
+    private static final float MOVE_SPEED     = 400f;
+    private static final float GOD_MODE_FLY_SPEED = 650f;
     private static final float JUMP_VELOCITY  = 950f;
 
     private static final float KNOCKBACK_X    = 300f;
     private static final float KNOCKBACK_Y    = 180f;
+
+    private static final float BOSS_KNOCKBACK_X = 900f;
+    private static final float BOSS_KNOCKBACK_Y = 450f;
+    private static final float KNOCKBACK_LOCK_DURATION = 0.25f;
+    private float knockbackLockTimer = 0f;
 
 
     private static final float WALL_SLIDE_SPEED      = -150f;
@@ -108,8 +114,12 @@ public class Player {
     boolean hitWall=false;
 
     private float deathTimer = 0f;
+    private boolean deathBurstTriggered = false;
 
-    private static final float DEATH_DELAY = 1.5f;
+    private static final float DEATH_FREEZE_DURATION = 0.12f;
+    private static final float DEATH_FADE_DELAY = 2.0f;
+    private static final float DEATH_SHAKE_INTENSITY = 24f;
+    private static final float DEATH_SHAKE_DURATION = 0.65f;
 
 
 
@@ -183,25 +193,33 @@ public class Player {
 
 
 
-    public void update(float delta, Array<SolidBlock> solidBlocks, Rectangle wallBound, Array<BaseEnemy> enemies) {
+    public void update(float delta, Array<SolidBlock> solidBlocks, Rectangle wallBound,
+                       Rectangle dynamicDoorBounds, Array<BaseEnemy> enemies,
+                       float mapWidth, float mapHeight) {
         this.transientBlocksRef = solidBlocks;
         this.breakableWallBounds=wallBound;
         stateTime += delta;
         tickInvincibility(delta);
+
+        if (godMode) {
+            updateGodModeFlight(delta, mapWidth, mapHeight);
+            return;
+        }
+
         if (isDead()) {
             velocity.set(0, 0);
-            deathTimer += delta;
         }
         if (attackCooldownTimer > 0) attackCooldownTimer -= delta;
         if (dashCooldownTimer > 0)   dashCooldownTimer -= delta;
         if (airStallTimer > 0)       airStallTimer -= delta;
         if (wallJumpGraceTimer > 0) wallJumpGraceTimer -= delta;
         if (recoilLockTimer > 0)    recoilLockTimer -= delta;
+        if (knockbackLockTimer > 0) knockbackLockTimer -= delta;
 
         updateWallClingState();
         handleInput();
         applyGravity(delta);
-        moveAndCollide(delta, solidBlocks);
+        moveAndCollide(delta, solidBlocks, dynamicDoorBounds);
 
 
         checkPogo(enemies);
@@ -209,8 +227,63 @@ public class Player {
         updateState(delta);
         updateFootsteps(delta);
     }
-    public boolean isReadyToRespawn() {
-        return isDead() && deathTimer >= DEATH_DELAY;
+
+    private void updateGodModeFlight(float delta, float mapWidth, float mapHeight) {
+        float moveX = 0f;
+        float moveY = 0f;
+
+        if (Gdx.input.isKeyPressed(InputManager.getKeyCode(GameAction.LEFT)))  moveX -= 1f;
+        if (Gdx.input.isKeyPressed(InputManager.getKeyCode(GameAction.RIGHT))) moveX += 1f;
+        if (Gdx.input.isKeyPressed(InputManager.getKeyCode(GameAction.DOWN)))  moveY -= 1f;
+        if (Gdx.input.isKeyPressed(InputManager.getKeyCode(GameAction.UP)))    moveY += 1f;
+
+        float lengthSquared = moveX * moveX + moveY * moveY;
+        if (lengthSquared > 0f) {
+            float speedScale = GOD_MODE_FLY_SPEED / (float) Math.sqrt(lengthSquared);
+            velocity.set(moveX * speedScale, moveY * speedScale);
+            if (moveX != 0f) facingRight = moveX > 0f;
+        } else {
+            velocity.setZero();
+        }
+
+        bounds.x += velocity.x * delta;
+        bounds.y += velocity.y * delta;
+        bounds.x = MathUtils.clamp(bounds.x, 0f, Math.max(0f, mapWidth - bounds.width));
+        bounds.y = MathUtils.clamp(bounds.y, 0f, Math.max(0f, mapHeight - bounds.height));
+
+        onGround = false;
+        wallClingActive = false;
+        doubleJumpAvailable = true;
+        airStallTimer = 0f;
+        knockbackLockTimer = 0f;
+
+        PlayerState desiredState = lengthSquared == 0f ? PlayerState.IDLE : PlayerState.AIRBORNE;
+        if (state != desiredState) setState(desiredState);
+    }
+
+    public void updateDeathSequence(float delta) {
+        if (!isDead()) return;
+
+        velocity.set(0, 0);
+        deathTimer += delta;
+
+        if (!deathBurstTriggered && deathTimer >= DEATH_FREEZE_DURATION) {
+            deathBurstTriggered = true;
+            CameraManager.shake(DEATH_SHAKE_INTENSITY, DEATH_SHAKE_DURATION);
+            EventBus.emit(EventBus.Event.PLAYER_DEATH, new EffectSpawnData(
+                bounds.x + bounds.width / 2f,
+                bounds.y + bounds.height / 2f,
+                facingRight
+            ));
+        }
+    }
+
+    public boolean isDeathFreezeActive() {
+        return isDead() && deathTimer < DEATH_FREEZE_DURATION;
+    }
+
+    public boolean isReadyForDeathFade() {
+        return isDead() && deathTimer >= DEATH_FADE_DELAY;
     }
 
     private void checkPogo(Array<BaseEnemy> enemies) {
@@ -413,7 +486,7 @@ public class Player {
         }
 
 
-        if (wallJumpLockTimer <= 0 && recoilLockTimer <= 0) {
+        if (wallJumpLockTimer <= 0 && recoilLockTimer <= 0 && knockbackLockTimer <= 0) {
             if (rightHeld) {
                 velocity.x  = MOVE_SPEED;
                 facingRight = true;
@@ -529,13 +602,15 @@ public class Player {
         if (velocity.y < minSpeed) velocity.y = minSpeed;
     }
 
-    private void moveAndCollide(float delta, Array<SolidBlock> solidBlocks) {
+    private void moveAndCollide(float delta, Array<SolidBlock> solidBlocks, Rectangle dynamicDoorBounds) {
+        float previousX = bounds.x;
         bounds.x += velocity.x * delta;
         for (SolidBlock b : solidBlocks) {
             if (b.isDeadly || !bounds.overlaps(b.bounds)) continue;
             bounds.x = velocity.x > 0 ? b.bounds.x - bounds.width : b.bounds.x + b.bounds.width;
             velocity.x = 0;
         }
+        resolveHorizontalDynamicCollision(dynamicDoorBounds, previousX);
 
         bounds.y += velocity.y * delta;
         onGround = false;
@@ -573,16 +648,35 @@ public class Player {
         }
     }
 
-    private void handleDeadlyBlockRespawn() {
-        takeDamage(1,false);
+    private void resolveHorizontalDynamicCollision(Rectangle obstacle, float previousX) {
+        if (obstacle == null || !bounds.overlaps(obstacle)) return;
 
-        if (health >= 0) {
-            bounds.setPosition(lastSafePosition.x, lastSafePosition.y);
-            invincible      = true;
-            invincibleTimer = INVINCIBLE_DURATION;
-            setState(PlayerState.IDLE_HURT);
-            EventBus.emit(EventBus.Event.PLAYER_DAMAGED);
+        float previousRight = previousX + bounds.width;
+        float obstacleRight = obstacle.x + obstacle.width;
+        if (previousRight <= obstacle.x) {
+            bounds.x = obstacle.x - bounds.width;
+        } else if (previousX >= obstacleRight) {
+            bounds.x = obstacleRight;
+        } else {
+            float pushLeft = bounds.x + bounds.width - obstacle.x;
+            float pushRight = obstacleRight - bounds.x;
+            bounds.x += pushLeft <= pushRight ? -pushLeft : pushRight;
         }
+        velocity.x = 0f;
+    }
+
+    private void handleDeadlyBlockRespawn() {
+        takeDamage(1, false);
+
+        if (isDead() || godMode) {
+            velocity.setZero();
+            return;
+        }
+
+        bounds.setPosition(lastSafePosition.x, lastSafePosition.y);
+        invincible = true;
+        invincibleTimer = INVINCIBLE_DURATION;
+        velocity.setZero();
     }
 
     private void updateState(float delta) {
@@ -689,19 +783,28 @@ public class Player {
     }
 
     public void takeDamage(int amount, boolean fromRight) {
+        takeDamage(amount, fromRight, false);
+    }
+
+    public void takeDamage(int amount, boolean fromRight, boolean heavyKnockback) {
         if (invincible|| godMode || state == PlayerState.DEAD||state == PlayerState.SHADOW_DASH) return;
         CameraManager.shake(10f, 0.25f);
         health = Math.max(0, health - amount);
         invincible      = true;
         invincibleTimer = INVINCIBLE_DURATION;
 
-        velocity.x = fromRight ? -KNOCKBACK_X : KNOCKBACK_X;
-        velocity.y = KNOCKBACK_Y;
+        float kbX = heavyKnockback ? BOSS_KNOCKBACK_X : KNOCKBACK_X;
+        float kbY = heavyKnockback ? BOSS_KNOCKBACK_Y : KNOCKBACK_Y;
+        velocity.x = fromRight ? -kbX : kbX;
+        velocity.y = kbY;
         onGround   = false;
+        knockbackLockTimer = KNOCKBACK_LOCK_DURATION;
+        airStallTimer = 0f;
 
         if (health <= 0) {
+            deathTimer = 0f;
+            deathBurstTriggered = false;
             setState(PlayerState.DEAD);
-            EventBus.emit(EventBus.Event.PLAYER_DEATH);
         } else {
             setState(PlayerState.IDLE_HURT);
             EventBus.emit(EventBus.Event.PLAYER_DAMAGED);
@@ -735,6 +838,7 @@ public class Player {
         velocity.set(0, 0);
         setState(PlayerState.IDLE);
         deathTimer = 0f;
+        deathBurstTriggered = false;
     }
 
     private boolean isFinished() {
@@ -860,8 +964,17 @@ public class Player {
     public boolean     isInvincible() { return invincible; }
     public boolean     isFacingRight(){ return facingRight; }
     public void toggleGodMode(){
-        this.godMode=!this.godMode;
+        if (isDead()) return;
+
+        godMode = !godMode;
+        velocity.setZero();
+        invincible = false;
+        invincibleTimer = 0f;
+        wallClingActive = false;
+        onGround = false;
+        setState(PlayerState.IDLE);
     }
+    public boolean isGodMode() { return godMode; }
     public boolean isShadowDashing() {
         return state == PlayerState.SHADOW_DASH;
     }
