@@ -3,6 +3,7 @@ package com.Graphic.models.enemies;
 import com.Graphic.managers.EventBus;
 import com.Graphic.managers.SaveManager;
 import com.Graphic.models.spells.Damageable;
+import com.Graphic.utils.DamageFlash;
 import com.Graphic.utils.EffectSpawnData;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -56,6 +57,10 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
     private float hitInvulnTimer = 0f;
 
 
+    /** Seconds of red hit-flash left. Mirrors DamageFlash.DURATION. */
+    protected float hitFlashTimer = 0f;
+
+
 
 
     private static final float KNOCKBACK_X    = 1000f;
@@ -104,6 +109,8 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
     public final void update(float delta, Rectangle target, Array<Rectangle> platforms) {
         anim.update(delta);
         if (hitInvulnTimer > 0f) hitInvulnTimer -= delta;
+        // Ticked before the dying branch so the killing blow still flashes on the corpse.
+        if (hitFlashTimer  > 0f) hitFlashTimer  -= delta;
 
         if (isDying()) {
 
@@ -204,6 +211,7 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
         if (hitInvulnTimer > 0f) return;
         health -= amount;
         hitInvulnTimer = HIT_INVULN;
+        hitFlashTimer  = DamageFlash.DURATION;
 
 
 
@@ -397,7 +405,7 @@ public abstract class BaseEnemy implements EnemyAI, Damageable {
 
         float drawX = bounds.x + bounds.width / 2f - frameWidth / 2f + spriteOffsetX;
         float drawY = bounds.y + spriteOffsetY;
-        batch.draw(frame, drawX, drawY, frameWidth, frameHeight);
+        DamageFlash.draw(batch, frame, drawX, drawY, frameWidth, frameHeight, hitFlashTimer);
     }
 
 

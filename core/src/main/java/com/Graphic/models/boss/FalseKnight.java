@@ -3,6 +3,7 @@ package com.Graphic.models.boss;
 import com.Graphic.managers.CameraManager;
 import com.Graphic.managers.EventBus;
 import com.Graphic.models.SolidBlock;
+import com.Graphic.utils.DamageFlash;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -104,6 +105,9 @@ public class FalseKnight {
     private int hp = MAX_HP;
     private float leapTargetX = 0f;
 
+    /** Seconds of red hit-flash left. Mirrors DamageFlash.DURATION. */
+    private float hitFlashTimer = 0f;
+
     private Array<SolidBlock> solidBlocks = new Array<>();
     private SolidBlock currentGroundBlock = null;
 
@@ -174,6 +178,9 @@ public class FalseKnight {
     }
 
     public void update(float delta, Rectangle playerBounds) {
+        // Ticked first: the stun transition below returns early, and the flash must
+        // still drain on that frame.
+        if (hitFlashTimer > 0f) hitFlashTimer -= delta;
         stateTime += delta;
         trackPlayerVelocity(delta, playerBounds);
 
@@ -456,6 +463,7 @@ public class FalseKnight {
     public void takeDamage(int amount) {
         if (state == State.DEAD || state == State.STUN) return;
         hp = Math.max(0, hp - amount);
+        hitFlashTimer = DamageFlash.DURATION;
         EventBus.emit(isPhase2 ? EventBus.Event.FALSE_KNIGHT_HIT_PHASE2 : EventBus.Event.FALSE_KNIGHT_HIT);
         if (hp <= 0) {
             enterState(State.DEAD);
@@ -519,8 +527,8 @@ public class FalseKnight {
         float h = spriteH * phase2Scale;
         float drawY = y + SPRITE_DRAW_Y_OFFSET;
 
-        if (!facingRight) batch.draw(currentFrame, x, drawY, w, h);
-        else               batch.draw(currentFrame, x + w, drawY, -w, h);
+        if (!facingRight) DamageFlash.draw(batch, currentFrame, x,      drawY,  w, h, hitFlashTimer);
+        else              DamageFlash.draw(batch, currentFrame, x + w,  drawY, -w, h, hitFlashTimer);
         for (Shockwave sw : shockwaves) sw.render(batch);
 
     }

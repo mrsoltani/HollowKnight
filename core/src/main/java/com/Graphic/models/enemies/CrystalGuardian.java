@@ -1,6 +1,7 @@
 package com.Graphic.models.enemies;
 
 import com.Graphic.managers.EventBus;
+import com.Graphic.utils.DamageFlash;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -447,7 +448,7 @@ public class CrystalGuardian extends BaseEnemy {
             if (poseFrame.isFlipX() != shouldFlip) poseFrame.flip(true, false);
             float poseX = bounds.x + bounds.width / 2f - frameWidth / 2f + spriteOffsetX;
             float poseY = bounds.y + spriteOffsetY;
-            batch.draw(poseFrame, poseX, poseY, frameWidth, frameHeight);
+            DamageFlash.draw(batch, poseFrame, poseX, poseY, frameWidth, frameHeight, hitFlashTimer);
         } else {
             super.render(batch);
         }
