@@ -78,10 +78,10 @@ audio/sfx/player/Soul Pickup 2.mp3
 audio/sfx/player/Soul Pickup 3.mp3
 audio/sfx/player/Soul Pickup 4.mp3
 audio/sfx/player/Sword Hit Reject.mp3
-audio/sfx/player/Sword Hit Window 1.mp3
-audio/sfx/player/Sword Hit Window 2.mp3
-audio/sfx/player/Sword Hit Window 3.mp3
-audio/sfx/player/Sword Hit Window 4.mp3
+audio/sfx/player/sword hit window 1.mp3
+audio/sfx/player/sword hit window 2.mp3
+audio/sfx/player/sword hit window 3.mp3
+audio/sfx/player/sword hit window 4.mp3
 audio/sfx/ui/Ui Button Confirm.mp3
 audio/sfx/ui/Ui Change Selection.mp3
 audio/sfx/ui/Ui Option Click.mp3
@@ -916,7 +916,7 @@ ui/menu/Green Path Background.png
 ui/menu/Logo.png
 ui/menu/Pointer.png
 ui/menu/Title Bottom.png
-ui/menu/Void Heart BackGround.png
+ui/menu/Void Heart Background.png
 ui/soul/FullSoul.png
 ui/soul/SoulContainer.png
 ui/soul/SoulOrbFull.png

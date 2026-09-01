@@ -2,7 +2,6 @@
 *.class
 *.bluej
 *.ctxt
-*.jar
 *.war
 *.nar
 *.ear
@@ -23,3 +22,5 @@ lwjgl3/build/
 .project
 .classpath
 .settings/
+.workbuddy-aigame.jar
+game.jar

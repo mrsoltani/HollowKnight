@@ -1,4 +1,3 @@
-
 buildscript {
   repositories {
     gradlePluginPortal()
@@ -11,14 +10,18 @@ buildscript {
   }
 }
 plugins {
-  id "application"
+  id 'application'
+  id 'java'
+  // Shadow plugin is incompatible with Gradle 9.5.1 – keep commented out
+  // id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 apply plugin: 'io.github.fourlastor.construo'
 
-
 import io.github.fourlastor.construo.Target
 
+// ===== USE ROOT PROJECT'S assets FOLDER =====
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
+
 application.mainClass = 'com.Graphic.lwjgl3.Lwjgl3Launcher'
 application.applicationName = appName
 eclipse.project.name = appName + '-lwjgl3'
@@ -40,7 +43,6 @@ dependencies {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
       implementation "io.github.berstanio:gdx-svmhelper-extension-box2d:$graalHelperVersion"
       implementation "io.github.berstanio:gdx-svmhelper-extension-freetype:$graalHelperVersion"
-
   }
   // Forces LWJGL3 to use at least $lwjgl3Version, currently 3.4.1, to avoid problems on Java 25 and up.
   constraints{
@@ -57,38 +59,36 @@ def os = System.properties['os.name'].toLowerCase(Locale.ROOT)
 
 run {
   workingDir = rootProject.file('assets').path
-// You can uncomment the next line if your IDE claims a build failure even when the app closed properly.
   //setIgnoreExitValue(true)
   jvmArgs += "--enable-native-access=ALL-UNNAMED"
   if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
 }
 
+// ===== MAIN JAR – COPY FROM ROOT assets =====
 jar {
-// sets the name of the .jar file this produces to the name of the game or app, with the version after.
   archiveFileName.set("${appName}-${projectVersion}.jar")
-// the duplicatesStrategy matters starting in Gradle 7.0; this setting works.
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
   dependsOn configurations.runtimeClasspath
   from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-// these "exclude" lines remove some unnecessary duplicate files in the output JAR.
+
+  // ===== COPY FROM ROOT PROJECT'S assets =====
+  from rootProject.fileTree('assets') {
+    into '/'   // All files go to the JAR root
+  }
+
   exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
   dependencies {
     exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
   }
-// setting the manifest makes the JAR runnable.
-// enabling native access helps avoid a warning when Java 24 or later runs the JAR.
-// setting Multi-Release to true allows LWJGL3 to use different classes on recent Java versions.
   manifest {
     attributes 'Main-Class': application.mainClass, 'Enable-Native-Access': 'ALL-UNNAMED', 'Multi-Release': 'true'
   }
-// this last step may help on some OSes that need extra instruction to make runnable JARs.
   doLast {
     file(archiveFile).setExecutable(true, false)
   }
 }
 
-// Builds a JAR that only includes the files needed to run on macOS, not Windows or Linux.
-// The file size for a Mac-only JAR is about 7MB smaller than a cross-platform JAR.
+// Mac-only JAR
 tasks.register("jarMac") {
   dependsOn("jar")
   group("build")
@@ -101,8 +101,7 @@ tasks.register("jarMac") {
   }
 }
 
-// Builds a JAR that only includes the files needed to run on Linux, not Windows or macOS.
-// The file size for a Linux-only JAR is about 5MB smaller than a cross-platform JAR.
+// Linux-only JAR
 tasks.register("jarLinux") {
   dependsOn("jar")
   group("build")
@@ -115,8 +114,7 @@ tasks.register("jarLinux") {
   }
 }
 
-// Builds a JAR that only includes the files needed to run on Windows, not Linux or macOS.
-// The file size for a Windows-only JAR is about 6MB smaller than a cross-platform JAR.
+// Windows-only JAR
 tasks.register("jarWin") {
   dependsOn("jar")
   group("build")
@@ -130,13 +128,10 @@ tasks.register("jarWin") {
 }
 
 construo {
-  // name of the executable
   name.set(appName)
-  // human-readable name, used for example in the `.app` name for macOS
   humanName.set(appName)
   jlink {
     guessModulesFromJar.set(false)
-    // You may need to add more modules, as needed.
     modules.addAll("java.base", "java.management", "java.desktop", "jdk.unsupported")
   }
 
@@ -144,38 +139,46 @@ construo {
     register("linuxX64", Target.Linux) {
       architecture.set(Target.Architecture.X86_64)
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_linux_hotspot_21.0.10_7.tar.gz")
-      // Linux does not currently have a way to set the icon on the executable
     }
     register("macM1", Target.MacOs) {
       architecture.set(Target.Architecture.AARCH64)
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.10_7.tar.gz")
-      // macOS needs an identifier
       identifier.set("com.Graphic." + appName)
-      // Optional: icon for macOS, as an ICNS file
       macIcon.set(project.file("icons/logo.icns"))
     }
     register("macX64", Target.MacOs) {
       architecture.set(Target.Architecture.X86_64)
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_mac_hotspot_21.0.10_7.tar.gz")
-      // macOS needs an identifier
       identifier.set("com.Graphic." + appName)
-      // Optional: icon for macOS, as an ICNS file
       macIcon.set(project.file("icons/logo.icns"))
     }
     register("winX64", Target.Windows) {
       architecture.set(Target.Architecture.X86_64)
-      // Optional: icon for Windows, as a PNG
       icon.set(project.file("icons/logo.png"))
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_windows_hotspot_21.0.10_7.zip")
-      // Uncomment the next line to show a console when the game runs, to print messages.
       //useConsole.set(true)
     }
   }
 }
 
-// Equivalent to the jar task; here for compatibility with gdx-setup.
-tasks.register('dist') {
-  dependsOn 'jar'
+// ===== DIST TASK – ALSO USE ROOT assets =====
+task dist(type: Jar) {
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    from rootProject.fileTree('assets') {
+        into '/'
+    }
+
+    archiveFileName = 'AP-Graphic-Project-Fat.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes 'Main-Class': 'com.Graphic.lwjgl3.Lwjgl3Launcher'
+    }
 }
 
 distributions {
@@ -195,14 +198,6 @@ distributions {
 startScripts.dependsOn(':lwjgl3:jar')
 startScripts.classpath = project.tasks.jar.outputs.files
 
-// Helps if debugging on Linux with an Nvidia GPU.
-// This means StartupHelper won't try to restart the JVM, which can prevent debugging.
-// This only applies to Gradle tasks, not main methods debugged when launching a main() method directly.
-// As a more general solution, set the environment variable __GL_THREADED_OPTIMIZATIONS to 0 globally, on Linux
-// machines with Nvidia GPUs where you need to debug LWJGL3 apps and games.
-// You can also set __GL_THREADED_OPTIMIZATIONS to 0 in run configurations, which you would need per main() method.
-// StartupHelper will still restart the JVM to set this environment variable when run as a distributable JAR, which is
-// a good thing for end users. They won't need to ever set the debug-specific environment variable.
 tasks.withType(JavaExec.class).configureEach {
   environment("__GL_THREADED_OPTIMIZATIONS", 0)
 }

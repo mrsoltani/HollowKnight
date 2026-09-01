@@ -6,7 +6,7 @@ public class PlayerStats {
     public int   soulPerHit          = 11;
 
 
-    public int   nailDamage          = 10;
+    public int   nailDamage          = 5;
     public float attackCooldown      = 0.5f;
 
 
@@ -28,7 +28,7 @@ public class PlayerStats {
 
     public void reset() {
         soulPerHit             = 11;
-        nailDamage             = 100;
+        nailDamage             = 5;
         attackCooldown         = 0.5f;
         dashCooldown           =0.4f;
         dashDuration           = 0.4f;

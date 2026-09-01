@@ -11,7 +11,10 @@ buildscript {
 
   }
 }
-
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'   // <-- CHANGE THIS LINE
+}
 allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
