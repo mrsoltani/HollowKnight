@@ -27,13 +27,17 @@ public class GameHUD {
     private boolean showingCharmCutscene = false;
     private float charmCutsceneAlpha = 0f;
     private float charmCutsceneTimer = 0f;
-    private static final float FLASH_HOLD_DURATION = 1.5f;
+    private static final float FLASH_HOLD_DURATION =5f;
     private static final float FADE_OUT_SPEED = 0.5f;
 
     private boolean showingEndScreen = false;
     private float endScreenTimer = 0f;
     private float endScreenBgAlpha = 0f;
     private static final float END_SCREEN_FADE_SPEED = 0.5f;
+
+    private String cutsceneQuoteText = "no cost too great";
+    private String cutsceneSubtitleText = null; // null = no subtitle line (matches original hidden-charm cutscene)
+
 
     public GameHUD(int playerMaxHealth) {
         dialogueBox = new DialogueBox(new Texture(Gdx.files.internal("ui/menu/Title Bottom.png")));
@@ -83,9 +87,18 @@ public class GameHUD {
     }
 
     public void triggerCharmCutscene() {
+        triggerCharmCutscene("no cost too great", null);
+    }
+
+    public void triggerCharmUnlockCutscene(String quote, String charmName) {
+        triggerCharmCutscene(quote, charmName + " unlocked");
+    }
+    private void triggerCharmCutscene(String quote, String subtitle) {
         showingCharmCutscene = true;
         charmCutsceneAlpha = 1f;
         charmCutsceneTimer = 0f;
+        cutsceneQuoteText = quote;
+        cutsceneSubtitleText = subtitle;
     }
 
     public void resetEndScreen() {
@@ -157,15 +170,26 @@ public class GameHUD {
 
         batch.begin();
         BitmapFont titleFont = FontManager.getTitle();
-        String text = "no cost too great";
-        GlyphLayout layout = new GlyphLayout(titleFont, text);
+        BitmapFont bodyFont = FontManager.getBody();
 
+        GlyphLayout layout = new GlyphLayout(titleFont, cutsceneQuoteText);
         float textX = (Gdx.graphics.getWidth() - layout.width) / 2f;
         float textY = (Gdx.graphics.getHeight() + layout.height) / 2f;
 
         titleFont.setColor(0f, 0f, 0f, charmCutsceneAlpha);
-        titleFont.draw(batch, text, textX, textY);
+        titleFont.draw(batch, cutsceneQuoteText, textX, textY);
         titleFont.setColor(Color.WHITE);
+
+        if (cutsceneSubtitleText != null) {
+            GlyphLayout subLayout = new GlyphLayout(bodyFont, cutsceneSubtitleText);
+            float subX = (Gdx.graphics.getWidth() - subLayout.width) / 2f;
+            float subY = textY - layout.height - 30f; // sits just under the quote
+
+            bodyFont.setColor(0.15f, 0.15f, 0.15f, charmCutsceneAlpha);
+            bodyFont.draw(batch, cutsceneSubtitleText, subX, subY);
+            bodyFont.setColor(Color.WHITE);
+        }
+
         batch.end();
     }
 

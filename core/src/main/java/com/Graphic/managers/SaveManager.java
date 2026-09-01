@@ -32,7 +32,8 @@ public class SaveManager {
             + " time_played REAL,\n"
             + " enemies_killed INTEGER,\n"
             + " deaths INTEGER,\n"
-            + " charm_acquired INTEGER,\n"
+            + " charm_acquired_1 INTEGER,\n"
+            + " charm_acquired_2 INTEGER,\n"
             + " wall_broken INTEGER,\n"
             + " game_beaten INTEGER,\n"
             + " last_area TEXT,\n"
@@ -48,18 +49,20 @@ public class SaveManager {
             Gdx.app.error("SaveManager", "Failed to create database table.", e);
         }
 
-        migrateAddColumnIfMissing("equipped_charm_1");
-        migrateAddColumnIfMissing("equipped_charm_2");
-        migrateAddColumnIfMissing("equipped_charm_3");
+        migrateAddColumnIfMissing("equipped_charm_1","INTEGER");
+        migrateAddColumnIfMissing("equipped_charm_2","INTEGER");
+        migrateAddColumnIfMissing("equipped_charm_3","INTEGER");
+        migrateAddColumnIfMissing("charm_acquired_1","INTEGER");
+        migrateAddColumnIfMissing("charm_acquired_2","INTEGER");
     }
 
 
-    private static void migrateAddColumnIfMissing(String columnName) {
+    private static void migrateAddColumnIfMissing(String columnName, String type) {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement stmt = conn.createStatement()) {
-            stmt.execute("ALTER TABLE saves ADD COLUMN " + columnName + " TEXT;");
+            stmt.execute("ALTER TABLE saves ADD COLUMN " + columnName + " " + type + ";");
         } catch (Exception e) {
-
+            // column already exists — expected on every load after the first
         }
     }
 
@@ -79,7 +82,8 @@ public class SaveManager {
                     rs.getFloat("time_played"),
                     rs.getInt("enemies_killed"),
                     rs.getInt("deaths"),
-                    rs.getInt("charm_acquired") == 1,
+                    rs.getInt("charm_acquired_1") == 1,
+                    rs.getInt("charm_acquired_2") == 1,
                     rs.getInt("wall_broken") == 1,
                     rs.getInt("game_beaten") == 1,
                     rs.getString("last_area"),
@@ -92,22 +96,21 @@ public class SaveManager {
             Gdx.app.error("SaveManager", "Error loading save slot " + slotId, e);
         }
 
-
         return new GameSaveData(slotId);
     }
-
 
     public static void saveCurrentGame() {
         if (currentSave == null) return;
 
-        String sql = "INSERT INTO saves (slot_id, time_played, enemies_killed, deaths, charm_acquired, wall_broken, game_beaten, last_area, " +
+        String sql = "INSERT INTO saves (slot_id, time_played, enemies_killed, deaths, charm_acquired_1, charm_acquired_2, wall_broken, game_beaten, last_area, " +
             "equipped_charm_1, equipped_charm_2, equipped_charm_3) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
             "ON CONFLICT(slot_id) DO UPDATE SET " +
             "time_played=excluded.time_played, " +
             "enemies_killed=excluded.enemies_killed, " +
             "deaths=excluded.deaths, " +
-            "charm_acquired=excluded.charm_acquired, " +
+            "charm_acquired_1=excluded.charm_acquired_1, " +
+            "charm_acquired_2=excluded.charm_acquired_2, " +
             "wall_broken=excluded.wall_broken, " +
             "game_beaten=excluded.game_beaten, " +
             "last_area=excluded.last_area, " +
@@ -122,13 +125,14 @@ public class SaveManager {
             pstmt.setFloat(2, currentSave.timePlayed);
             pstmt.setInt(3, currentSave.enemiesKilled);
             pstmt.setInt(4, currentSave.deaths);
-            pstmt.setInt(5, currentSave.charmAcquired ? 1 : 0);
-            pstmt.setInt(6, currentSave.wallBroken ? 1 : 0);
-            pstmt.setInt(7, currentSave.gameBeaten ? 1 : 0);
-            pstmt.setString(8, currentSave.lastArea.name());
-            pstmt.setString(9, currentSave.equippedCharm1.name());
-            pstmt.setString(10, currentSave.equippedCharm2.name());
-            pstmt.setString(11, currentSave.equippedCharm3.name());
+            pstmt.setInt(5, currentSave.charmAcquired1 ? 1 : 0);
+            pstmt.setInt(6, currentSave.charmAcquired2 ? 1 : 0);
+            pstmt.setInt(7, currentSave.wallBroken ? 1 : 0);
+            pstmt.setInt(8, currentSave.gameBeaten ? 1 : 0);
+            pstmt.setString(9, currentSave.lastArea.name());
+            pstmt.setString(10, currentSave.equippedCharm1.name());
+            pstmt.setString(11, currentSave.equippedCharm2.name());
+            pstmt.setString(12, currentSave.equippedCharm3.name());
 
             pstmt.executeUpdate();
             Gdx.app.log("SaveManager", "Game saved successfully to slot " + currentSave.slotId);

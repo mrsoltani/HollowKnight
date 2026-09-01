@@ -6,11 +6,13 @@ audio/music/Sealed Vessel.mp3
 audio/sfx/area/Breakable Wall Death.mp3
 audio/sfx/area/Breakable Wall Hit 1.mp3
 audio/sfx/area/Breakable Wall Hit 2.mp3
+audio/sfx/area/Button.mp3
 audio/sfx/area/Dream Enter Pt 2.mp3
 audio/sfx/area/Dream Orb Pickup.mp3
 audio/sfx/area/Stalactite Break.mp3
 audio/sfx/area/Stalactite Death.mp3
 audio/sfx/area/Stalactite Impact.mp3
+audio/sfx/area/Success.mp3
 audio/sfx/enemies/Col Flyer Death 01.mp3
 audio/sfx/enemies/Col Flyer Death 02.mp3
 audio/sfx/enemies/Crystal Break 1.mp3
@@ -186,10 +188,12 @@ maps/CrystalPeak02.tmx
 maps/CrystalPeak03.tmx
 maps/CrystalPeak04.tmx
 maps/CrystalPeak05.tmx
+maps/CrystalPeak06.tmx
 maps/ForgottenCrossroads01.tmx
 maps/ForgottenCrossroads02.tmx
 maps/ForgottenCrossroads03.tmx
 maps/ForgottenCrossroads04.tmx
+maps/ForgottenCrossroads05.tmx
 maps/Glow.tsx
 maps/Holder.tsx
 maps/Mines_Layered_0068_a.tsx
@@ -581,6 +585,7 @@ maps/crystal peak/mines_stomper_02.png
 maps/crystal peak/mines_workshop_table.png
 maps/crystal peak/nailmaster_03_cloth #01904.png
 maps/crystal peak/nailmaster_03_cloth #01904.tsx
+maps/crystal peak/puzzle platform.png
 maps/crystal peak/ruins_fancy_shelf_0000_2.png
 maps/crystal peak/ruins_fancy_shelf_0000_2.tsx
 maps/crystal peak/shaft_02.png

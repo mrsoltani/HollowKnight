@@ -10,9 +10,7 @@ import com.Graphic.models.enums.GameViewScreen;
 import com.Graphic.models.spells.Damageable;
 import com.Graphic.models.spells.Fireball;
 import com.Graphic.models.spells.Scream;
-import com.Graphic.utils.CharmSpawnData;
-import com.Graphic.utils.GameAction;
-import com.Graphic.utils.ScreenCapture;
+import com.Graphic.utils.*;
 import com.Graphic.views.ui.GameHUD;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -33,6 +31,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -41,7 +40,6 @@ import java.util.Arrays;
 
 import static com.Graphic.utils.Constants.V_HEIGHT;
 import static com.Graphic.utils.Constants.V_WIDTH;
-
 public class GameScreen implements Screen {
 
 
@@ -51,6 +49,9 @@ public class GameScreen implements Screen {
     private SpriteBatch        batch;
     private ShapeRenderer      shapeRenderer;
 
+    private Array<PlatformPuzzle> platformPuzzles;
+    private Texture platformTexture;
+    private Texture pressurePlateTexture;
 
     private TiledMap           tiledMap;
     private TiledMapRenderer   mapRenderer;
@@ -71,7 +72,7 @@ public class GameScreen implements Screen {
 
     private final Array<BaseEnemy> enemies = new Array<>();
     private final Array<Rectangle> enemyCollisionRects = new Array<>();
-
+    private final Array<SolidBlock> puzzlePlatformSolids = new Array<>();
 
 
 
@@ -223,10 +224,11 @@ public class GameScreen implements Screen {
         initSpikes(helper);
         initLasers(helper);
         initParticles();
+        initPuzzles(helper);
         spawnPlayer(helper, spawnPointName);
         spawnEnemies(helper);
 
-        if(!SaveManager.currentSave.charmAcquired) {
+        if(!SaveManager.currentSave.charmAcquired2) {
             if (charmEntity != null) charmEntity.dispose();
             CharmSpawnData charmData = helper.getCharmData();
             charmEntity = (charmData != null) ? new CharmEntity(charmData) : null;
@@ -316,6 +318,19 @@ public class GameScreen implements Screen {
                 updateBreakableWall(delta);
                 updateEnemies(delta);
                 updateLasers(delta);
+                if (platformPuzzles != null) {
+                    for (PlatformPuzzle puzzle : platformPuzzles) {
+                        puzzle.update(delta, player.getBounds());
+
+                        if (puzzle.consumeSolvedPending()) {
+                            CharmManager.unlockSharpShadow();
+                            gameHUD.triggerCharmUnlockCutscene(
+                                "brilliance is the shape left behind by patience",
+                                "Sharp Shadow"
+                            );
+                        }
+                    }
+                }
 
                 if (charmEntity != null) charmEntity.update(delta, player, gameHUD);
                 if (zote != null) zote.update(delta, player, gameHUD, solidBlocks);
@@ -503,6 +518,17 @@ public class GameScreen implements Screen {
             player.gainSoul();
             EventBus.emit(EventBus.Event.PLAYER_SOUL_GAIN);
         }
+        if (platformPuzzles != null) {
+            for (PlatformPuzzle puzzle : platformPuzzles) {
+                for (RotatablePlatform plat : puzzle.getPlatforms()) {
+                    if (plat.isRotating()) continue; // don't queue hits mid-spin, avoids spam-rotation
+                    Rectangle pbnd = plat.getBounds();
+                    if (!attackBox.overlaps(pbnd)) continue;
+                    float platCX = pbnd.x + pbnd.width / 2f;
+                    plat.hit(playerCX > platCX);
+                }
+            }
+        }
     }
 
     private void renderGameWorld() {
@@ -521,6 +547,17 @@ public class GameScreen implements Screen {
 
         spellManager.render(batch);
         for (BaseEnemy e : enemies) e.render(batch);
+        if (platformPuzzles != null) {
+            if (platformPuzzles.size == 0) {
+                // only log once in a while if you want, this can spam every frame otherwise
+            }
+            for (PlatformPuzzle puzzle : platformPuzzles) {
+                puzzle.getPlate().render(batch);
+                for (RotatablePlatform plat : puzzle.getPlatforms()) {
+                    plat.render(batch);
+                }
+            }
+        }
         player.render(batch);
         EffectManager.render(batch);
         if (charmEntity != null) charmEntity.render(batch);
@@ -892,8 +929,52 @@ public class GameScreen implements Screen {
             shapeRenderer.triangle(v[0], v[1], v[2], v[3], v[4], v[5]);
         }
         shapeRenderer.end();
-    }
+    }private void initPuzzles(TiledMapHelper helper) {
+        for (SolidBlock s : puzzlePlatformSolids) solidBlocks.removeValue(s, true);
+        puzzlePlatformSolids.clear();
+        if (platformTexture == null)
+            platformTexture = new Texture(Gdx.files.internal("maps/crystal peak/puzzle platform.png"));
+        if (pressurePlateTexture == null)
+            pressurePlateTexture = new Texture(Gdx.files.internal("maps/crystal peak/Mines_Layered_0050_a.png"));
 
+        if (platformPuzzles != null) platformPuzzles.clear();
+        else platformPuzzles = new Array<>();
+
+        ObjectMap<String, Array<PlatformSpawnData>> platformGroups = helper.getPlatformGroups();
+        ObjectMap<String, PressurePlateSpawnData> plateGroups = helper.getPressurePlateGroups();
+
+        Gdx.app.error("GameScreen", "initPuzzles: platformGroups=" + platformGroups.size
+            + " plateGroups=" + plateGroups.size);
+
+        for (ObjectMap.Entry<String, PressurePlateSpawnData> entry : plateGroups) {
+            String groupId = entry.key;
+            Array<PlatformSpawnData> spawns = platformGroups.get(groupId);
+
+            if (spawns == null || spawns.size == 0) {
+                Gdx.app.error("GameScreen", "initPuzzles: plate group '" + groupId
+                    + "' has NO matching platforms (check name casing/typos)");
+                continue;
+            }
+
+            Array<RotatablePlatform> plats = new Array<>();
+            for (PlatformSpawnData sd : spawns) plats.add(new RotatablePlatform(sd, platformTexture));
+
+            PressurePlate plate = new PressurePlate(groupId, entry.value.x, entry.value.y, pressurePlateTexture);
+            platformPuzzles.add(new PlatformPuzzle(groupId, plate, plats));
+
+            Gdx.app.error("GameScreen", "initPuzzles: built puzzle '" + groupId
+                + "' with " + plats.size + " platform(s)");
+            for (RotatablePlatform plat : plats) {
+                Array<SolidBlock> slabs = plat.buildCollisionSlabs();
+                for (SolidBlock slab : slabs) {
+                    puzzlePlatformSolids.add(slab);
+                    solidBlocks.add(slab);
+                }
+            }
+        }
+
+        Gdx.app.error("GameScreen", "initPuzzles: total puzzles built=" + platformPuzzles.size);
+    }
     @Override
     public void resize(int w, int w_height) {
         if (w <= 0 || w_height <= 0 || !initialized) return;
@@ -924,7 +1005,8 @@ public class GameScreen implements Screen {
         if (falseKnight != null) falseKnight.dispose();
         if (lasers != null) lasers.clear();
         LaserHazard.disposeSharedAssets();
-
+        if (platformTexture != null) platformTexture.dispose();
+        if (pressurePlateTexture != null) pressurePlateTexture.dispose();
         ScreenCapture.dispose();
     }
 }

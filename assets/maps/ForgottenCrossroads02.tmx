@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="69" nextobjectid="228">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="420" height="206" tilewidth="8" tileheight="8" infinite="0" nextlayerid="69" nextobjectid="229">
  <tileset firstgid="1" source="textures/forgotten crossroads/SimplePath.tsx"/>
  <tileset firstgid="341" source="textures/forgotten crossroads/FlatPath.tsx"/>
  <tileset firstgid="597" source="textures/forgotten crossroads/CdFloor.tsx"/>
@@ -1378,10 +1378,10 @@
   </object>
  </objectgroup>
  <objectgroup id="59" name="teleport">
-  <object id="198" x="0.727273" y="66.303" width="33.3333" height="1518.18">
+  <object id="198" x="2118.91" y="2.66664" width="266.667" height="87.877">
    <properties>
-    <property name="location" value="CROSSROADS_01"/>
-    <property name="targetSpawn" value="SPAWN_EAST"/>
+    <property name="location" value="CROSSROADS_05"/>
+    <property name="targetSpawn" value="SPAWN_WEST"/>
    </properties>
   </object>
   <object id="199" x="-606.061" y="978.788"/>
@@ -1398,6 +1398,12 @@
    </properties>
   </object>
   <object id="223" x="3580" y="1024" height="94"/>
+  <object id="228" x="1.51517" y="-37.8779" width="33.3333" height="1518.18">
+   <properties>
+    <property name="location" value="CROSSROADS_01"/>
+    <property name="targetSpawn" value="SPAWN_EAST"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="64" name="danger">
   <object id="208" x="851.167" y="344.833" width="129" height="961">

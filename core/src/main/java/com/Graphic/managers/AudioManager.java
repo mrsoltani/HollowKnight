@@ -18,7 +18,7 @@ public class AudioManager {
     private static float   masterVolume = 0.75f;
     private static boolean musicEnabled = true;
     private static boolean sfxEnabled   = true;
-    private static float   musicVolume  = 0.35f;
+    private static float   musicVolume  = 0.2f;
 
 
     private static final Map<String, Sound> sounds   = new HashMap<>();
@@ -169,6 +169,11 @@ public class AudioManager {
         loadSFX("fk_hit_1",             "audio/sfx/false knight/Fknight Hit 01.mp3");
         loadSFX("fk_hit_2",             "audio/sfx/false knight/Fknight Hit 02.mp3");
         loadSFX("fk_rage",              "audio/sfx/false knight/Fknight Rage.mp3");
+
+
+        loadSFX("puzzle_challenge_start",              "audio/sfx/area/Button.mp3");
+        loadSFX("puzzle_challenge_solved",              "audio/sfx/area/Success.mp3");
+
     }
 
     private static void subscribeToAreaEvents() {
@@ -178,6 +183,7 @@ public class AudioManager {
         EventBus.subscribe(EventBus.Event.ENTER_CRYSTAL_PEAK, e -> fadeToMusic("crystal peak"));
         EventBus.subscribe(EventBus.Event.ENTER_BOSS, e -> fadeToMusic("false knight"));
         EventBus.subscribe(EventBus.Event.ENTER_END, e -> fadeToMusic("end screen"));
+
     }
 
     private static void subscribeToPlayerEvents() {
@@ -225,6 +231,11 @@ public class AudioManager {
         EventBus.subscribe(EventBus.Event.ENEMY_CRYSTAL_LASER_STOP,
             e -> stopChannel("crystal_laser"));
         EventBus.subscribe(EventBus.Event.PLAYER_SOUL_GAIN, e -> playRandomSFX("soul_1", "soul_2", "soul_3", "soul_4"));
+
+        EventBus.subscribe(EventBus.Event.PUZZLE_CHALLENGE_START,e -> playSFX("puzzle_challenge_start"));
+
+        EventBus.subscribe(EventBus.Event.PUZZLE_SOLVED,e -> playSFX("puzzle_challenge_solved"));
+
 
     }
     private static void playEnemyDeath(Object data) {

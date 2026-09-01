@@ -83,7 +83,11 @@ public class EventBus {
         FALSE_KNIGHT_RAGE,
         FALSE_KNIGHT_CEILING_BREAK,
         FALSE_KNIGHT_LAND_FIRST,
-        FALSE_KNIGHT_CHARGE_SWING
+        FALSE_KNIGHT_CHARGE_SWING,
+
+        PUZZLE_SOLVED,
+        PUZZLE_CHALLENGE_START,
+        PUZZLE_CHALLENGE_END
     }
 
     private static final Map<Event, List<Consumer<Object>>> listeners = new HashMap<>();

@@ -1411,7 +1411,7 @@
  <objectgroup id="59" name="teleport">
   <object id="198" x="0.727273" y="1032.97" width="33.3333" height="551.513">
    <properties>
-    <property name="location" value="CRYSTAL_PEAK_01"/>
+    <property name="location" value="CRYSTAL_PEAK_06"/>
     <property name="targetSpawn" value="SPAWN_EAST"/>
    </properties>
   </object>

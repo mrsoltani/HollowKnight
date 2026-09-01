@@ -1,6 +1,8 @@
 package com.Graphic.models;
 
 import com.Graphic.utils.CharmSpawnData;
+import com.Graphic.utils.PlatformSpawnData;
+import com.Graphic.utils.PressurePlateSpawnData;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -17,6 +19,7 @@ import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.math.Ellipse;
 import com.badlogic.gdx.math.Vector2;
 import com.Graphic.models.FallingSpikeData;
+import com.badlogic.gdx.utils.ObjectMap;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -334,5 +337,144 @@ public class TiledMapHelper {
             result.add(new LaserSpawnData(x, y, w, h));
         }
         return result;
+    }
+    // === Puzzle platform / pressure plate parsing ===================
+
+    /**
+     * Reads every object on the logical layer whose name starts with
+     * "platform_" and groups them by puzzle id.
+     *
+     * Expected name format: platform_<groupId>_<n>
+     *   e.g. "platform_A_1", "platform_A_2", "platform_A_3"
+     *
+     * <n> only needs to be unique within the group; it is discarded, groupId
+     * is what links these to their pressure plate.
+     */
+    public ObjectMap<String, Array<PlatformSpawnData>> getPlatformGroups() {
+        ObjectMap<String, Array<PlatformSpawnData>> groups = new ObjectMap<>();
+
+        MapLayer logicalLayer = tiledMap.getLayers().get("puzzle");
+        if (logicalLayer == null) {
+            Gdx.app.error("TiledMapHelper", "getPlatformGroups: no 'puzzle' layer found");
+            return groups;
+        }
+
+        int objectCount = logicalLayer.getObjects().getCount();
+        Gdx.app.error("TiledMapHelper", "getPlatformGroups: 'puzzle' layer has " + objectCount + " objects total");
+
+        for (MapObject obj : logicalLayer.getObjects()) {
+            String name = obj.getName();
+            Gdx.app.error("TiledMapHelper", "getPlatformGroups: found object name='" + name
+                + "' class=" + obj.getClass().getSimpleName());
+
+            if (name == null || !name.startsWith("platform_")) continue;
+
+            String[] parts = name.split("_");
+            if (parts.length < 3) {
+                Gdx.app.error("TiledMapHelper", "Malformed platform object name: " + name
+                    + " (expected platform_<groupId>_<n>, got " + parts.length + " parts)");
+                continue;
+            }
+            String groupId = parts[1];
+
+            float[] xy = objectCenter(obj);
+            if (xy == null) {
+                Gdx.app.error("TiledMapHelper", "getPlatformGroups: objectCenter() returned null for '" + name + "'");
+                continue;
+            }
+
+            Gdx.app.error("TiledMapHelper", "getPlatformGroups: registered platform group='" + groupId
+                + "' at (" + xy[0] + ", " + xy[1] + ")");
+
+            PlatformSpawnData data = new PlatformSpawnData(groupId, xy[0], xy[1]);
+
+            Array<PlatformSpawnData> list = groups.get(groupId);
+            if (list == null) {
+                list = new Array<>();
+                groups.put(groupId, list);
+            }
+            list.add(data);
+        }
+
+        Gdx.app.error("TiledMapHelper", "getPlatformGroups: final group count=" + groups.size);
+        for (ObjectMap.Entry<String, Array<PlatformSpawnData>> e : groups) {
+            Gdx.app.error("TiledMapHelper", "  group '" + e.key + "' -> " + e.value.size + " platform(s)");
+        }
+
+        return groups;
+    }
+
+    /**
+     * Reads every object on the logical layer whose name starts with
+     * "pressure_" and keys them by puzzle id.
+     *
+     * Expected name format: pressure_<groupId>
+     *   e.g. "pressure_A"
+     */
+    public ObjectMap<String, PressurePlateSpawnData> getPressurePlateGroups() {
+        ObjectMap<String, PressurePlateSpawnData> plates = new ObjectMap<>();
+
+        MapLayer logicalLayer = tiledMap.getLayers().get("puzzle");
+        if (logicalLayer == null) {
+            Gdx.app.error("TiledMapHelper", "getPressurePlateGroups: no 'puzzle' layer found");
+            return plates;
+        }
+
+        for (MapObject obj : logicalLayer.getObjects()) {
+            String name = obj.getName();
+            if (name == null || !name.startsWith("pressure_")) continue;
+
+            String[] parts = name.split("_");
+            if (parts.length < 2) {
+                Gdx.app.error("TiledMapHelper", "Malformed pressure plate object name: " + name);
+                continue;
+            }
+            String groupId = parts[1];
+
+            float[] xy = objectCenter(obj);
+            if (xy == null) {
+                Gdx.app.error("TiledMapHelper", "getPressurePlateGroups: objectCenter() returned null for '" + name + "'");
+                continue;
+            }
+
+            if (plates.containsKey(groupId)) {
+                Gdx.app.error("TiledMapHelper", "Duplicate pressure plate for group: " + groupId);
+                continue;
+            }
+            Gdx.app.error("TiledMapHelper", "getPressurePlateGroups: registered plate group='" + groupId
+                + "' at (" + xy[0] + ", " + xy[1] + ")");
+            plates.put(groupId, new PressurePlateSpawnData(groupId, xy[0], xy[1]));
+        }
+
+        Gdx.app.error("TiledMapHelper", "getPressurePlateGroups: final plate count=" + plates.size);
+        return plates;
+    }
+
+    /**
+     * Returns the center point of a Tiled object in the same y-down pixel
+     * space used everywhere else in this project (matches findObjectPosition's
+     * coordinate convention — no flipping).
+     *
+     * Handles either a point object (x/y only) or a rectangle object
+     * (x/y + width/height), since Tiled point objects and rectangle objects
+     * both surface as MapObject but only RectangleMapObject exposes a
+     * Rectangle via getRectangle().
+     */
+    private float[] objectCenter(MapObject obj) {
+        MapProperties props = obj.getProperties();
+        if (!props.containsKey("x") || !props.containsKey("y")) {
+            Gdx.app.error("TiledMapHelper", "objectCenter: object '" + obj.getName() + "' has no x/y properties");
+            return null;
+        }
+
+        float x = props.get("x", Float.class);
+        float y = props.get("y", Float.class);
+
+        if (obj instanceof RectangleMapObject) {
+            Rectangle r = ((RectangleMapObject) obj).getRectangle();
+            return new float[] { r.x + r.width / 2f, r.y + r.height / 2f };
+        }
+
+        return new float[] { x, y };
     }
 }

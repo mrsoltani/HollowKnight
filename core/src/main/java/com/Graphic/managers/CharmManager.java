@@ -59,7 +59,7 @@ public class CharmManager {
             CharmId.SHARP_SHADOW,         "Sharp Shadow",
             "Sharp Shadow.png",
             "Dash through enemies dealing damage. Dash distance +20%.",
-            true, 1, new SharpShadowEffect()
+            false, 1, new SharpShadowEffect()
         ));
         charms.add(new Charm(
             CharmId.VOID_HEART,           "Void Heart",
@@ -102,8 +102,13 @@ public class CharmManager {
     }
 
     public static void unlockVoidHeart(){
-        charms.get(7).unlocked=true;
-        SaveManager.currentSave.charmAcquired=true;
+        charms.get(7).unlocked = true;
+        SaveManager.currentSave.charmAcquired2 = true;
+    }
+
+    public static void unlockSharpShadow(){
+        charms.get(6).unlocked = true;
+        SaveManager.currentSave.charmAcquired1 = true;
     }
 
 
@@ -113,7 +118,8 @@ public class CharmManager {
         if (save == null) return;
 
 
-        charms.get(7).unlocked=save.charmAcquired;
+        charms.get(6).unlocked=save.charmAcquired1;
+        charms.get(7).unlocked=save.charmAcquired2;
 
         for (Charm c : charms) {
             if (c.equipped) {
